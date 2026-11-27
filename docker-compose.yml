@@ -1,0 +1,40 @@
+# Start the app with: docker compose up
+# No .env or keys are needed. Open http://localhost:8000
+# Optional PostgreSQL: docker compose --profile postgres up
+#   (then set DATABASE_URL=postgresql+psycopg://ration:ration@postgres:5432/ration_bolo)
+services:
+  app:
+    build: .
+    image: ration-bolo:local
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-sqlite:////srv/data/ration_bolo.db}
+      DEALER_PIN: ${DEALER_PIN:-1234}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      WISPR_API_KEY: ${WISPR_API_KEY:-}
+      SARVAM_API_KEY: ${SARVAM_API_KEY:-}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
+      TWILIO_VOICE_NUMBER: ${TWILIO_VOICE_NUMBER:-}
+      TWILIO_WHATSAPP_NUMBER: ${TWILIO_WHATSAPP_NUMBER:-}
+      TWILIO_SMS_NUMBER: ${TWILIO_SMS_NUMBER:-}
+    volumes:
+      - app-data:/srv/data
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_USER: ration
+      POSTGRES_PASSWORD: ration
+      POSTGRES_DB: ration_bolo
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+volumes:
+  app-data:
+  pg-data:

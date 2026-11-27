@@ -1,6 +1,6 @@
 # Progress
 
-Current: none (bootstrap done; next is F01 on `feat/f01-foundation`)
+Current: F01 on `feat/f01-foundation`
 
 ## Functionality backlog
 
