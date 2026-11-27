@@ -96,7 +96,7 @@
 </section>
 
 <section class="slide">
-  <h2>Who it is for, and how many</h2>
+  <h2>Addressable market</h2>
   <div class="cols3">
     <div class="box"><div class="big">~80 crore</div><p>NFSA beneficiaries collecting grain every month</p></div>
     <div class="box"><div class="big">~5.5 lakh</div><p>fair price (ration) shops across India</p></div>
@@ -108,12 +108,12 @@
       <ul>
         <li><b>Cardholders</b> and family members calling for them — the primary users</li>
         <li><b>Dealers</b> — a calmer shop, a predictable queue, fewer arguments</li>
-        <li><b>State Civil Supplies Departments</b> — complaints and shop metrics they can act on</li>
+        <li><b>State Civil Supplies Departments</b> — complaints and shop metrics they can act on; the likely <b>paying partner</b> (a service fee per shop or per state)</li>
       </ul>
     </div>
     <div>
       <h3>Languages</h3>
-      <p>Telangana pack: Telugu, Hindi and Urdu understood, including mixed speech ("Kal ka slot book cheyyandi"); replies in Telugu or Hindi (English for testers). A new state is a new configuration file.</p>
+      <p>Telangana pack: Telugu, Hindi and Urdu understood, including mixed speech ("Kal ka slot book cheyyandi"); replies in Telugu or Hindi (English for testers). A draft Tamil Nadu pack already proves a new state is one file: {{PACK_COUNT}} state packs, {{LANGUAGE_COUNT}} languages today.</p>
     </div>
   </div>
   <span class="brand">Ration Bolo</span><span class="num">4</span>
@@ -170,6 +170,36 @@
 </section>
 
 <section class="slide">
+  <h2>What we built — working today</h2>
+  <div class="cols">
+    <div>
+      <h3>The core flow, end to end by voice</h3>
+      <ul class="small">
+        <li>Call simulator (keyless, for judges), Twilio phone line and WhatsApp voice notes — one dialogue engine behind all three</li>
+        <li>Card check by last digits, stock and entitlement, live queue and wait, slot booking with read-back, short-ration complaints with an ID, reminder calls 20 minutes before the slot</li>
+        <li>Wispr Flow → Sarvam → keypad/menu fallback chain; browser speech when no keys are set</li>
+        <li>Dealer dashboard: serve next (simulated ePoS sale), walk-ins, stock and machine status by voice; impact metrics page</li>
+        <li>Shared live demo: each judge gets fresh demo callers; status toggles restore themselves; nightly reset</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Built for the finale</h3>
+      <ul class="small">
+        <li><b>Tamil Nadu draft pack</b> — a new state is one JSON file, no code change</li>
+        <li><b>Phone-link verification</b> by a one-time code sent by SMS</li>
+        <li><b>Exotel adapter stub</b> — the path to an Indian toll-free number</li>
+        <li><b>Multi-shop admin</b> with CSV import of shops and ration cards</li>
+        <li><b>WCAG 2.2 AA audit</b>: 0 automated violations; every page under 80 KB</li>
+      </ul>
+      <h3>By the numbers (computed at build time)</h3>
+      <p class="small">{{UNIT_TESTS}} unit tests · {{E2E_FLOWS}} browser flows · {{APP_LINES}} lines of application code · {{PACK_COUNT}} state packs · commit {{COMMIT}}</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">7</span>
+</section>
+
+
+<section class="slide">
   <h2>Tech stack and why</h2>
   <table>
     <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
@@ -184,14 +214,14 @@
     <tr><td>Understanding</td><td>Own keyword + rapidfuzz matching</td><td>Deterministic, testable, free; accepts accent and spelling variation</td></tr>
     <tr><td>Phone, WhatsApp, SMS</td><td>Twilio Voice, WhatsApp sandbox, SMS</td><td>A working phone line and WhatsApp in days; Indian provider later</td></tr>
     <tr><td>Scheduling</td><td>APScheduler in-process, reminders in the database</td><td>No separate worker; reminders survive restarts</td></tr>
-    <tr><td>Quality</td><td>ruff, mypy, pytest, Playwright, GitHub Actions</td><td>147 unit tests, browser flows, PostgreSQL and fresh-clone checks in CI</td></tr>
+    <tr><td>Quality</td><td>ruff, mypy, pytest, Playwright, GitHub Actions</td><td>{{UNIT_TESTS}} unit tests, {{E2E_FLOWS}} browser flows, PostgreSQL and fresh-clone checks in CI</td></tr>
     <tr><td>Hosting</td><td>Docker, docker compose, Railway</td><td>One-command start; always-on HTTPS that Twilio needs</td></tr>
   </table>
-  <span class="brand">Ration Bolo</span><span class="num">7</span>
+  <span class="brand">Ration Bolo</span><span class="num">8</span>
 </section>
 
 <section class="slide">
-  <h2>What it depends on — and what happens if it fails or gets costly</h2>
+  <h2>Third-party dependencies: cost and availability risks</h2>
   <table>
     <tr><th>Dependency</th><th>If it fails or is unavailable</th><th>If it gets costly</th></tr>
     <tr><td>Wispr Flow (speech-to-text)</td><td>After two failures in a call we switch to Sarvam AI; a third failure gives a keypad / numbered menu. Simulator uses browser speech.</td><td>One request per caller sentence; swap provider by an environment variable</td></tr>
@@ -201,7 +231,7 @@
     <tr><td>Our server</td><td>One container, health-checked and restarted; data in PostgreSQL</td><td>Rules run on our own server — no per-decision AI cost</td></tr>
   </table>
   <p class="small" style="margin-top:0.18in">Every outside service sits behind an interface with a mock and a real adapter. The app starts with no keys at all; each missing key shows as "key not set" and falls back.</p>
-  <span class="brand">Ration Bolo</span><span class="num">8</span>
+  <span class="brand">Ration Bolo</span><span class="num">9</span>
 </section>
 
 <section class="slide">
@@ -229,11 +259,11 @@
       <p class="small">Every turn logs which engine produced the text, so fallback rates are measured, not guessed.</p>
     </div>
   </div>
-  <span class="brand">Ration Bolo</span><span class="num">9</span>
+  <span class="brand">Ration Bolo</span><span class="num">10</span>
 </section>
 
 <section class="slide">
-  <h2>Launch plan</h2>
+  <h2>Go-to-market plan</h2>
   <div class="cols">
     <ul class="small">
       <li><b>Pilot:</b> one ward in Hyderabad with the Telangana Civil Supplies Department, 10 shops, 3 months.</li>
@@ -253,7 +283,7 @@
       </ul>
     </div>
   </div>
-  <span class="brand">Ration Bolo</span><span class="num">10</span>
+  <span class="brand">Ration Bolo</span><span class="num">11</span>
 </section>
 
 <section class="slide">
@@ -272,10 +302,11 @@
       <p class="small"><b>Code:</b> github.com/sandeep-sakilam/ration-bolo — <code>docker compose up</code>, no keys needed, open localhost:8000.</p>
       <p class="small"><b>Demo video:</b> [YouTube link — add before submitting]</p>
       <p class="small"><b>Live link:</b> [Railway URL — add before submitting]</p>
-      <p class="small"><b>Dealer dashboard PIN (demo):</b> 1234</p>
+      <p class="small"><b>No login:</b> the simulator, dealer dashboard, metrics and admin pages all open without a PIN. The live demo resets itself for each judge.</p>
+      <p class="small"><b>Build:</b> commit {{COMMIT}} — the live link's footer shows the same commit.</p>
     </div>
   </div>
-  <span class="brand">Ration Bolo</span><span class="num">11</span>
+  <span class="brand">Ration Bolo</span><span class="num">12</span>
 </section>
 
 </body>
