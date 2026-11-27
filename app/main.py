@@ -13,6 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from app import __version__
 from app.channels import dealer as dealer_channel
 from app.channels import simulator as simulator_channel
+from app.channels import voice as voice_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
 from app.packs import all_packs
@@ -93,6 +94,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(simulator_channel.router)
     app.include_router(dealer_channel.router)
+    app.include_router(voice_channel.router)
 
     @app.get("/dealer", include_in_schema=False)
     def dealer_page() -> FileResponse:

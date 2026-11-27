@@ -1,6 +1,6 @@
 # Progress
 
-Current: F11 merged; next is F12 on `feat/f12-voice-channel`
+Current: F12 merged; next is F13 on `feat/f13-whatsapp`
 
 ## Functionality backlog
 
@@ -17,7 +17,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F09 Call simulator — `feat/f09-simulator`
 - [x] F10 Dealer dashboard — `feat/f10-dealer-dashboard`
 - [x] F11 Reminders and outbox — `feat/f11-reminders`
-- [ ] F12 Twilio Voice channel — `feat/f12-voice-channel`
+- [x] F12 Twilio Voice channel — `feat/f12-voice-channel`
 - [ ] F13 Twilio WhatsApp channel — `feat/f13-whatsapp`
 - [ ] F14 Impact metrics page — `feat/f14-metrics`
 - [ ] F15 Acceptance suite — `feat/f15-acceptance`
