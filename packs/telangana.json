@@ -357,6 +357,21 @@
     "i am at the shop",
     "im at the shop"
    ]
+  },
+  "nearby_yes": {
+   "te": [
+    "akkadiki veltanu",
+    "akkade veltanu"
+   ],
+   "hi": [
+    "wahan jaunga",
+    "wahan jaungi",
+    "wahin jaunga"
+   ],
+   "en": [
+    "go there",
+    "i will go there"
+   ]
   }
  },
  "intent_priority": [
@@ -1374,6 +1389,26 @@
    "te": "Public ammakala data lo {minutes} nimishaluga ammakalu levu; shop aagi undavachu.",
    "hi": "Sarkari bikri data mein {minutes} minute se koi bikri nahi; dukaan ruki ho sakti hai.",
    "en": "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
+  },
+  "nearby_offer": {
+   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; akkada biyyam undi, sumaru {minutes} nimishala wait.",
+   "hi": "Dukaan {code}, {landmark}, {km} km door hai; wahan chawal hai, lagbhag {minutes} minute ka intezaar.",
+   "en": "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait."
+  },
+  "nearby_offer_plain": {
+   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; sumaru {minutes} nimishala wait.",
+   "hi": "Dukaan {code}, {landmark}, {km} km door hai; lagbhag {minutes} minute ka intezaar.",
+   "en": "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait."
+  },
+  "nearby_ask": {
+   "te": "One Nation One Ration Card tho sadharananga akkada kuda mee ration teesukovachu. Akkadiki veltara?",
+   "hi": "One Nation One Ration Card se aam taur par aap wahan bhi ration le sakte hain. Wahan jaayenge?",
+   "en": "Under One Nation One Ration Card you can usually collect your ration there too. Want to go there?"
+  },
+  "nearby_accepted": {
+   "te": "Sare, Shop {code}.",
+   "hi": "Theek hai, dukaan {code}.",
+   "en": "Okay, Shop {code}."
   }
  },
  "default_busy_pattern": {

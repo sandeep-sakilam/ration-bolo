@@ -19,7 +19,11 @@ def test_seed_matches_pilot(empty_db: Session) -> None:
     assert salma.members == 3 and salma.language == "hi"
     assert (db.scalar(select(func.count()).select_from(Card)) or 0) >= 44
     today = ist_today()
-    waiting = db.scalars(select(Token).where(Token.date == today, Token.status == "waiting")).all()
+    waiting = db.scalars(
+        select(Token).where(
+            Token.date == today, Token.status == "waiting", Token.shop_id == shop.id
+        )
+    ).all()
     assert len(waiting) == 18 and all(t.kind == "walkin" for t in waiting)
     links = db.scalars(select(PhoneLink).where(PhoneLink.phone_e164 == "+919000009903")).all()
     assert len(links) == 2
