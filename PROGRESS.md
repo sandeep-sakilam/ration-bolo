@@ -1,6 +1,6 @@
 # Progress
 
-Current: none — F01–F39 merged (version 3 complete); no unchecked backlog items
+Current: docs/spec-v3.1 (spec version 3.1); next is F40 on `feat/f40-fresh-demo-sales`
 
 ## Functionality backlog
 
@@ -54,3 +54,12 @@ Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon
 - [x] F37 Dealer incentives: dealer phone line, "Rice arrived" broadcast, "Fair shop" badge — `feat/f37-dealer-incentives`
 - [x] F38 Volunteer queue coordinator mode — `feat/f38-volunteer-mode`
 - [x] F39 Version 3 docs, metrics for reports and levels, rebuilt PDF — `feat/f39-v3-docs`
+
+Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main` shippable after each):
+
+- [ ] F40 Demo public sales stay fresh relative to now and open hours; no false "possibly stopped" — `feat/f40-fresh-demo-sales`
+- [ ] F41 Natural spoken times in advice (part-of-day phrases from the state pack) — `feat/f41-spoken-times`
+- [ ] F42 Advice honours the day and part of day asked for; prefers today's remaining hours — `feat/f42-advice-context`
+- [ ] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
+- [ ] F44 Nearby shop gives today's wait ("go now" / today's best time / tomorrow) — `feat/f44-nearby-today`
+- [ ] F45 Version 3.1 docs: demo script phrases, README, acceptance map, deck only if quoted text changed — `feat/f45-v31-docs`
