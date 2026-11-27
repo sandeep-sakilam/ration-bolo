@@ -2,3 +2,10 @@
 
 One line per decision: date · question · choice · reason.
 
+- 2026-11-27 · Uvicorn entry point · `uvicorn --factory app.main:create_app` · importing the module must not create a database; tests build their own app.
+- 2026-11-27 · How to store window times · `windows.date` and `start_time` are IST wall-clock (shop schedule); every instant (issued, served, due) is naive UTC · a window is a schedule, not an instant, and India has no DST.
+- 2026-11-27 · Timezone source · fixed UTC+05:30 offset instead of zoneinfo · slim images may lack tzdata; IST has no DST.
+- 2026-11-27 · Demo "several cards" caller · added a fictional "Family phone" (+91 90000 09903) with cards TS-108-0610 and TS-108-0733 · acceptance check 8 needs a phone with two cards.
+- 2026-11-27 · "08:00 to 10:00 fully booked" · the 10:00 window is included (7 windows × 5 bookings) · so the first free morning window is 10:20, as the spec's script says.
+- 2026-11-27 · Metrics demo history · seed a week of fictional served tokens, sessions and two complaints · the spec asks for queue and metrics that look real.
+- 2026-11-27 · Weights · stored as integer grams (`grams_due`, `grams_given`) · spec says weights in grams; column names say the unit.
