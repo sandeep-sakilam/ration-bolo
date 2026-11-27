@@ -110,3 +110,22 @@ variables listed in `.env.example` (an ExoPhone as caller ID, a call-flow URL fo
 reminders, and DLT entity/template IDs for SMS to India). Check Exotel's current API
 docs first. Inbound calls on the ExoPhone still need an Exotel call flow pointed at this
 app; until then keep Twilio for inbound.
+
+## 7. Real-adapter smoke check (run by hand, never in CI)
+
+With your real keys in `.env` (or exported), from the repository root:
+
+```bash
+make install
+```
+
+```bash
+python scripts/smoke_real.py
+```
+
+It transcribes `tests/fixtures/biyyam_vachaya_te.wav` with Wispr Flow and with Sarvam,
+asks Sarvam for one Telugu reply (saved to `data/smoke_reply_te.wav`), and checks the
+Twilio credentials and numbers **without calling or messaging anyone**. Each line is
+PASS, FAIL (with the provider's exact error) or SKIP (key not set). The bundled clip is
+synthesised; for a realistic check record yourself saying "Maa shop ki biyyam vachaya?"
+and pass `--clip my_recording.m4a` (any format ffmpeg reads).

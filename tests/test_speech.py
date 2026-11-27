@@ -77,6 +77,26 @@ def test_wispr_timeout_is_a_failure() -> None:
     assert not out.ok and out.error == "wispr: ReadTimeout"
 
 
+def test_http_errors_carry_status_and_message() -> None:
+    client = httpx.Client(
+        transport=httpx.MockTransport(
+            lambda r: httpx.Response(401, json={"detail": "Invalid API key"})
+        )
+    )
+    out = WisprSTT("k", "https://w", client=client).transcribe(b"x", ["te"])
+    assert out.error == 'wispr: HTTP 401 {"detail":"Invalid API key"}'
+    tts = SarvamTTS(
+        "s",
+        "https://s",
+        "bulbul:v3",
+        "kavya",
+        client=httpx.Client(
+            transport=httpx.MockTransport(lambda r: httpx.Response(400, text="bad speaker"))
+        ),
+    )
+    assert tts.synthesize("x", "te-IN") is None and tts.last_error == "HTTP 400 bad speaker"
+
+
 def test_sarvam_stt_request() -> None:
     seen: dict[str, object] = {}
 
