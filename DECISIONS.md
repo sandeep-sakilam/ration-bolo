@@ -52,3 +52,8 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Nothing said after <Record> · Twilio falls through to a <Redirect> to `/twilio/voice/silence` · that is the silence event (8 s timeout).
 - 2026-11-27 · Rate limits · in-memory sliding window: 40 webhook requests a minute per phone, 120 per IP (webhooks and simulator starts) · "basic rate limits per phone and IP" in one process without Redis.
 - 2026-11-27 · Twilio send failures (e.g. unverified numbers on a trial account) · recorded as "failed" in the outbox, never break the call · never strand the caller.
+- 2026-11-27 · WhatsApp conversation boundaries · one session per phone, reused while active within 30 minutes; an older open chat is closed (with its summary) and a new one greets · WhatsApp has no "call" to start or end.
+- 2026-11-27 · First WhatsApp message · always gets the greeting and card check; if it already contains a question (or a voice note with one), that is answered in the same reply · "hi" shouldn't count as a failure, "biyyam vachaya?" shouldn't need two messages.
+- 2026-11-27 · Numbered menu replies · a WhatsApp message made only of digits is treated as keypad input (menu choice, 1 = yes / 2 = no, or card digits) · the sandbox can't send buttons.
+- 2026-11-27 · WhatsApp voice-note format · reply WAV is converted once to OGG/Opus and served at `/audio/{id}.ogg` · WhatsApp does not play WAV voice notes.
+- 2026-11-27 · WhatsApp reply transport · the reply goes back in the webhook's TwiML (`<Message><Body>` + `<Media>`); booking confirmations and reminders use the messenger · TwiML replies work in the sandbox without extra API calls.

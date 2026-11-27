@@ -14,6 +14,7 @@ from app import __version__
 from app.channels import dealer as dealer_channel
 from app.channels import simulator as simulator_channel
 from app.channels import voice as voice_channel
+from app.channels import whatsapp as whatsapp_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
 from app.packs import all_packs
@@ -64,10 +65,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/audio/{audio_id}", include_in_schema=False)
     def audio(audio_id: str) -> FileResponse:
         """Reply audio (never caller audio) for <Play>, WhatsApp and the simulator."""
-        path = app.state.services.voice.path(audio_id.removesuffix(".wav"))
+        stem, _, ext = audio_id.partition(".")
+        fmt = ext or "wav"
+        path = app.state.services.voice.path(stem, fmt)
         if path is None or not path.exists():
             raise HTTPException(404)
-        return FileResponse(path, media_type="audio/wav")
+        return FileResponse(path, media_type="audio/ogg" if fmt == "ogg" else "audio/wav")
 
     @app.get("/api/packs")
     def packs_list() -> list[dict[str, object]]:
@@ -95,6 +98,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(simulator_channel.router)
     app.include_router(dealer_channel.router)
     app.include_router(voice_channel.router)
+    app.include_router(whatsapp_channel.router)
 
     @app.get("/dealer", include_in_schema=False)
     def dealer_page() -> FileResponse:
