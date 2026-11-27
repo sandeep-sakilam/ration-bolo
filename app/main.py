@@ -12,6 +12,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
+from app import admin as admin_module
 from app.channels import dealer as dealer_channel
 from app.channels import simulator as simulator_channel
 from app.channels import voice as voice_channel
@@ -119,6 +120,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(simulator_channel.router)
     app.include_router(dealer_channel.router)
+    app.include_router(admin_module.router)
+
+    @app.get("/admin", include_in_schema=False)
+    def admin_page() -> FileResponse:
+        return FileResponse(STATIC_DIR / "admin.html")
+
     app.include_router(voice_channel.router)
     app.include_router(whatsapp_channel.router)
 

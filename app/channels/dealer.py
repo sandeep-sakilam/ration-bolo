@@ -84,8 +84,12 @@ class WalkinIn(BaseModel):
     last4: str | None = None
 
 
-def shop_of(db: Session) -> Shop:
-    shop = db.scalars(select(Shop).order_by(Shop.id)).first()
+def shop_of(db: Session, code: str | None = None) -> Shop:
+    """The shop the dashboard is looking at (X-Shop-Code header), else the first one."""
+    query = select(Shop).order_by(Shop.id)
+    if code:
+        query = query.where(Shop.code == code)
+    shop = db.scalars(query).first()
     if shop is None:
         raise HTTPException(404, "no shop")
     return shop
@@ -105,7 +109,7 @@ def _token_row(t: Token) -> dict[str, Any]:
 
 
 def overview_data(db: Session, request: Request) -> dict[str, Any]:
-    shop = shop_of(db)
+    shop = shop_of(db, request.headers.get("X-Shop-Code"))
     queue.sweep_no_shows(db, shop)
     db.commit()
     today = ist_today()
@@ -121,7 +125,12 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
         )
         .order_by(Token.date, Token.window_id, Token.token_no)
     ).all()
-    complaints = db.scalars(select(Complaint).order_by(Complaint.id.desc()).limit(20)).all()
+    complaints = db.scalars(
+        select(Complaint)
+        .where(Complaint.shop_id == shop.id)
+        .order_by(Complaint.id.desc())
+        .limit(20)
+    ).all()
     outbox = db.scalars(select(Outbox).order_by(Outbox.id.desc()).limit(30)).all()
     cards = db.execute(
         select(Card, CardHolder.display_name)
@@ -133,6 +142,10 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
     extra = getattr(request.app.state, "dealer_extras", None)
     return {
         "demo_data": True,
+        "shops": [
+            {"code": x.code, "name": x.name, "area": x.area}
+            for x in db.scalars(select(Shop).order_by(Shop.id))
+        ],
         "shop": {
             "code": shop.code,
             "name": shop.name,
@@ -182,8 +195,10 @@ def overview(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
 
 
 @router.post("/serve")
-def serve(body: ServeIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    shop = shop_of(db)
+def serve(
+    body: ServeIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+) -> dict[str, Any]:
+    shop = shop_of(db, x_shop_code)
     grams = None if body.kg is None else int(round(body.kg * 1000))
     token = queue.serve_next(db, shop, grams)
     db.commit()
@@ -216,8 +231,10 @@ def arrive(body: ArriveIn, db: Session = Depends(get_db)) -> dict[str, Any]:
 
 
 @router.post("/walkin")
-def walkin(body: WalkinIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    shop = shop_of(db)
+def walkin(
+    body: WalkinIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+) -> dict[str, Any]:
+    shop = shop_of(db, x_shop_code)
     card = None
     if body.last4:
         matches = [
@@ -251,12 +268,14 @@ def _apply_status(
 
 
 @router.post("/status")
-def status(body: StatusIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    return _apply_status(db, shop_of(db), body.stock, body.machine, "dealer")
+def status(
+    body: StatusIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+) -> dict[str, Any]:
+    return _apply_status(db, shop_of(db, x_shop_code), body.stock, body.machine, "dealer")
 
 
-def _voice_update(db: Session, text: str) -> dict[str, Any]:
-    shop = shop_of(db)
+def _voice_update(db: Session, text: str, code: str | None = None) -> dict[str, Any]:
+    shop = shop_of(db, code)
     pack = get_pack(shop.state_pack)
     intent = dealer_intent(text, pack)
     if intent is None:
@@ -282,8 +301,10 @@ def _voice_update(db: Session, text: str) -> dict[str, Any]:
 
 
 @router.post("/voice")
-def voice(body: VoiceIn, db: Session = Depends(get_db)) -> dict[str, Any]:
-    return _voice_update(db, body.text[:200])
+def voice(
+    body: VoiceIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+) -> dict[str, Any]:
+    return _voice_update(db, body.text[:200], x_shop_code)
 
 
 @router.post("/voice-audio")
@@ -293,7 +314,7 @@ def voice_audio(
     services: Services = request.app.state.services
     probe = DialogueSession(
         channel="simulator",
-        state_pack=shop_of(db).state_pack,
+        state_pack=shop_of(db, request.headers.get("X-Shop-Code")).state_pack,
         language="te",
         engine="primary",
         data={},
@@ -301,7 +322,7 @@ def voice_audio(
     heard = pipeline.transcribe(services, probe, file.file.read())
     if not heard.ok:
         return {"understood": False, "heard": "", "message": heard.error or "nothing heard"}
-    return _voice_update(db, heard.text)
+    return _voice_update(db, heard.text, request.headers.get("X-Shop-Code"))
 
 
 @router.post("/complaints/{complaint_id}/resolve")

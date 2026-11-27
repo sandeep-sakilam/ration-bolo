@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     database_url: str = "sqlite:///./data/ration_bolo.db"
     dealer_pin: str = "1234"
+    admin_pin: str = "1234"
     public_base_url: str = ""
     seed_demo: bool = True
     default_state_pack: str = "telangana"

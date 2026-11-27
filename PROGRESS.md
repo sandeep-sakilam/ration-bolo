@@ -1,6 +1,6 @@
 # Progress
 
-Current: F21 merged; next is F22 on `feat/f22-multi-shop`
+Current: none — all backlog items F01–F22 merged
 
 ## Functionality backlog
 
@@ -30,4 +30,4 @@ Finale:
 - [x] F19 Phone-to-card link verification — `feat/f19-link-verification`
 - [x] F20 Indian telephony adapter stub (Exotel) — `feat/f20-indian-telephony`
 - [x] F21 Accessibility and low-bandwidth audit — `feat/f21-accessibility`
-- [ ] F22 Multi-shop admin and CSV import — `feat/f22-multi-shop`
+- [x] F22 Multi-shop admin and CSV import — `feat/f22-multi-shop`
