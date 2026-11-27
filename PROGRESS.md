@@ -1,6 +1,6 @@
 # Progress
 
-Current: F32 merged; next is F33 on `feat/f33-best-time`
+Current: F33 merged; next is F34 on `feat/f34-nearby-shops`
 
 ## Functionality backlog
 
@@ -47,7 +47,7 @@ Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon
 - [x] F30 Shop levels 0, 1, 2: capabilities, honest wording, level on dashboard/admin, v3 demo shops — `feat/f30-shop-levels`
 - [x] F31 Cardholder reports and check-ins, agreement and decay model — `feat/f31-crowd-reports`
 - [x] F32 Public PDS data adapter, polling and signals — `feat/f32-public-pds`
-- [ ] F33 Best-time advice from hourly crowd profiles — `feat/f33-best-time`
+- [x] F33 Best-time advice from hourly crowd profiles — `feat/f33-best-time`
 - [ ] F34 Nearby-shop portability (ONORC) — `feat/f34-nearby-shops`
 - [ ] F35 Official complaint routing and escalation — `feat/f35-grievance-routing`
 - [ ] F36 Public transparency page and monthly report — `feat/f36-transparency`

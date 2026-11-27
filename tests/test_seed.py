@@ -56,3 +56,22 @@ def test_ensure_windows_idempotent(empty_db: Session) -> None:
     day = ist_today() + timedelta(days=5)
     assert len(ensure_windows(db, shop, day)) == 24
     assert len(ensure_windows(db, shop, day)) == 24
+
+
+def test_reset_clears_every_version3_table(empty_db: Session) -> None:
+    """Reset must delete rows in every table that points at shops or cards."""
+    from app import besttime
+    from app.db import Base
+    from app.publicpds import MockPublicPds, PublicPdsService
+
+    db = empty_db
+    seed_demo(db)
+    shop = db.scalars(select(Shop).where(Shop.code == "112")).one()
+    besttime.rebuild(db, shop)
+    PublicPdsService(mock=MockPublicPds("tests/fixtures/public_pds")).store(db, shop)
+    db.commit()
+    reset_demo(db)
+    from app.seed import _ALL_TABLES
+
+    covered = {m.__tablename__ for m in _ALL_TABLES}
+    assert covered == set(Base.metadata.tables), set(Base.metadata.tables) - covered

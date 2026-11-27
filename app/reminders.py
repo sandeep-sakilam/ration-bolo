@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import demo, levels, queue
+from app import besttime, demo, levels, queue
 from app.clock import fmt_time, now_utc, to_ist
 from app.models import Outbox, PhoneLink, Reminder, Shop, Token
 from app.packs import get_pack
@@ -174,6 +174,26 @@ def start_scheduler(
 
     scheduler.add_job(
         poll_public_pds, "interval", minutes=10, id="public_pds", coalesce=True, max_instances=1
+    )
+
+    def nightly_profiles() -> None:
+        try:
+            with factory() as db:
+                besttime.rebuild_all(db)
+                db.commit()
+        except Exception:
+            log.exception("hourly profile rebuild failed")
+
+    # 02:30 IST = 21:00 UTC: rebuild every shop's hourly profile from the last 4 weeks.
+    scheduler.add_job(
+        nightly_profiles,
+        "cron",
+        hour=21,
+        minute=0,
+        timezone="UTC",
+        id="hourly_profiles",
+        coalesce=True,
+        max_instances=1,
     )
     if demo_on:
 
