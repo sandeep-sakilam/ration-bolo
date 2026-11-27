@@ -5,6 +5,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import re
+import subprocess
 from pathlib import Path
 from typing import Protocol
 
@@ -86,10 +87,37 @@ class ReplyVoice:
     def audio_id(text: str, language_code: str) -> str:
         return hashlib.sha1(f"{language_code}|{text}".encode()).hexdigest()
 
-    def path(self, audio_id: str) -> Path | None:
-        if not self.ID_RE.match(audio_id):
+    def path(self, audio_id: str, fmt: str = "wav") -> Path | None:
+        """Cached file for an id. ``fmt="ogg"`` makes (once) an OGG/Opus copy, the
+        format WhatsApp plays as a voice note."""
+        if not self.ID_RE.match(audio_id) or fmt not in ("wav", "ogg"):
             return None
-        return self.dir / f"{audio_id}.wav"
+        wav = self.dir / f"{audio_id}.wav"
+        if fmt == "wav" or not wav.exists():
+            return wav if fmt == "wav" else None
+        ogg = self.dir / f"{audio_id}.ogg"
+        if not ogg.exists():
+            proc = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-loglevel",
+                    "error",
+                    "-y",
+                    "-i",
+                    str(wav),
+                    "-c:a",
+                    "libopus",
+                    "-b:a",
+                    "24k",
+                    str(ogg),
+                ],
+                capture_output=True,
+                timeout=20,
+                check=False,
+            )
+            if proc.returncode != 0:
+                return None
+        return ogg
 
     def get(self, text: str, language_code: str) -> str | None:
         """Audio id for this reply (synthesising it if needed), or None if no voice."""
