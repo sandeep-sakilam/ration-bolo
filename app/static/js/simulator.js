@@ -250,9 +250,13 @@
       const s = await api("/api/status");
       state.status = s;
       const missing = s.missing_keys.length;
+      const ready = (name) => s.services.find((x) => x.service === name && x.ready);
+      const stt = ready("speech_to_text") || ready("speech_to_text_backup");
+      const voice = ready("reply_voice");
       $("status-summary").textContent = s.server_speech_to_text
-        ? "Server speech engines active · " + (missing ? `${missing} keys not set` : "all keys set")
-        : "No speech keys set: using your browser's speech recognition and voice (key not set)";
+        ? `Speech-to-text: ${stt ? stt.provider : "server"} · reply voice: ${voice ? voice.provider : "browser"}`
+          + (missing ? ` · ${missing} keys not set` : "")
+        : "Keyless mode: no speech keys set, using your browser's speech recognition and voice (key not set)";
       const list = $("status-list"); list.innerHTML = "";
       for (const svc of s.services) {
         const li = document.createElement("li");
