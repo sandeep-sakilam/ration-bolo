@@ -33,6 +33,7 @@ class Advice:
     hour: int
     minutes: int
     known: bool  # True when built from this shop's own data
+    busy_part: str | None = None  # the asked part of day had no hour under 30 minutes
 
     @property
     def time(self) -> str:
@@ -180,16 +181,50 @@ def expected_waits(
     return waits, True
 
 
-def best_time(db: Session, shop: Shop, now: datetime | None = None) -> Advice | None:
+BUSY_MIN = 30  # an asked part of day with no hour under this is "busy"
+PART_HOURS = {"morning": (5, 12), "afternoon": (12, 16), "evening": (16, 20), "night": (20, 24)}
+
+
+def best_time(
+    db: Session,
+    shop: Shop,
+    now: datetime | None = None,
+    day_word: str | None = None,
+    part: str | None = None,
+) -> Advice | None:
+    """The quietest open hour. Honours the day ("today"/"tomorrow") and part of day
+    ("morning"/"evening") asked for (F42); with no day: today if hours are left, else
+    tomorrow. If the asked part has no hour under 30 minutes, the best other part of the
+    same day is returned with ``busy_part`` set."""
     now = now or now_utc()
     local = to_ist(now)
     today = ist_today(now)
-    for day, earliest in ((today, local.hour + 1), (today + timedelta(days=1), 0)):
+    if day_word == "tomorrow":
+        days = [(today + timedelta(days=1), 0)]
+    elif day_word == "today":
+        days = [(today, local.hour + 1), (today + timedelta(days=1), 0)]
+    else:
+        days = [(today, local.hour + 1), (today + timedelta(days=1), 0)]
+    for day, earliest in days:
         waits, known = expected_waits(db, shop, day, now)
         candidates = {h: w for h, w in waits.items() if h >= earliest}
-        if candidates:
-            hour = min(candidates, key=lambda h: (candidates[h], h))
-            return Advice(day, hour, spoken_minutes(candidates[hour]), known)
+        if not candidates:
+            continue
+        if part in PART_HOURS:
+            lo, hi = PART_HOURS[part]
+            in_part = {h: w for h, w in candidates.items() if lo <= h < hi}
+            if in_part and min(in_part.values()) < BUSY_MIN:
+                hour = min(in_part, key=lambda h: (in_part[h], h))
+                return Advice(day, hour, spoken_minutes(in_part[hour]), known)
+            if not in_part and day_word is None:
+                continue  # that part of today is over: try the same part tomorrow
+            others = {h: w for h, w in candidates.items() if not lo <= h < hi}
+            if others:
+                hour = min(others, key=lambda h: (others[h], h))
+                busy = part if in_part else None  # busy only if it was still possible
+                return Advice(day, hour, spoken_minutes(others[hour]), known, busy)
+        hour = min(candidates, key=lambda h: (candidates[h], h))
+        return Advice(day, hour, spoken_minutes(candidates[hour]), known)
     return None
 
 

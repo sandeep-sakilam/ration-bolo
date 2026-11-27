@@ -633,7 +633,7 @@ class Dialogue:
         kg_due = queue.entitlement_grams(card) // 1000
         queue.log_event(self.db, session.channel, "intent", f"session:{session.id}", intent=intent)
         if intent in ("stock", "queue", "book") and not levels.takes_bookings(self.db, shop):
-            self._level0(session, intent, out)
+            self._level0(session, intent, out, asked=(u.day, u.session) if u else None)
             return
         if intent == "stock":
             if shop.status_machine != "working":
@@ -677,7 +677,12 @@ class Dialogue:
             self._goto(session, "ended", out)
 
     def _level0(
-        self, session: DialogueSession, intent: str, out: _Out, shop: Shop | None = None
+        self,
+        session: DialogueSession,
+        intent: str,
+        out: _Out,
+        shop: Shop | None = None,
+        asked: tuple[str | None, str | None] | None = None,
     ) -> None:
         """Level 0 shop: no dealer source and no bookings. Say what is known, with its
         source and age, or say that nothing recent is known; then the best time to go."""
@@ -702,7 +707,7 @@ class Dialogue:
             )
         else:
             out.say("no_recent_reports")
-        self._best_time(shop, out)
+        self._best_time(shop, out, *(asked or (None, None)))
         self._goto(session, "main", out)
         if shop.id == self._card(session).shop_id:
             self._anything_else(session, out)
@@ -957,13 +962,20 @@ class Dialogue:
             return self._in_main(session, u, out)
         return False
 
-    def _best_time(self, shop: Shop, out: _Out) -> None:
-        advice = besttime.best_time(self.db, shop)
+    def _best_time(
+        self, shop: Shop, out: _Out, day_word: str | None = None, part: str | None = None
+    ) -> None:
+        if day_word not in (None, "today", "tomorrow"):
+            day_word = None  # an ISO date carried in a booking offer
+        advice = besttime.best_time(self.db, shop, day_word=day_word, part=part)
         if advice is None:
             return
         day = self._day_label(advice.day)
         when = SpokenTime("advice", advice.hour, besttime.session_starts(shop))
-        if advice.known:
+        if advice.busy_part is not None:
+            key = "best_time_part_busy" if advice.known else "best_time_part_busy_usual"
+            out.say(key, day=day, part=Word(advice.busy_part), when=when, minutes=advice.minutes)
+        elif advice.known:
             out.say("best_time_known", day=day, when=when, minutes=advice.minutes)
         else:
             out.say("best_time_usual", day=day, when=when)
@@ -982,7 +994,7 @@ class Dialogue:
         card = self._card(session)
         shop = self._booking_shop(session)
         if not levels.takes_bookings(self.db, shop):
-            self._level0(session, "book", out, shop)
+            self._level0(session, "book", out, shop, asked=(day_word, session_word))
             return
         today = ist_today()
         day = today if day_word == "today" else today + timedelta(days=1)

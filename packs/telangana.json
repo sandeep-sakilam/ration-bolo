@@ -1116,6 +1116,16 @@
    "te": "saayantram",
    "hi": "shaam",
    "en": "evening"
+  },
+  "afternoon": {
+   "te": "madhyahnam",
+   "hi": "dopahar",
+   "en": "afternoon"
+  },
+  "night": {
+   "te": "raatri",
+   "hi": "raat",
+   "en": "night"
   }
  },
  "twilio_voices": {
@@ -1557,6 +1567,16 @@
    "te": "Ivala {total} ammakalu ayyayi; shop ippudu moosi undi, {opens} terustaru.",
    "hi": "Aaj {total} bikri hui; dukaan abhi band hai, {opens} khulegi.",
    "en": "{total} sales today; the shop is closed now and opens {opens}."
+  },
+  "best_time_part_busy": {
+   "te": "{day} {part} rush ekkuva; {when} sadharananga {minutes} nimishala lopu.",
+   "hi": "{day} {part} bheed zyada hoti hai; {when} aam taur par {minutes} minute se kam.",
+   "en": "{day} {part} is busy; {when} is usually under {minutes} minutes."
+  },
+  "best_time_part_busy_usual": {
+   "te": "{day} {part} sadharananga rush ekkuva; {when} rush takkuva.",
+   "hi": "{day} {part} aam taur par bheed zyada hoti hai; {when} bheed kam hoti hai.",
+   "en": "{day} {part} is usually busy; {when} is usually quieter."
   }
  },
  "default_busy_pattern": {
