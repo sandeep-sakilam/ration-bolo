@@ -47,6 +47,9 @@
     $("stock-badge").className = "badge " + (stockOk ? "ok" : "bad");
     $("machine-badge").textContent = machineOk ? "Machine working" : "Machine down";
     $("machine-badge").className = "badge " + (machineOk ? "ok" : "bad");
+    const back = d.restore_in_minutes || {};
+    if (back.stock) $("stock-badge").textContent += ` · back to normal in ${back.stock} min`;
+    if (back.machine) $("machine-badge").textContent += ` · back to normal in ${back.machine} min`;
     $("pause-badge").hidden = !d.shop.paused; $("pause-badge").className = "badge bad";
     $("k-waiting").textContent = d.waiting;
     $("k-wait").textContent = d.wait_minutes;

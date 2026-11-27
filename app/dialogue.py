@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import queue, reminders
+from app import demo, queue, reminders
 from app.clock import fmt_time, ist_today, now_utc
 from app.models import (
     Card,
@@ -106,10 +106,17 @@ class _Out:
 
 
 class Dialogue:
-    def __init__(self, db: Session, send: Sender | None = None, verify_links: bool = True) -> None:
+    def __init__(
+        self,
+        db: Session,
+        send: Sender | None = None,
+        verify_links: bool = True,
+        demo_mode: bool = False,
+    ) -> None:
         self.db = db
         self.send = send or outbox_sender(db)
         self.verify_links = verify_links
+        self.demo_mode = demo_mode
 
     # --- sessions ---------------------------------------------------------
 
@@ -138,6 +145,8 @@ class Dialogue:
         return session
 
     def handle(self, session: DialogueSession, event: Event) -> Reply:
+        if self.demo_mode:
+            demo.apply_auto_restore(self.db)
         pack = get_pack(session.state_pack)
         session.last_activity_at = now_utc()
         out = _Out(pack, session.language)
@@ -728,6 +737,11 @@ class Dialogue:
         return None
 
     def _set_card(self, session: DialogueSession, card: Card, out: _Out) -> None:
+        fresh = list(session.data.get("demo_fresh", []))
+        if self.demo_mode and card.id not in fresh:
+            # Shared live demo: a demo card starts fresh in every new session (F23).
+            demo.refresh_card(self.db, card)
+            session.data = {**session.data, "demo_fresh": [*fresh, card.id]}
         session.card_id = card.id
         session.state_pack = card.state_pack
         pack = get_pack(card.state_pack)

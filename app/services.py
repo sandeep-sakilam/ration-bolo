@@ -47,7 +47,12 @@ class Services:
     def dialogue(self, db: Session) -> Dialogue:
         from app.dialogue import Dialogue
 
-        return Dialogue(db, self.sender(db), self.settings.link_verification != "off")
+        return Dialogue(
+            db,
+            self.sender(db),
+            verify_links=self.settings.link_verification != "off",
+            demo_mode=self.settings.demo_active,
+        )
 
     def sender(self, db: Session) -> Callable[[str, str, str], None]:
         """Dialogue sender backed by the messenger."""

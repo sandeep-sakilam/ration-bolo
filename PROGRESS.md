@@ -1,6 +1,6 @@
 # Progress
 
-Current: docs/spec-v2 (spec version 2); next is F23 on `feat/f23-shared-demo`
+Current: F23 merged; next is F24 on `feat/f24-no-login-wall`
 
 ## Functionality backlog
 
@@ -34,7 +34,7 @@ Finale:
 
 Version 2 submission fixes (F23–F28, merge by 30 Nov 2026, 12:00 noon IST):
 
-- [ ] F23 Shared live demo safety: fresh demo callers, auto-restoring status toggles, nightly reset — `feat/f23-shared-demo`
+- [x] F23 Shared live demo safety: fresh demo callers, auto-restoring status toggles, nightly reset — `feat/f23-shared-demo`
 - [ ] F24 No login wall: dealer and admin pages open when no PIN is set — `feat/f24-no-login-wall`
 - [ ] F25 Build identity (commit SHA) and submission checklist — `feat/f25-submission-checklist`
 - [ ] F26 Real-adapter smoke script (run by hand, never in CI) — `feat/f26-real-smoke`

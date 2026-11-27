@@ -13,6 +13,7 @@ from app.models import (
     Card,
     CardHolder,
     Complaint,
+    DemoCard,
     DialogueSession,
     Distribution,
     Event,
@@ -20,6 +21,7 @@ from app.models import (
     PhoneLink,
     Reminder,
     Shop,
+    StatusTimer,
     Token,
     Turn,
     Window,
@@ -40,6 +42,7 @@ DEMO_CALLERS = {
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
+    StatusTimer,
     Turn,
     DialogueSession,
     Reminder,
@@ -49,6 +52,7 @@ _ALL_TABLES = [
     Window,
     PhoneLink,
     CardHolder,
+    DemoCard,
     Outbox,
     Event,
     Card,
@@ -112,6 +116,7 @@ def seed_demo(db: Session, now: datetime | None = None) -> None:
         db.add(c)
         db.flush()
         db.add(CardHolder(card_id=c.id, display_name=name))
+        db.add(DemoCard(card_id=c.id, language=lang))
         return c
 
     lakshmi = card("TS-108-0421", 4, "te", "Lakshmi (demo)")
@@ -316,6 +321,7 @@ def _seed_tamil_nadu(db: Session) -> None:
     db.add(meena)
     db.flush()
     db.add(CardHolder(card_id=meena.id, display_name="Meena (demo)"))
+    db.add(DemoCard(card_id=meena.id, language="ta"))
     db.add(PhoneLink(phone_e164=DEMO_CALLERS["meena"]["phone"], card_id=meena.id, source="seed"))
 
 

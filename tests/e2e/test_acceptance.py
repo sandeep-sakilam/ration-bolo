@@ -117,3 +117,16 @@ def test_check8_unknown_number_registers_and_two_cards(page: Page, reset: None) 
     start(page, "family")
     expect(page.locator("#log .bubble.app").first).to_contain_text("2 cardlu unnayi: 0610, 0733")
     say(page, "0 7 3 3", "Meeku ela sahayam cheyali?")
+
+
+def test_check11_next_judge_gets_a_fresh_lakshmi(page: Page, reset: None) -> None:
+    start(page, "lakshmi")
+    say(page, "Avunu", "sahayam")
+    say(page, "Repu poddhuna book cheyyandi", "Repu 10:20 ki, sare na?")
+    say(page, "Avunu", "Booking ayindi")
+    say(page, "Hindi lo cheppandi", "Hindi mein")
+    page.click("#hangup")
+    start(page, "lakshmi")
+    expect(page.locator("#log .bubble.app").first).to_contain_text("Card chivari ankelu 0421")
+    say(page, "Avunu", "Meeku ela sahayam cheyali?")
+    say(page, "Repu poddhuna book cheyyandi", "Repu 10:20 ki, sare na?")
