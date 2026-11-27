@@ -250,14 +250,14 @@ class Dialogue:
         if len(cards) == 1:
             card = cards[0]
             self._set_card(session, card, out)
-            self._status_alerts(card.shop, out)
+            self._status_alerts(card.shop, out, session)
             out.say("confirm_card", last4=card.last4)
             self._goto(session, "confirm_card", out)
         elif len(cards) > 1:
             session.data = {**session.data, "cards": [c.id for c in cards]}
             shops = {c.shop_id for c in cards}
             if len(shops) == 1:
-                self._status_alerts(cards[0].shop, out)
+                self._status_alerts(cards[0].shop, out, session)
             out.say("which_card", count=len(cards), options=", ".join(_card_labels(cards)))
             self._goto(session, "choose_card", out)
         else:
@@ -380,7 +380,7 @@ class Dialogue:
         return True
 
     def _ready(self, session: DialogueSession, out: _Out) -> None:
-        self._status_alerts(self._card(session).shop, out)
+        self._status_alerts(self._card(session).shop, out, session)
         out.say("how_help")
         self._goto(session, "main", out)
 
@@ -636,8 +636,7 @@ class Dialogue:
             self._level0(session, intent, out, asked=(u.day, u.session) if u else None)
             return
         if intent == "stock":
-            if shop.status_machine != "working":
-                out.say("status_machine_down")
+            self._status_alerts(shop, out, session)  # only if it changed since the greeting
             out.say("stock_yes" if shop.status_stock == "in_stock" else "stock_no", kg=kg_due)
             self._goto(session, "main", out)
             self._anything_else(session, out)
@@ -650,7 +649,7 @@ class Dialogue:
             quiet = queue.quietest_tomorrow(self.db, shop)
             if quiet:
                 out.say("quietest", time=fmt_time(quiet))
-            self._best_time(shop, out)
+            # At most one advice sentence: the quietest bookable window above (F43).
             self._goto(session, "main", out)
             self._anything_else(session, out)
         elif intent == "book":
@@ -688,6 +687,7 @@ class Dialogue:
         source and age, or say that nothing recent is known; then the best time to go."""
         shop = shop or self._card(session).shop
         state = shopstate.view(self.db, shop)
+        before = len(out.parts)
         if intent == "book":
             out.say("no_booking_level0")
             out.actions.append({"type": "booking_refused", "reason": "level0"})
@@ -707,7 +707,11 @@ class Dialogue:
             )
         else:
             out.say("no_recent_reports")
-        self._best_time(shop, out, *(asked or (None, None)))
+        said_status = intent == "stock" and any(
+            k != "no_recent_reports" for k, _ in out.parts[before:]
+        )
+        if not said_status:
+            self._best_time(shop, out, *(asked or (None, None)))
         self._goto(session, "main", out)
         if shop.id == self._card(session).shop_id:
             self._anything_else(session, out)
@@ -722,7 +726,8 @@ class Dialogue:
             out.say("public_not_started")
             return
         first = to_ist(public.first_sale)
-        out.say("public_started", when=SpokenTime("at", first.hour, minute=first.minute))
+        if not (public.closed_now and public.opens_at is not None):
+            out.say("public_started", when=SpokenTime("at", first.hour, minute=first.minute))
         if public.closed_now and public.opens_at is not None:
             opens = to_ist(public.opens_at)
             out.say(
@@ -910,10 +915,10 @@ class Dialogue:
             "km": f"{c.km:.1f}",
             "minutes": max(1, c.wait),
         }
-        out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
         if incentives.fair_shop(self.db, c.shop):
             out.say("fair_shop_note")
-        out.say("nearby_ask")
+        # One sentence that ends in the question ("…; want to go there?"), F43.
+        out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
         queue.log_event(self.db, session.channel, "nearby_offered", f"shop:{c.shop.code}")
         out.actions.append(
             {
@@ -1080,8 +1085,13 @@ class Dialogue:
     def _refused(self, session: DialogueSession, refused: queue.BookingRefused, out: _Out) -> None:
         if refused.reason == "paused":
             shop = self._booking_shop(session)
-            self._status_alerts(shop, out)
-            out.say("booking_paused")
+            if session.data.get("warned") == _alert_keys(shop) and _alert_keys(shop):
+                # Already warned this call: the reason is the answer, in one sentence (F43).
+                key = "machine" if shop.status_machine != "working" else "stock"
+                out.say(f"booking_paused_{key}")
+            else:
+                self._status_alerts(shop, out, session, force=True)
+                out.say("booking_paused")
         elif refused.reason == "month" and refused.existing is not None:
             existing: Token = refused.existing
             when = existing.window.start_time if existing.window else None
@@ -1245,7 +1255,16 @@ class Dialogue:
             raise RuntimeError("no card on this session yet")
         return self.db.get_one(Card, session.card_id)
 
-    def _status_alerts(self, shop: Shop, out: _Out) -> None:
+    def _status_alerts(
+        self, shop: Shop, out: _Out, session: DialogueSession | None = None, force: bool = False
+    ) -> None:
+        """Stock/machine warnings: once per call, again only if the status changed (F43)."""
+        if session is not None:
+            keys = _alert_keys(shop) if levels.takes_bookings(self.db, shop) else None
+            if keys is not None:
+                if not force and session.data.get("warned") == keys:
+                    return
+                session.data = {**session.data, "warned": keys}
         if not levels.takes_bookings(self.db, shop):
             # Level 0: no dealer status; say confirmed problems from reports, with source.
             state = shopstate.view(self.db, shop)
@@ -1270,6 +1289,15 @@ class Dialogue:
 
 def _code_hash(code: str, salt: int) -> str:
     return hashlib.sha256(f"{salt}:{code}".encode()).hexdigest()
+
+
+def _alert_keys(shop: Shop) -> list[str]:
+    keys = []
+    if shop.status_stock != "in_stock":
+        keys.append("stock_out")
+    if shop.status_machine != "working":
+        keys.append("machine_down")
+    return keys
 
 
 _PART = {

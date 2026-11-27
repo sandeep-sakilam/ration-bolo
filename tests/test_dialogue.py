@@ -50,7 +50,7 @@ def test_lakshmi_full_telugu_flow(db: Session) -> None:
     assert r.text == "Repu 10:20 ki, sare na?"
     assert r.gloss == "Tomorrow at 10:20, okay?"
     r = call.say("Avunu")
-    assert r.text.startswith("Booking ayindi. Mee token B-036. SMS lo pampamu.")
+    assert r.text.startswith("Booking ayindi. Mee token B-036, SMS lo pampamu.")
     assert r.actions[0]["type"] == "booking_created"
     sms = db.scalars(select(Outbox).where(Outbox.channel == "sms")).one()
     assert "B-036" in sms.body and "10:20" in sms.body and sms.to_masked.endswith("4401")
