@@ -15,6 +15,7 @@ from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
 from app.packs import all_packs
 from app.seed import seed_if_empty
+from app.services import build_services
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -37,12 +38,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app = FastAPI(title="Ration Bolo", version=__version__, lifespan=lifespan)
     app.state.settings = settings
     app.state.packs = packs
+    app.state.services = build_services(settings)
     app.state.engine = engine
     app.state.sessionmaker = factory
 
     @app.get("/health")
     def health() -> dict[str, str]:
         return {"status": "ok", "version": __version__}
+
+    @app.get("/api/status")
+    def status() -> dict[str, object]:
+        result: dict[str, object] = app.state.services.status()
+        return result
 
     @app.get("/api/packs")
     def packs_list() -> list[dict[str, object]]:

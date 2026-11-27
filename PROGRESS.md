@@ -1,6 +1,6 @@
 # Progress
 
-Current: F06 merged; next is F07 on `feat/f07-adapters`
+Current: F07 merged; next is F08 on `feat/f08-speech-pipeline`
 
 ## Functionality backlog
 
@@ -12,7 +12,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F04 Slot and queue engine — `feat/f04-slot-engine`
 - [x] F05 Speech understanding — `feat/f05-understanding`
 - [x] F06 Dialogue engine — `feat/f06-dialogue`
-- [ ] F07 Adapter interfaces, mocks, service status — `feat/f07-adapters`
+- [x] F07 Adapter interfaces, mocks, service status — `feat/f07-adapters`
 - [ ] F08 Speech pipeline — `feat/f08-speech-pipeline`
 - [ ] F09 Call simulator — `feat/f09-simulator`
 - [ ] F10 Dealer dashboard — `feat/f10-dealer-dashboard`
