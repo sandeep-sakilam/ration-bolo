@@ -1,6 +1,6 @@
 # Progress
 
-Current: version 3.1 complete (F40–F45 merged)
+Current: F46 next (`feat/f46-closed-shop-honesty`)
 
 ## Functionality backlog
 
@@ -63,3 +63,7 @@ Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main
 - [x] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
 - [x] F44 Nearby shop gives today's wait ("go now" / today's best time / tomorrow) — `feat/f44-nearby-today`
 - [x] F45 Version 3.1 docs: demo script phrases, README, acceptance map, deck only if quoted text changed — `feat/f45-v31-docs`
+
+Version 3.2 "closed-shop honesty" (F46, merge by 29 Nov 2026, 6:00 PM IST):
+
+- [ ] F46 Closed-shop honesty: nearby offers and status answers respect open hours; demo reports keep their real age outside open hours — `feat/f46-closed-shop-honesty`
