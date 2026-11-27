@@ -1,6 +1,6 @@
 # Progress
 
-Current: F14 merged; next is F15 on `feat/f15-acceptance`
+Current: F15 merged; next is F16 on `feat/f16-deploy`
 
 ## Functionality backlog
 
@@ -20,7 +20,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F12 Twilio Voice channel — `feat/f12-voice-channel`
 - [x] F13 Twilio WhatsApp channel — `feat/f13-whatsapp`
 - [x] F14 Impact metrics page — `feat/f14-metrics`
-- [ ] F15 Acceptance suite — `feat/f15-acceptance`
+- [x] F15 Acceptance suite — `feat/f15-acceptance`
 - [ ] F16 Railway deployment — `feat/f16-deploy`
 - [ ] F17 Submission pack — `feat/f17-submission-pack`
 
