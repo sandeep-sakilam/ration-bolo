@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ration Bolo · Pitch deck</title>
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif; color: #1d2320; background: #ddd; }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.55in 0.75in; background: #fbf9f4; position: relative;
+           page-break-after: always; break-after: page; overflow: hidden; margin: 0 auto 12px; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .slide::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 0.18in; background: #0d6b4f; }
+  .num { position: absolute; right: 0.5in; bottom: 0.3in; font-size: 12pt; color: #6d756f; }
+  .brand { position: absolute; left: 0.75in; bottom: 0.3in; font-size: 12pt; color: #6d756f; }
+  h1 { font-size: 40pt; margin: 0 0 0.15in; color: #0d6b4f; }
+  h2 { font-size: 28pt; margin: 0 0 0.25in; color: #0d6b4f; }
+  h3 { font-size: 17pt; margin: 0.12in 0 0.06in; }
+  p, li { font-size: 16pt; line-height: 1.35; margin: 0 0 0.08in; }
+  ul { margin: 0; padding-left: 0.3in; }
+  .lead { font-size: 21pt; line-height: 1.35; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45in; }
+  .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.3in; }
+  .box { background: #fff; border: 1px solid #ddd6c8; border-radius: 12px; padding: 0.16in 0.22in; }
+  .big { font-size: 34pt; font-weight: 800; color: #0d6b4f; line-height: 1.1; }
+  .small, .small li { font-size: 13pt; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5pt; }
+  th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #ddd6c8; vertical-align: top; }
+  th { color: #6d756f; font-size: 11pt; text-transform: uppercase; }
+  .tag { display: inline-block; background: #e07a1f; color: #fff; border-radius: 999px; padding: 2px 12px; font-size: 13pt; font-weight: 700; }
+  .flow p { font-size: 15pt; margin: 0 0 0.05in; }
+  .flow .c { color: #0d6b4f; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<section class="slide">
+  <p class="tag">Build for Bharat · Round 2 · Public infrastructure and civic services</p>
+  <h1 style="font-size:60pt;margin-top:0.6in">Ration Bolo</h1>
+  <p class="lead">A voice-first ration shop assistant. Ration cardholders check stock, hear the live queue,
+    book a time slot and report short rations by speaking — on a phone call or a WhatsApp voice note.</p>
+  <p class="lead">No app. No reading. No typing.</p>
+  <p style="margin-top:0.5in">Sandeep Sakilam · github.com/sandeep-sakilam/ration-bolo</p>
+  <span class="num">1</span>
+</section>
+
+<section class="slide">
+  <h2>Problem: hours in a queue for grain that may not be there</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li>About 80 crore people collect subsidised grain every month from about 5.5 lakh ration shops under the National Food Security Act.</li>
+        <li>Families arrive early and wait for hours. Many are told "stock hasn't come" or "machine is down, come tomorrow" — a wasted trip and a lost day's wage.</li>
+        <li>Nobody can check stock or the queue before leaving home.</li>
+        <li>Short rations (15 kg instead of 24 kg) go unreported: complaining means another trip, a form, or a confrontation.</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Who suffers most</h3>
+      <ul>
+        <li>Daily-wage workers who lose a day's pay per wasted trip</li>
+        <li>Elderly and disabled cardholders who cannot stand for hours</li>
+        <li>Women who juggle the queue with work and children</li>
+        <li>People who cannot read or type, or own only a basic phone — the ones existing apps leave out</li>
+      </ul>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">2</span>
+</section>
+
+<section class="slide">
+  <h2>Solution: one call or one voice note</h2>
+  <div class="cols">
+    <div>
+      <ul>
+        <li><b>Check stock</b> and the family's entitlement</li>
+        <li><b>Hear the live queue</b> and the expected wait</li>
+        <li><b>Book a 20-minute slot</b>, confirmed by SMS or WhatsApp, with a reminder call 20 minutes before</li>
+        <li><b>Report short rations</b> by voice and get a complaint ID</li>
+        <li><b>Dealers</b> update stock and machine status by voice; every caller hears it first</li>
+      </ul>
+      <p class="small" style="margin-top:0.2in">Works on any phone: a phone call on a basic feature phone, WhatsApp voice notes on a smartphone, a web dashboard for dealers.</p>
+    </div>
+    <div class="box flow">
+      <h3>A real call, in Telugu</h3>
+      <p><span class="c">App:</span> Namaskaram, Ration Bolo. Card chivari ankelu 0421, sare na? <i>(card ending 0421, right?)</i></p>
+      <p><span class="c">Lakshmi:</span> Avunu. Maa shop ki biyyam vachaya? <i>(yes — has rice come?)</i></p>
+      <p><span class="c">App:</span> Avunu, biyyam vachindi. Mee kutumbaniki 24 kilolu. <i>(yes, 24 kg for your family)</i></p>
+      <p><span class="c">Lakshmi:</span> Ippudu entha mandi unnaru? <i>(how many now?)</i></p>
+      <p><span class="c">App:</span> 18 mandi mundu unnaru, sumaru 36 nimishalu. <i>(18 ahead, about 36 minutes)</i></p>
+      <p><span class="c">Lakshmi:</span> Repu poddhuna book cheyyandi. <i>(book tomorrow morning)</i></p>
+      <p><span class="c">App:</span> Repu 10:20 ki, sare na? … Booking ayindi. Mee token B-036.</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">3</span>
+</section>
+
+<section class="slide">
+  <h2>Who it is for, and how many</h2>
+  <div class="cols3">
+    <div class="box"><div class="big">~80 crore</div><p>NFSA beneficiaries collecting grain every month</p></div>
+    <div class="box"><div class="big">~5.5 lakh</div><p>fair price (ration) shops across India</p></div>
+    <div class="box"><div class="big">~650 shops</div><p>in the pilot city, Hyderabad, serving 6.5–8.4 lakh ration cards</p></div>
+  </div>
+  <div class="cols" style="margin-top:0.35in">
+    <div>
+      <h3>Users</h3>
+      <ul>
+        <li><b>Cardholders</b> and family members calling for them — the primary users</li>
+        <li><b>Dealers</b> — a calmer shop, a predictable queue, fewer arguments</li>
+        <li><b>State Civil Supplies Departments</b> — complaints and shop metrics they can act on</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Languages</h3>
+      <p>Telangana pack: Telugu, Hindi and Urdu understood, including mixed speech ("Kal ka slot book cheyyandi"); replies in Telugu or Hindi (English for testers). A new state is a new configuration file.</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">4</span>
+</section>
+
+<section class="slide">
+  <h2>Why voice — voice is the whole product</h2>
+  <div class="cols">
+    <ul>
+      <li><b>Low literacy:</b> many cardholders cannot read an app or type a message. Everyone can speak.</li>
+      <li><b>Basic phones:</b> a phone call works on any feature phone, with no data plan and no install.</li>
+      <li><b>Mixed languages:</b> people mix Telugu, Hindi, Urdu and English in one sentence; we match keywords across all of them at once.</li>
+      <li><b>Speed:</b> one sentence replaces a menu tree.</li>
+    </ul>
+    <div class="box">
+      <h3>Every task can be finished by speaking</h3>
+      <p>Keypad, numbered menus and buttons exist only as fallbacks.</p>
+      <h3>Confirm before saving</h3>
+      <p>Card digits, kilos and times are read back; nothing is saved without a "yes".</p>
+      <h3>Private by default</h3>
+      <p>Names are never spoken. Cards are confirmed by their last digits, phones are masked, caller audio is deleted after transcription.</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">5</span>
+</section>
+
+<section class="slide">
+  <h2>How it works</h2>
+  <div class="cols">
+    <div>
+      <h3>Architecture in words</h3>
+      <ul class="small">
+        <li>Three channels — Twilio Voice calls, Twilio WhatsApp voice notes, and a web simulator — are thin wrappers around one dialogue engine.</li>
+        <li>The speech pipeline converts audio with ffmpeg and sends it to Wispr Flow (primary) or Sarvam AI (backup). Speech engines only turn audio into text.</li>
+        <li>The dialogue engine is a deterministic state machine: keyword and fuzzy matching (rapidfuzz) decide intent, numbers, days and yes/no. No LLM makes decisions.</li>
+        <li>A slot and queue engine, complaints and an in-process reminder scheduler sit behind it. One FastAPI container, SQLite or PostgreSQL.</li>
+        <li>Languages, phrases, keywords and entitlements live in a per-state JSON "state pack".</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Slot rules</h3>
+      <ul class="small">
+        <li>Each shop session is split into 20-minute windows (pilot: 10 families each).</li>
+        <li><b>Half of every window is kept for walk-ins.</b> A booking saves waiting time; it never gives more rice or a better claim on stock.</li>
+        <li>One booking per card per month; the token is tied to the card.</li>
+        <li>More than 10 minutes late → the family joins the walk-in line.</li>
+        <li>The dealer serves booked and walk-in families alternately.</li>
+        <li>Wait estimate = people ahead × 2 minutes (30 families an hour).</li>
+        <li>Out of stock or machine down → new bookings pause, callers hear it first, existing bookings are told in their reminder.</li>
+      </ul>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">6</span>
+</section>
+
+<section class="slide">
+  <h2>Tech stack and why</h2>
+  <table>
+    <tr><th>Layer</th><th>Choice</th><th>Why</th></tr>
+    <tr><td>Language</td><td>Python 3.12</td><td>Strong libraries for Twilio, audio and HTTP APIs</td></tr>
+    <tr><td>Web framework</td><td>FastAPI, Uvicorn, Pydantic v2</td><td>Webhooks, JSON API and pages from one typed app</td></tr>
+    <tr><td>Web pages</td><td>Plain HTML, CSS, JavaScript</td><td>No build step on a judge's machine; small and fast on cheap phones</td></tr>
+    <tr><td>Database</td><td>SQLAlchemy 2; SQLite default, PostgreSQL 16 on Railway</td><td>Zero-setup local start; production database by one setting</td></tr>
+    <tr><td>Speech-to-text</td><td>Wispr Flow API; Sarvam AI backup</td><td>Hackathon partner's engine for Indian and mixed speech; Indian-language backup</td></tr>
+    <tr><td>Reply voice</td><td>Sarvam Bulbul, cached by text</td><td>Natural Indian voices; each sentence synthesised once</td></tr>
+    <tr><td>Keyless speech</td><td>Browser Web Speech API</td><td>Free, no key, keeps the simulator voice-driven for judges</td></tr>
+    <tr><td>Audio</td><td>ffmpeg</td><td>WebM, WhatsApp OGG and 8 kHz call audio → 16 kHz WAV</td></tr>
+    <tr><td>Understanding</td><td>Own keyword + rapidfuzz matching</td><td>Deterministic, testable, free; accepts accent and spelling variation</td></tr>
+    <tr><td>Phone, WhatsApp, SMS</td><td>Twilio Voice, WhatsApp sandbox, SMS</td><td>A working phone line and WhatsApp in days; Indian provider later</td></tr>
+    <tr><td>Scheduling</td><td>APScheduler in-process, reminders in the database</td><td>No separate worker; reminders survive restarts</td></tr>
+    <tr><td>Quality</td><td>ruff, mypy, pytest, Playwright, GitHub Actions</td><td>147 unit tests, browser flows, PostgreSQL and fresh-clone checks in CI</td></tr>
+    <tr><td>Hosting</td><td>Docker, docker compose, Railway</td><td>One-command start; always-on HTTPS that Twilio needs</td></tr>
+  </table>
+  <span class="brand">Ration Bolo</span><span class="num">7</span>
+</section>
+
+<section class="slide">
+  <h2>What it depends on — and what happens if it fails or gets costly</h2>
+  <table>
+    <tr><th>Dependency</th><th>If it fails or is unavailable</th><th>If it gets costly</th></tr>
+    <tr><td>Wispr Flow (speech-to-text)</td><td>After two failures in a call we switch to Sarvam AI; a third failure gives a keypad / numbered menu. Simulator uses browser speech.</td><td>One request per caller sentence; swap provider by an environment variable</td></tr>
+    <tr><td>Sarvam AI (backup STT, reply voice)</td><td>Twilio &lt;Say&gt; with an Indian voice; fixed prompts from pre-generated audio; browser voice in the simulator</td><td>Replies cached by text, so repeated prompts cost nothing</td></tr>
+    <tr><td>Twilio (phone, WhatsApp, SMS)</td><td>Messages are kept in an outbox; move to an Indian telephony provider with a real toll-free number (interface already separated)</td><td>Indian provider rates; WhatsApp for confirmations instead of SMS</td></tr>
+    <tr><td>State data (ePoS, card database)</td><td>Dealer dashboard is the manual fallback for stock and machine status and records each sale</td><td>None today; needs a department agreement</td></tr>
+    <tr><td>Our server</td><td>One container, health-checked and restarted; data in PostgreSQL</td><td>Rules run on our own server — no per-decision AI cost</td></tr>
+  </table>
+  <p class="small" style="margin-top:0.18in">Every outside service sits behind an interface with a mock and a real adapter. The app starts with no keys at all; each missing key shows as "key not set" and falls back.</p>
+  <span class="brand">Ration Bolo</span><span class="num">8</span>
+</section>
+
+<section class="slide">
+  <h2>Measuring impact</h2>
+  <div class="cols">
+    <div>
+      <h3>Pilot targets (Round 1)</h3>
+      <ul>
+        <li>Booked families served within <b>20 minutes</b> of their slot</li>
+        <li><b>30%</b> of families using a booking by month 3</li>
+        <li><b>Half as many</b> wasted trips</li>
+        <li><b>85%</b> of calls completed by voice alone</li>
+        <li><b>Every complaint</b> resolved within 7 days</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Built-in metrics page tracks them</h3>
+      <ul class="small">
+        <li>Average wait with and without a booking; share served within 20 minutes of the slot</li>
+        <li>Adoption: share of families served who had booked</li>
+        <li>Stock and queue checks by phone (trips not wasted); late and no-show bookings</li>
+        <li>Voice success rate (calls that never needed the menu), turns understood, backup-engine rate, usage per speech engine</li>
+        <li>Complaints filed, open, overdue and resolved within 7 days</li>
+      </ul>
+      <p class="small">Every turn logs which engine produced the text, so fallback rates are measured, not guessed.</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">9</span>
+</section>
+
+<section class="slide">
+  <h2>Launch plan</h2>
+  <div class="cols">
+    <ul class="small">
+      <li><b>Pilot:</b> one ward in Hyderabad with the Telangana Civil Supplies Department, 10 shops, 3 months.</li>
+      <li><b>Dealer onboarding:</b> a 15-minute session per dealer; the dashboard works on any phone browser; status updates by voice.</li>
+      <li><b>Awareness at the shop:</b> posters with the number at every pilot shop, dealer word of mouth, self-help-group (SHG) meetings and ward volunteers.</li>
+      <li><b>Telephony:</b> move from the Twilio pilot number to an Indian toll-free number with an Indian provider (KYC).</li>
+      <li><b>Data:</b> connect the department's ePoS feed and card database through the state-data interface.</li>
+      <li><b>Scale:</b> add states by adding state packs (languages, phrases, entitlements) — no code changes; phrases checked by native speakers.</li>
+    </ul>
+    <div class="box">
+      <h3>Milestones</h3>
+      <ul class="small">
+        <li>Month 0: department agreement, 10 dealers trained, posters up</li>
+        <li>Month 1: toll-free number live; metrics reviewed weekly with the department</li>
+        <li>Month 3: 30% booking adoption, 85% voice success; decide ward-wide rollout</li>
+        <li>Month 6: city-wide in Hyderabad; second state pack</li>
+      </ul>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">10</span>
+</section>
+
+<section class="slide">
+  <h2>Risks and limits, stated honestly</h2>
+  <div class="cols">
+    <ul class="small">
+      <li><b>Government data:</b> accurate queues and card lookups need ePoS data and phone-to-card links from each state; the prototype simulates both and labels it "Demo data".</li>
+      <li><b>Not yet toll-free:</b> the pilot uses a Twilio US number (an international call for Indian callers); a real toll-free number needs an Indian provider with KYC.</li>
+      <li><b>SMS to India</b> from a foreign number may not be delivered without DLT registration; confirmations go on WhatsApp where possible.</li>
+      <li><b>Speech accuracy</b> for elderly callers, strong dialects and noisy shops is unproven until piloted; the fallback chain and the voice-success metric exist because of that.</li>
+      <li><b>Dealer resistance:</b> dealers who benefit from crowded, unrecorded queues may resist; department backing is needed.</li>
+      <li><b>Wispr Flow API access and limits</b> to be confirmed with the organisers; Sarvam covers speech if Wispr is unavailable.</li>
+    </ul>
+    <div class="box">
+      <h3>Try it</h3>
+      <p class="small"><b>Code:</b> github.com/sandeep-sakilam/ration-bolo — <code>docker compose up</code>, no keys needed, open localhost:8000.</p>
+      <p class="small"><b>Demo video:</b> [YouTube link — add before submitting]</p>
+      <p class="small"><b>Live link:</b> [Railway URL — add before submitting]</p>
+      <p class="small"><b>Dealer dashboard PIN (demo):</b> 1234</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">11</span>
+</section>
+
+</body>
+</html>
