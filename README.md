@@ -4,6 +4,10 @@ Voice-first ration shop assistant: ration cardholders check stock, hear the live
 
 See `SPEC.md` for the full specification and `PROGRESS.md` for build status.
 
+## Deploying
+
+See `docs/DEPLOY.md` for Railway, the Twilio console and local tunnelling.
+
 ## What Sandeep must provide
 
 - API keys: Wispr Flow API, Sarvam AI.

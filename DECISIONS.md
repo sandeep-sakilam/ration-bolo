@@ -62,3 +62,5 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · E2E clock · the e2e server runs with `RATION_BOLO_NOW` = 11:00 IST today · "today evening" and late-arrival flows must not depend on when the suite runs.
 - 2026-11-27 · Fresh-clone check on a local repo · exports committed files with `git archive HEAD` (no clone needed); a URL is cloned · works in CI's detached checkout and proves uncommitted files aren't needed; `BUILD_ARGS` lets a proxy-bound machine pass build settings.
 - 2026-11-27 · Counting "lines written" · non-blank, non-comment lines of Python, JS, HTML and CSS under `app/` · spec: application code outside tests and config.
+- 2026-11-27 · Railway config · `railway.json` with the Dockerfile builder, `/health` healthcheck, one replica, restart on failure; Postgres via a `DATABASE_URL` reference variable · the scheduler and rate limits are in-process, so exactly one replica.
+- 2026-11-27 · Deployment check · `scripts/smoke_deploy.sh` reads health, status, simulator and checks that unsigned Twilio webhooks are refused · safe to run against the live link; it never calls Twilio.
