@@ -21,7 +21,7 @@ Nothing here is needed for the keyless demo: `docker compose up` on any machine 
    | Variable | Value |
    | --- | --- |
    | `PUBLIC_BASE_URL` | the Railway domain, e.g. `https://ration-bolo.up.railway.app` |
-   | `DEALER_PIN` | a PIN for the dealer dashboard (demo default `1234`) |
+   | `DEALER_PIN`, `ADMIN_PIN` | leave **unset** during evaluation: the live link must have no login wall. Set them only for real production use. |
    | `WISPR_API_KEY` | Wispr Flow API key |
    | `SARVAM_API_KEY` | Sarvam AI key (backup speech-to-text and reply voice) |
    | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` | Twilio console → Account info |

@@ -15,7 +15,7 @@
       else { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
     }
     const res = await fetch("/api/dealer" + path, opts);
-    if (res.status === 401) { logout("Wrong PIN"); throw new Error("unauthorised"); }
+    if (res.status === 401) { logout(pin ? "Wrong PIN" : ""); throw new Error("unauthorised"); }
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   }
@@ -130,7 +130,7 @@
     try {
       render(await api("/overview"));
       try { sessionStorage.setItem("dealerPin", pin); } catch (e) { /* ignore */ }
-      $("login").hidden = true; $("dash").hidden = false;
+      $("login").hidden = true; $("dash").hidden = false; $("logout").hidden = !pin;
       clearInterval(timer); timer = setInterval(refresh, 5000);
     } catch (e) { if (pin) $("login-error").textContent = "Wrong PIN"; }
   }
@@ -170,5 +170,5 @@
   });
   $("reset").addEventListener("click", () => { if (confirm("Restore the demo data? Bookings and complaints made in the demo are removed.")) act("/reset", {}); });
   $("logout").addEventListener("click", () => logout());
-  if (pin) login();
+  login();  // opens straight away when the server has no PIN set (no login wall)
 })();

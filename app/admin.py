@@ -23,6 +23,7 @@ from app.clock import ist_today
 from app.db import get_db
 from app.models import Card, Complaint, PhoneLink, Shop, Token
 from app.packs import all_packs
+from app.ratelimit import RateLimiter
 
 SHOP_FIELDS = [
     "code",
@@ -46,7 +47,7 @@ MAX_ROWS = 20000
 
 def require_admin(request: Request, x_admin_pin: str = Header(default="")) -> None:
     expected: str = request.app.state.settings.admin_pin
-    if not secrets.compare_digest(x_admin_pin.encode(), expected.encode()):
+    if expected and not secrets.compare_digest(x_admin_pin.encode(), expected.encode()):
         raise HTTPException(401, "wrong admin PIN")
 
 
@@ -213,13 +214,26 @@ def _response(result: ImportResult) -> dict[str, Any]:
     }
 
 
+IMPORT_LIMIT = RateLimiter(limit=20, window_seconds=60)
+
+
+def _limit(request: Request) -> None:
+    IMPORT_LIMIT.check(f"import:{request.client.host if request.client else ''}")
+
+
 @router.post("/import/shops")
-def upload_shops(file: UploadFile = File(...), db: Session = Depends(get_db)) -> dict[str, Any]:
+def upload_shops(
+    request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    _limit(request)
     return _response(import_shops(db, _rows(file, SHOP_FIELDS)))
 
 
 @router.post("/import/cards")
-def upload_cards(file: UploadFile = File(...), db: Session = Depends(get_db)) -> dict[str, Any]:
+def upload_cards(
+    request: Request, file: UploadFile = File(...), db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    _limit(request)
     return _response(import_cards(db, _rows(file, CARD_FIELDS)))
 
 

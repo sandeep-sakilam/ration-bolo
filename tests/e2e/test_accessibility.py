@@ -31,8 +31,6 @@ def test_simulator_in_call_and_dashboard_have_no_violations(page: Page, reset: N
     page.click("#toggle-keypad")
     assert _violations(page) == []
     page.goto("/dealer")
-    page.fill("#pin", "1234")
-    page.click("#login-form button[type=submit]")
     expect(page.locator("#dash")).to_be_visible()
     assert _violations(page) == []
 

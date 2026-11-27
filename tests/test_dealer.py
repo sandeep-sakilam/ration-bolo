@@ -7,9 +7,37 @@ from app.models import PhoneLink
 PIN = {"X-Dealer-Pin": "1234"}
 
 
-def test_pin_required(client: TestClient) -> None:
-    assert client.get("/api/dealer/overview").status_code == 401
-    assert client.get("/api/dealer/overview", headers={"X-Dealer-Pin": "0000"}).status_code == 401
+def test_check13_no_pin_by_default(client: TestClient) -> None:
+    assert client.get("/api/dealer/overview").status_code == 200
+    assert client.post("/api/dealer/serve", json={}).status_code == 200
+
+
+def test_pin_required_when_set(db_url: str) -> None:
+    from app.config import Settings
+    from app.main import create_app
+
+    settings = Settings(
+        _env_file=None,
+        database_url=db_url,
+        scheduler_enabled=False,  # type: ignore[call-arg]
+        dealer_pin="2468",
+        admin_pin="1357",
+    )
+    with TestClient(create_app(settings)) as c:
+        assert c.get("/api/dealer/overview").status_code == 401
+        assert c.get("/api/dealer/overview", headers={"X-Dealer-Pin": "0000"}).status_code == 401
+        assert c.get("/api/dealer/overview", headers={"X-Dealer-Pin": "2468"}).status_code == 200
+        assert c.get("/api/admin/shops", headers={"X-Admin-Pin": "2468"}).status_code == 401
+        assert c.get("/api/admin/shops", headers={"X-Admin-Pin": "1357"}).status_code == 200
+
+
+def test_reset_is_rate_limited(client: TestClient) -> None:
+    from app.channels.dealer import RESET_LIMIT
+
+    RESET_LIMIT.reset()
+    codes = [client.post("/api/dealer/reset").status_code for _ in range(7)]
+    assert codes[:6] == [200] * 6 and codes[6] == 429
+    RESET_LIMIT.reset()
 
 
 def test_overview_masks_cards_and_phones(client: TestClient) -> None:

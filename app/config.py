@@ -11,8 +11,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     database_url: str = "sqlite:///./data/ration_bolo.db"
-    dealer_pin: str = "1234"
-    admin_pin: str = "1234"
+    # No login wall (F24): the dealer and admin pages are open while these are unset,
+    # which is the default and the live-link setting. Set them in production.
+    dealer_pin: str = ""
+    admin_pin: str = ""
     public_base_url: str = ""
     seed_demo: bool = True
     # Shared-demo safety (F23): "auto" = on whenever demo data is seeded, "on", or "off".

@@ -12,8 +12,6 @@ def test_admin_imports_shop_csv(page: Page, reset: None, tmp_path: Path) -> None
         "150,Fair Price Shop 150,Amberpet,telangana,08:00-12:00,30,0.5\n"
     )
     page.goto("/admin")
-    page.fill("#pin", "1234")
-    page.click("#login-form button[type=submit]")
     expect(page.locator("#shops-body tr")).to_have_count(2)
     page.set_input_files("#shops-file", str(csv))
     page.click("#shops-form button[type=submit]")

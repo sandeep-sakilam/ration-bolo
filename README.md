@@ -34,10 +34,10 @@ Open **http://localhost:8000** — the call simulator. Everything you see is lab
    with two cards, the **WhatsApp voice note** mode, the **keypad**, and saying nonsense
    three times to see the engine switch and the fallback menu. **Meena** uses the draft
    Tamil Nadu pack (*Arisi vanthucha?*, *Naalai kaalai book pannunga*) — a new state is a new file.
-4. Open **Dealer dashboard** (PIN **1234**): live queue, *Serve next*, walk-in tokens,
+4. Open **Dealer dashboard** (no login needed): live queue, *Serve next*, walk-in tokens,
    *Machine down* (booking pauses on every channel), voice updates (*"Biyyam aipoyindi"*),
    complaints, the outbox of every SMS / WhatsApp / reminder call, *Send reminder now*, *Reset demo*.
-5. Open **Admin** (PIN **1234**) to see every shop and import shops and ration cards from CSV.
+5. Open **Admin** (no login needed) to see every shop and import shops and ration cards from CSV.
 6. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
 
 **Shared live demo.** In demo mode (on by default with demo data) every new call as a demo

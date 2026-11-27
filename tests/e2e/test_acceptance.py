@@ -7,8 +7,6 @@ from __future__ import annotations
 
 from playwright.sync_api import Page, expect
 
-PIN = "1234"
-
 
 def start(page: Page, caller: str, mode: str = "call") -> None:
     page.goto("/simulator")
@@ -29,8 +27,6 @@ def say(page: Page, text: str, expect_text: str) -> None:
 
 def dealer(page: Page) -> None:
     page.goto("/dealer")
-    page.fill("#pin", PIN)
-    page.click("#login-form button[type=submit]")
     expect(page.locator("#dash")).to_be_visible()
 
 
@@ -130,3 +126,11 @@ def test_check11_next_judge_gets_a_fresh_lakshmi(page: Page, reset: None) -> Non
     expect(page.locator("#log .bubble.app").first).to_contain_text("Card chivari ankelu 0421")
     say(page, "Avunu", "Meeku ela sahayam cheyali?")
     say(page, "Repu poddhuna book cheyyandi", "Repu 10:20 ki, sare na?")
+
+
+def test_check13_no_login_wall(page: Page, reset: None) -> None:
+    for path in ("/dealer", "/admin"):
+        page.goto(path)
+        expect(page.locator("#dash")).to_be_visible()
+        expect(page.locator("#login")).to_be_hidden()
+    expect(page.locator("#shops-body tr")).to_have_count(2)

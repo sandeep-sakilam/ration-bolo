@@ -56,4 +56,10 @@ reply="$(curl -fsS -X POST -H 'Content-Type: application/json' \
   -d '{"caller":"lakshmi"}' "http://localhost:$PORT/api/sim/start")"
 echo "$reply" | grep -q "0421" || { echo "FAIL: simulator call did not start"; exit 1; }
 
-echo "PASS: fresh clone starts with no .env and no keys; simulator loads; missing keys shown as 'key not set'."
+curl -fsS "http://localhost:$PORT/dealer" | grep -q "Dealer" || { echo "FAIL: dealer page missing"; exit 1; }
+curl -fsS "http://localhost:$PORT/api/dealer/overview" | grep -q '"waiting"' \
+  || { echo "FAIL: dealer dashboard needs a PIN (login wall)"; exit 1; }
+curl -fsS "http://localhost:$PORT/api/admin/shops" | grep -q '"code"' \
+  || { echo "FAIL: admin page needs a PIN (login wall)"; exit 1; }
+
+echo "PASS: fresh clone starts with no .env and no keys; simulator loads; missing keys shown as 'key not set'; dealer and admin open with no PIN."
