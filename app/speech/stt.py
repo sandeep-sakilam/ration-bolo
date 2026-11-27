@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import base64
+import json
 from dataclasses import dataclass
 from typing import Protocol
+
+import httpx
 
 
 @dataclass
@@ -41,3 +45,85 @@ class MockSTT:
             text = wav[marker + len(MOCK_PREFIX) :].decode("utf-8", "ignore").strip("\x00 \n")
             return Transcript(text=text, engine=self.name, confidence=1.0)
         return Transcript(text="", engine=self.name, error="mock engine heard no text")
+
+
+class WisprSTT:
+    """Wispr Flow REST API: base64 16 kHz mono WAV, language hints from the pack."""
+
+    name = "wispr"
+
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str,
+        timeout: float = 6.0,
+        dictionary: list[str] | None = None,
+        client: httpx.Client | None = None,
+    ) -> None:
+        self.api_key, self.base_url, self.timeout = api_key, base_url.rstrip("/"), timeout
+        self.dictionary = dictionary or []
+        self.client = client or httpx.Client()
+
+    def transcribe(self, wav: bytes, language_hints: list[str]) -> Transcript:
+        body = {
+            "audio": base64.b64encode(wav).decode("ascii"),
+            "language": language_hints,
+            "context": {"app": {"type": "other"}, "dictionary_context": self.dictionary[:100]},
+        }
+        try:
+            resp = self.client.post(
+                f"{self.base_url}/api",
+                json=body,
+                timeout=self.timeout,
+                headers={"Authorization": f"Bearer {self.api_key}"},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except (httpx.HTTPError, ValueError) as exc:
+            return Transcript(text="", engine=self.name, error=f"wispr: {type(exc).__name__}")
+        lang = data.get("detected_language")
+        return Transcript(text=str(data.get("text") or ""), engine=self.name, language=lang)
+
+
+class SarvamSTT:
+    """Sarvam AI speech-to-text REST (clips under ~30 s)."""
+
+    name = "sarvam"
+
+    def __init__(
+        self,
+        api_key: str,
+        base_url: str,
+        model: str,
+        timeout: float = 6.0,
+        keyterms: list[str] | None = None,
+        client: httpx.Client | None = None,
+    ) -> None:
+        self.api_key, self.base_url, self.model = api_key, base_url.rstrip("/"), model
+        self.timeout, self.keyterms = timeout, keyterms or []
+        self.client = client or httpx.Client()
+
+    def transcribe(self, wav: bytes, language_hints: list[str]) -> Transcript:
+        # One hint pins the language; several mean "detect it".
+        language = language_hints[0] if len(language_hints) == 1 else "unknown"
+        form = {"model": self.model, "language_code": language}
+        if self.keyterms and self.model.startswith("saaras:v4"):
+            form["keyterms"] = json.dumps(self.keyterms[:50], ensure_ascii=False)
+        try:
+            resp = self.client.post(
+                f"{self.base_url}/speech-to-text",
+                data=form,
+                timeout=self.timeout,
+                files={"file": ("audio.wav", wav, "audio/wav")},
+                headers={"api-subscription-key": self.api_key},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        except (httpx.HTTPError, ValueError) as exc:
+            return Transcript(text="", engine=self.name, error=f"sarvam: {type(exc).__name__}")
+        code = data.get("language_code") or ""
+        return Transcript(
+            text=str(data.get("transcript") or ""),
+            engine=self.name,
+            language=code.split("-")[0] or None,
+        )

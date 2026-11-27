@@ -14,8 +14,9 @@ from sqlalchemy.orm import Session
 
 from app.channels.messaging import Messenger, MockMessenger
 from app.config import Settings
-from app.speech.stt import MockSTT, SpeechToText
-from app.speech.tts import MockTTS, TextToSpeech
+from app.packs import all_packs
+from app.speech.stt import MockSTT, SarvamSTT, SpeechToText, WisprSTT
+from app.speech.tts import MockTTS, ReplyVoice, SarvamTTS, TextToSpeech
 from app.statedata import DealerFedStateData, StateData
 
 
@@ -28,6 +29,10 @@ class Services:
     messenger: Messenger
     state_data: StateData
     extra: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def voice(self) -> ReplyVoice:
+        return ReplyVoice(self.tts, self.settings.audio_cache_dir)
 
     @property
     def server_stt(self) -> bool:
@@ -165,11 +170,44 @@ class Services:
 
 
 def build_services(settings: Settings) -> Services:
-    """Mocks everywhere unless keys are present. Real adapters are added by later modules."""
+    """Mocks everywhere unless keys are present."""
     primary: SpeechToText | None = None
     backup: SpeechToText | None = None
     tts: TextToSpeech = MockTTS()
     messenger: Messenger = MockMessenger()
+    words = _vocabulary()
+    timeout = settings.speech_timeout_seconds
     if settings.speech_mode == "mock":
         primary, backup = MockSTT("mock"), MockSTT("mock-backup")
+    if settings.wispr_ready:
+        primary = WisprSTT(settings.wispr_api_key, settings.wispr_base_url, timeout, words)
+    if settings.sarvam_ready:
+        sarvam = SarvamSTT(
+            settings.sarvam_api_key,
+            settings.sarvam_base_url,
+            settings.sarvam_stt_model,
+            timeout,
+            words,
+        )
+        if primary is None:
+            primary = sarvam
+        else:
+            backup = sarvam
+        tts = SarvamTTS(
+            settings.sarvam_api_key,
+            settings.sarvam_base_url,
+            settings.sarvam_tts_model,
+            settings.sarvam_tts_speaker,
+            timeout,
+        )
     return Services(settings, primary, backup, tts, messenger, DealerFedStateData())
+
+
+def _vocabulary() -> list[str]:
+    """Pack keywords, given to speech engines as hints (dictionary / key terms)."""
+    words: list[str] = []
+    for pack in all_packs().values():
+        for lists in pack.raw["intents"].values():
+            for items in lists.values():
+                words.extend(w for w in items if w.isascii())
+    return list(dict.fromkeys(words))

@@ -6,7 +6,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -50,6 +50,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def status() -> dict[str, object]:
         result: dict[str, object] = app.state.services.status()
         return result
+
+    @app.get("/audio/{audio_id}", include_in_schema=False)
+    def audio(audio_id: str) -> FileResponse:
+        """Reply audio (never caller audio) for <Play>, WhatsApp and the simulator."""
+        path = app.state.services.voice.path(audio_id.removesuffix(".wav"))
+        if path is None or not path.exists():
+            raise HTTPException(404)
+        return FileResponse(path, media_type="audio/wav")
 
     @app.get("/api/packs")
     def packs_list() -> list[dict[str, object]]:
