@@ -429,6 +429,19 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             )
         if code == "112":
             _seed_112_reports(db, shop)
+        if code == "115":  # Level 1: 12 walk-ins waiting today (about 24 minutes)
+            for n in range(1, 13):
+                db.add(
+                    Token(
+                        shop_id=shop.id,
+                        date=ist_today(),
+                        token_no=n,
+                        kind="walkin",
+                        status="waiting",
+                        channel="dealer",
+                        issued_at=ist_to_utc(ist_today(), time(8, 0)) + timedelta(minutes=5 * n),
+                    )
+                )
         for i in range(1, 9):
             card = Card(
                 card_no=f"TS-{code}-{3000 + i}",

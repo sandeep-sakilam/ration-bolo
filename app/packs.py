@@ -107,6 +107,15 @@ V3_PHRASES: dict[str, str] = {
     "public_stopped": (
         "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
     ),
+    "nearby_offer": (
+        "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait."
+    ),
+    "nearby_offer_plain": ("Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait."),
+    "nearby_ask": (
+        "Under One Nation One Ration Card you can usually collect your ration there too. "
+        "Want to go there?"
+    ),
+    "nearby_accepted": "Okay, Shop {code}.",
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [

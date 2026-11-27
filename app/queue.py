@@ -128,9 +128,11 @@ def booking_this_month(db: Session, card: Card, day: date) -> Token | None:
     ).first()
 
 
-def check_can_book(db: Session, card: Card, day: date) -> None:
+def check_can_book(db: Session, card: Card, day: date, shop: Shop | None = None) -> None:
+    """The month rule follows the card; the pause follows the shop booked at (the card's
+    own shop unless booking at a nearby shop under One Nation One Ration Card)."""
     existing = booking_this_month(db, card, day)
-    reason = slots.booking_block_reason(paused(card.shop), existing is not None)
+    reason = slots.booking_block_reason(paused(shop or card.shop), existing is not None)
     if reason:
         raise BookingRefused(reason, existing)
 
@@ -144,7 +146,8 @@ def _next_token_no(db: Session, shop: Shop, day: date) -> int:
 
 def book(db: Session, card: Card, window: Window, channel: str) -> Token:
     """Create a booking. Refuses when paused, already booked this month, or window full."""
-    check_can_book(db, card, window.date)
+    shop = db.get_one(Shop, window.shop_id)
+    check_can_book(db, card, window.date, shop)
     taken = (
         db.scalar(
             select(func.count())
@@ -158,9 +161,9 @@ def book(db: Session, card: Card, window: Window, channel: str) -> Token:
     if taken >= window.booked_capacity:
         raise BookingRefused("full")
     token = Token(
-        shop_id=card.shop_id,
+        shop_id=shop.id,
         date=window.date,
-        token_no=_next_token_no(db, card.shop, window.date),
+        token_no=_next_token_no(db, shop, window.date),
         kind="booked",
         card_id=card.id,
         window_id=window.id,

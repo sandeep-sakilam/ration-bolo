@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import besttime, crowd, demo, levels, queue, reminders, shopstate
+from app import besttime, crowd, demo, levels, nearby, queue, reminders, shopstate
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.models import (
     Card,
@@ -439,9 +439,10 @@ class Dialogue:
             return True
         if u.no:
             tried = list(offer.get("tried", []))
-            card = self._card(session)
             day = date.fromisoformat(offer["day"])
-            nxt = queue.offers(self.db, card.shop, day, offer.get("session"), exclude=set(tried))
+            nxt = queue.offers(
+                self.db, self._booking_shop(session), day, offer.get("session"), exclude=set(tried)
+            )
             if len(tried) < MAX_OFFERS and nxt:
                 self._offer(session, nxt[0], offer.get("session"), tried, out)
             else:
@@ -499,8 +500,8 @@ class Dialogue:
             if shop.status_machine != "working":
                 out.say("status_machine_down")
             out.say("stock_yes" if shop.status_stock == "in_stock" else "stock_no", kg=kg_due)
-            out.say("anything_else")
             self._goto(session, "main", out)
+            self._anything_else(session, out)
         elif intent == "queue":
             info = queue.people_ahead_now(self.db, shop)
             if info.ahead:
@@ -511,8 +512,8 @@ class Dialogue:
             if quiet:
                 out.say("quietest", time=fmt_time(quiet))
             self._best_time(shop, out)
-            out.say("anything_else")
             self._goto(session, "main", out)
+            self._anything_else(session, out)
         elif intent == "book":
             if u is None:  # keypad: first free window tomorrow, any session
                 self._plan_booking(session, "tomorrow", None, out)
@@ -536,10 +537,12 @@ class Dialogue:
             out.say("goodbye")
             self._goto(session, "ended", out)
 
-    def _level0(self, session: DialogueSession, intent: str, out: _Out) -> None:
+    def _level0(
+        self, session: DialogueSession, intent: str, out: _Out, shop: Shop | None = None
+    ) -> None:
         """Level 0 shop: no dealer source and no bookings. Say what is known, with its
         source and age, or say that nothing recent is known; then the best time to go."""
-        shop = self._card(session).shop
+        shop = shop or self._card(session).shop
         state = shopstate.view(self.db, shop)
         if intent == "book":
             out.say("no_booking_level0")
@@ -559,8 +562,11 @@ class Dialogue:
         else:
             out.say("no_recent_reports")
         self._best_time(shop, out)
-        out.say("anything_else")
         self._goto(session, "main", out)
+        if shop.id == self._card(session).shop_id:
+            self._anything_else(session, out)
+        else:
+            out.say("anything_else")
 
     def _say_public(self, state: shopstate.ShopView, out: _Out) -> None:
         public = state.public
@@ -685,6 +691,87 @@ class Dialogue:
         out.say("anything_else")
         self._goto(session, "main", out)
 
+    # --- nearby shops (F34) -------------------------------------------------------
+
+    def _booking_shop(self, session: DialogueSession) -> Shop:
+        """The card's own shop, or the nearby shop the caller chose."""
+        other = session.data.get("shop_override")
+        if other:
+            return self.db.get_one(Shop, int(other))
+        return self._card(session).shop
+
+    def _anything_else(self, session: DialogueSession, out: _Out) -> None:
+        """Close an answer: offer a nearby shop when this one needs an alternative
+        (out of stock, machine down, long wait, upheld complaints), else "anything else?"."""
+        shop = self._card(session).shop
+        if not session.data.get("nearby_done") and not session.data.get("shop_override"):
+            needed = nearby.needs_alternative(self.db, shop)
+            found = nearby.candidates(self.db, shop) if needed else []
+            if found:
+                session.data = {
+                    **session.data,
+                    "nearby": [c.shop.id for c in found],
+                    "nearby_index": 0,
+                }
+                self._offer_nearby(session, found[0], out)
+                return
+        out.say("anything_else")
+
+    def _offer_nearby(self, session: DialogueSession, c: nearby.Candidate, out: _Out) -> None:
+        values = {
+            "code": c.shop.code,
+            "landmark": c.landmark or c.shop.area,
+            "km": f"{c.km:.1f}",
+            "minutes": max(1, c.wait),
+        }
+        out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
+        out.say("nearby_ask")
+        out.actions.append(
+            {
+                "type": "nearby_offer",
+                "shop": c.shop.code,
+                "km": round(c.km, 1),
+                "wait": c.wait,
+                "level": c.level,
+            }
+        )
+        self._goto(session, "nearby_offer", out)
+
+    def _in_nearby_offer(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        ids = list(session.data.get("nearby", []))
+        index = int(session.data.get("nearby_index", 0))
+        accepted = u.yes or u.intent == "nearby_yes" or "nearby_yes" in u.scores
+        if accepted and not u.no and index < len(ids):
+            target = self.db.get_one(Shop, ids[index])
+            session.data = {**session.data, "shop_override": target.id, "nearby_done": True}
+            out.say("nearby_accepted", code=target.code)
+            out.actions.append({"type": "nearby_accepted", "shop": target.code})
+            if levels.takes_bookings(self.db, target):
+                out.say("ask_book_when")
+                self._goto(session, "book_when", out)
+            else:
+                self._best_time(target, out)
+                out.say("anything_else")
+                self._goto(session, "main", out)
+            return True
+        if u.no:
+            index += 1
+            session.data = {**session.data, "nearby_index": index}
+            shop = self._card(session).shop
+            found = [c for c in nearby.candidates(self.db, shop) if c.shop.id in ids[index:]]
+            if found:
+                self._offer_nearby(session, found[0], out)
+            else:
+                session.data = {**session.data, "nearby_done": True}
+                out.say("anything_else")
+                self._goto(session, "main", out)
+            return True
+        if u.intent:
+            session.data = {**session.data, "nearby_done": True}
+            self._goto(session, "main", out)
+            return self._in_main(session, u, out)
+        return False
+
     def _best_time(self, shop: Shop, out: _Out) -> None:
         advice = besttime.best_time(self.db, shop)
         if advice is None:
@@ -707,16 +794,16 @@ class Dialogue:
         self, session: DialogueSession, day_word: str | None, session_word: str | None, out: _Out
     ) -> None:
         card = self._card(session)
-        shop = card.shop
+        shop = self._booking_shop(session)
         if not levels.takes_bookings(self.db, shop):
-            self._level0(session, "book", out)
+            self._level0(session, "book", out, shop)
             return
         today = ist_today()
         day = today if day_word == "today" else today + timedelta(days=1)
         if isinstance(day_word, str) and len(day_word) == 10:  # ISO date carried in offer
             day = date.fromisoformat(day_word)
         try:
-            queue.check_can_book(self.db, card, day)
+            queue.check_can_book(self.db, card, day, shop)
         except queue.BookingRefused as refused:
             self._refused(session, refused, out)
             return
@@ -754,6 +841,7 @@ class Dialogue:
     def _confirm_booking(self, session: DialogueSession, offer: dict[str, Any], out: _Out) -> None:
         card = self._card(session)
         window = self.db.get_one(Window, offer["window_id"])
+        window_shop = self.db.get_one(Shop, window.shop_id)
         try:
             token = queue.book(self.db, card, window, session.channel)
         except queue.BookingRefused as refused:
@@ -782,7 +870,7 @@ class Dialogue:
                 time=fmt_time(window.start_time),
                 token=token.label,
                 last4=card.last4,
-                shop=card.shop.code,
+                shop=window_shop.code,
             )
             self.send("whatsapp" if via == "WhatsApp" else "sms", session.phone_e164, body)
         self._summary(
@@ -793,7 +881,7 @@ class Dialogue:
 
     def _refused(self, session: DialogueSession, refused: queue.BookingRefused, out: _Out) -> None:
         if refused.reason == "paused":
-            shop = self._card(session).shop
+            shop = self._booking_shop(session)
             self._status_alerts(shop, out)
             out.say("booking_paused")
         elif refused.reason == "month" and refused.existing is not None:
@@ -806,8 +894,8 @@ class Dialogue:
                 token=existing.label,
             )
         out.actions.append({"type": "booking_refused", "reason": refused.reason})
-        out.say("anything_else")
         self._goto(session, "main", out)
+        self._anything_else(session, out)
 
     def _complaint_amount(self, session: DialogueSession, kg: int, out: _Out) -> None:
         card = self._card(session)
@@ -992,6 +1080,7 @@ _PART = {
 }
 
 _YES_NO_STATES = {
+    "nearby_offer",
     "confirm_at_shop",
     "confirm_report",
     "confirm_card",
