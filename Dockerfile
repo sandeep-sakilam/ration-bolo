@@ -16,6 +16,11 @@ RUN --mount=type=secret,id=ca \
     if [ -f /run/secrets/ca ]; then export PIP_CERT=/run/secrets/ca; fi; \
     pip install --no-cache-dir -r requirements.txt
 
+# Commit the image is built from (shown on /health and page footers). Railway sets
+# RAILWAY_GIT_COMMIT_SHA itself; elsewhere pass --build-arg GIT_SHA=$(git rev-parse HEAD).
+ARG GIT_SHA=""
+ENV GIT_SHA=${GIT_SHA}
+
 COPY app ./app
 COPY packs ./packs
 RUN mkdir -p /srv/data
