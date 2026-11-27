@@ -2,6 +2,9 @@
 
 `SPEC.md` is the single source of truth. Read `CLAUDE.md`, `SPEC.md` and `PROGRESS.md` at the start of every session.
 
+## Spec updates
+- When `SPEC.md` is replaced with a newer version, the first branch of the session is `docs/spec-vN` (N = version): replace `SPEC.md`, add the new backlog rows to `PROGRESS.md` unticked, copy changed working rules here. Normal PR and local merge before any functionality work.
+
 ## Start of every session
 - Check for open branches and PRs. If a functionality is in progress or waiting to merge, finish and merge it before anything new.
 - Then take the next unchecked item in `PROGRESS.md`.
@@ -23,7 +26,11 @@
 - Check before every push: `git log --format='%B' main..HEAD | grep -i claude` must return nothing.
 
 ## Product rules
-- The app must always start with `docker compose up` on a clean checkout with **no `.env` and no keys**, and show the call simulator. A change that breaks this is not done.
+- The app must always start with `docker compose up` on a clean checkout with **no `.env` and no keys**, and show the call simulator. From F24, the dealer and admin pages must also open without any PIN when none is set. A change that breaks this is not done.
+- No login wall: the live link must be usable by judges without a PIN; PINs apply only when explicitly set.
+- Submission deadlines (version 2): F23–F28 merged by 30 Nov 2026, 12:00 noon IST; the hackathon form closes 30 Nov 11:59 PM IST and can be submitted once.
+- Deck PDF: at most 30 pages and 10 MB; numbers in it are computed at build time. Demo video: YouTube only, at most 3:00, with a live voice interaction.
+- Never run the real-adapter smoke script (`scripts/smoke_real.py`) against real services; it is for Sandeep only, never in CI or tests.
 - Every outside service has an interface, a mock adapter and a real adapter; real adapters only turn on when keys are present. Tests always use mocks.
 - Never commit secrets. Every key is listed in `.env.example`.
 - Don't stop to ask: decide, log one line in `DECISIONS.md` (date, question, choice, reason), carry on. Stop only before irreversible actions outside the repo (spending money, buying numbers, contacting real people).
