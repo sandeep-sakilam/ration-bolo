@@ -21,9 +21,10 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app import besttime, levels, shopstate
+from app import besttime, levels, shopstate, spoken
 from app.clock import ist_to_utc, ist_today, now_utc, to_ist
 from app.models import Complaint, Report, Shop, Token
+from app.packs import get_pack
 
 MIN_COUNT = 5
 SMALL = "fewer than 5"
@@ -124,6 +125,15 @@ def status_lines(db: Session, shop: Shop, now: datetime) -> list[str]:
             continue
         if signal.source == "dealer":
             lines.append(f"{words[signal.value].capitalize()} (dealer update)")
+        elif signal.source == "reports" and signal.earlier is not None:
+            # Demo reports at a closed shop keep their real age (F46).
+            when = spoken.earlier(get_pack(shop.state_pack), "en", *signal.earlier)
+            who = (
+                f"confirmed {when} by {shown(signal.count)} cardholders"
+                if signal.confirmed
+                else f"one cardholder report {when}, not yet confirmed"
+            )
+            lines.append(f"{words[signal.value].capitalize()} — {who}")
         elif signal.source == "reports":
             who = (
                 f"confirmed by {shown(signal.count)} cardholders"

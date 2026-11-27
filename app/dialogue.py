@@ -102,10 +102,11 @@ class Word:
 class SpokenTime:
     """An advice time, rendered per reply language as a part-of-day phrase (F41)."""
 
-    kind: str  # advice | before | after | at | at_hour
+    kind: str  # advice | before | after | at | at_hour | earlier | opens
     hour: int
     session_starts: tuple[int, ...] = ()
     minute: int = 0
+    day: str = ""  # earlier: today | yesterday; opens: today | tomorrow (F46)
 
 
 @dataclass(frozen=True)
@@ -136,6 +137,10 @@ class _Out:
             if isinstance(v, SpokenTime):
                 if v.kind == "advice":
                     return spoken.advice_when(self.pack, language, v.hour, list(v.session_starts))
+                if v.kind == "earlier":
+                    return spoken.earlier(self.pack, language, v.day, v.hour)
+                if v.kind == "opens":
+                    return spoken.opens(self.pack, language, v.day, v.hour)
                 return spoken.say(self.pack, language, v.kind, v.hour, v.minute)
             if isinstance(v, Part):
                 return self.pack.phrase(v.key, language, **dict(v.values))
@@ -748,6 +753,14 @@ class Dialogue:
 
     def _say_signal(self, signal: shopstate.Signal, out: _Out) -> None:
         what = Part(f"report_part_{_PART[(signal.kind, signal.value)]}")
+        if signal.source == "reports" and signal.earlier is not None:
+            # Demo reports at a closed shop: when, in words, not "in the last 30 minutes".
+            when = SpokenTime("earlier", signal.earlier[1], day=signal.earlier[0])
+            if signal.count >= 2:
+                out.say("status_from_reports_earlier", what=what, count=signal.count, when=when)
+            else:
+                out.say("status_one_report_earlier", what=what, when=when)
+            return
         if signal.source == "reports":
             if signal.count >= 2:
                 out.say(
@@ -919,7 +932,16 @@ class Dialogue:
         if incentives.fair_shop(self.db, c.shop):
             out.say("fair_shop_note")
         # One sentence that ends in the question ("…; want to go there?"), F43.
-        out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
+        if c.open_now:
+            out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
+        else:
+            # Closed now (F46): when it opens and the usual wait then, never a wait "now".
+            opens = SpokenTime("opens", c.opens_hour, day=c.opens_day)
+            if c.stock_when is not None:
+                when = SpokenTime("earlier", c.stock_when[1], day=c.stock_when[0])
+                out.say("nearby_offer_closed_stock", **values, opens=opens, when=when)
+            else:
+                out.say("nearby_offer_closed", **values, opens=opens)
         queue.log_event(self.db, session.channel, "nearby_offered", f"shop:{c.shop.code}")
         out.actions.append(
             {
@@ -930,7 +952,16 @@ class Dialogue:
                 "level": c.level,
             }
         )
-        session.data = {**session.data, "nearby_wait": max(1, c.wait)}
+        # One stored result per suggestion: the reply after "yes" repeats it (F46).
+        plan = {
+            "shop": c.shop.code,
+            "open": c.open_now,
+            "ok": c.confirmed_ok,
+            "wait": max(1, c.wait),
+            "opens_day": c.opens_day,
+            "opens_hour": c.opens_hour,
+        }
+        session.data = {**session.data, "nearby_wait": max(1, c.wait), "nearby_plan": plan}
         self._goto(session, "nearby_offer", out)
 
     def _in_nearby_offer(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
@@ -972,10 +1003,30 @@ class Dialogue:
     def _nearby_when(self, session: DialogueSession, target: Shop, out: _Out) -> None:
         """F44: go now with the quoted wait if the shop is open, in stock and working;
         else today's best remaining time, else tomorrow's (best_time picks the day)."""
+        plan = dict(session.data.get("nearby_plan") or {})
+        if plan.get("shop") != target.code:
+            plan = {}
+        if plan and not plan.get("open"):
+            # Closed when offered: repeat the same opening time and wait (F46).
+            minutes = int(plan["wait"])
+            opens = SpokenTime("opens", int(plan["opens_hour"]), day=str(plan["opens_day"]))
+            out.say("nearby_closed_when", opens=opens, minutes=minutes)
+            out.actions.append(
+                {
+                    "type": "nearby_opens",
+                    "shop": target.code,
+                    "wait": minutes,
+                    "day": plan["opens_day"],
+                }
+            )
+            return
         now = now_utc()
-        ok, _bad = nearby.status_ok(self.db, target, now)
-        if ok and publicpds.is_open(target, now):
-            minutes = int(session.data.get("nearby_wait") or nearby.predicted_wait(self.db, target))
+        if plan:
+            ok = bool(plan.get("ok"))
+        else:
+            ok = nearby.status_ok(self.db, target, now)[0] and publicpds.is_open(target, now)
+        if ok:
+            minutes = int(plan.get("wait") or nearby.predicted_wait(self.db, target))
             out.say("nearby_go_now", minutes=max(1, minutes))
             out.actions.append({"type": "nearby_go_now", "shop": target.code, "wait": minutes})
         else:

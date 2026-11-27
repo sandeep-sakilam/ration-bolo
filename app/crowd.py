@@ -34,6 +34,7 @@ CHECKIN_WINDOW_MIN = 30.0
 WEIGHT_MIN, WEIGHT_MAX = 0.2, 2.0
 AGREE_STEP, DISAGREE_STEP = 0.1, 0.2
 STRONG_SOURCES = {"dealer", "volunteer"}
+DEMO_REPORTER_PREFIX = "demo-"  # seeded demo reports (see app.demo)
 
 # kind -> (signal, value)
 SIGNALS = {

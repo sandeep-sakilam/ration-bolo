@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from app import queue
+from app import crowd, queue
 from app.clock import now_utc
 from app.models import Card, DemoCard, Reminder, Report, Shop, StatusTimer, Token
 
@@ -82,7 +82,7 @@ def restore_countdown(db: Session, shop: Shop, now: datetime | None = None) -> d
     return out
 
 
-DEMO_REPORTER_PREFIX = "demo-"
+DEMO_REPORTER_PREFIX = crowd.DEMO_REPORTER_PREFIX
 FRESH_AFTER = timedelta(minutes=20)
 
 

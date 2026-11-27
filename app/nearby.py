@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app import besttime, levels, queue, shopstate
+from app import besttime, levels, publicpds, queue, shopstate
 from app.clock import ist_today, now_utc, to_ist
 from app.models import Complaint, Shop
 from app.packs import get_pack
@@ -44,6 +44,11 @@ class Candidate:
     confirmed_ok: bool
     level: int
     landmark: str
+    # F46: a closed shop is offered with when it opens and the usual wait then.
+    open_now: bool = True
+    opens_day: str = "today"  # today | tomorrow
+    opens_hour: int = 0
+    stock_when: tuple[str, int] | None = None  # rice known today: (today, session hour)
 
 
 def predicted_wait(db: Session, shop: Shop, now: datetime | None = None) -> int:
@@ -89,6 +94,39 @@ def upheld_complaints(db: Session, shop: Shop, now: datetime | None = None) -> i
     )
 
 
+def _closed_aware(db: Session, c: Candidate, now: datetime | None) -> Candidate:
+    """For a shop closed now: when it opens, the usual wait at that hour, and whether rice
+    is known for today (today's reports or sales), never a wait "now" (F46)."""
+    now = now or now_utc()
+    if publicpds.is_open(c.shop, now) or not c.shop.sessions:
+        return c
+    opens = to_ist(publicpds.next_opening(c.shop, now))
+    waits, _known = besttime.expected_waits(db, c.shop, opens.date(), now)
+    wait = waits.get(opens.hour, c.wait)
+    last = publicpds.last_session(c.shop, now)
+    view = shopstate.view(db, c.shop, now)
+    stock = view.stock
+    known_today = (
+        stock is not None
+        and stock.value == "in_stock"
+        and stock.confirmed
+        and stock.source in ("reports", "public_pds")
+        and (stock.earlier is None or stock.earlier[0] == "today")
+    ) or (view.public is not None and view.public.available and view.public.total_today > 0)
+    return Candidate(
+        c.shop,
+        c.km,
+        wait,
+        c.confirmed_ok,
+        c.level,
+        c.landmark,
+        open_now=False,
+        opens_day="today" if opens.date() == ist_today(now) else "tomorrow",
+        opens_hour=opens.hour,
+        stock_when=last if known_today and last is not None and last[0] == "today" else None,
+    )
+
+
 def needs_alternative(db: Session, shop: Shop, now: datetime | None = None) -> bool:
     _, bad = status_ok(db, shop, now)
     if bad:
@@ -116,14 +154,19 @@ def candidates(db: Session, shop: Shop, now: datetime | None = None) -> list[Can
         if bad:
             continue
         found.append(
-            Candidate(
-                other,
-                km,
-                predicted_wait(db, other, now),
-                ok,
-                levels.effective_level(db, other, now),
-                prof.landmark,
+            _closed_aware(
+                db,
+                Candidate(
+                    other,
+                    km,
+                    predicted_wait(db, other, now),
+                    ok,
+                    levels.effective_level(db, other, now),
+                    prof.landmark,
+                ),
+                now,
             )
         )
-    found.sort(key=lambda c: (not c.confirmed_ok, c.wait, c.km))
+    # Open shops first (F46), then confirmed in stock, shorter wait, nearer.
+    found.sort(key=lambda c: (not c.open_now, not c.confirmed_ok, c.wait, c.km))
     return found[:MAX_SUGGESTIONS]

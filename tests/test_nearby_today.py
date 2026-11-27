@@ -52,12 +52,14 @@ def _accept_at(db: Session, hh: int) -> Reply:
     return r
 
 
-@pytest.mark.parametrize("hh", [13])
-def test_closed_now_opens_again_today_gives_todays_time(db: Session, hh: int) -> None:
-    r = _accept_at(db, hh)
-    assert "Ippude" not in r.text and "Ivala saayantram" in r.text, r.text
-
-
-def test_closed_for_the_day_gives_tomorrows_time(db: Session) -> None:
-    r = _accept_at(db, 21)
-    assert "Ippude" not in r.text and "Repu" in r.text, r.text
+@pytest.mark.parametrize("hh", [13, 21])
+def test_closed_shop_reply_repeats_the_offer(db: Session, hh: int) -> None:
+    # F46: a closed shop is offered with when it opens; "yes" repeats that time and wait.
+    clock.freeze(ist_to_utc(ist_today(), time(hh, 0)))
+    offer, r = _accept_112(db)
+    assert offer.state == "nearby_offer" and "Ippude" not in r.text
+    opens = next(a for a in r.actions if a["type"] == "nearby_opens")
+    assert f"appudu sadharananga {opens['wait']} nimishala wait" in offer.text
+    assert f"appudu sadharananga {opens['wait']} nimishala wait." in r.text
+    when = "Repu poddhuna 8 gantalaku" if hh == 21 else "Saayantram 4 gantalaku"
+    assert when in r.text and when.lower() in offer.text.lower()

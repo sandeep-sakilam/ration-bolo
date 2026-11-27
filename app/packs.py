@@ -115,6 +115,17 @@ V3_PHRASES: dict[str, str] = {
         "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait, "
         "and your card usually works there too; want to go there?"
     ),
+    "status_from_reports_earlier": ("{what}, confirmed by {count} people {when}."),
+    "status_one_report_earlier": ("{what}: one person reported it {when}."),
+    "nearby_offer_closed": (
+        "Shop {code}, {landmark}, {km} km; closed now, opens {opens},"
+        " usually about {minutes} minutes' wait then; want to go there?"
+    ),
+    "nearby_offer_closed_stock": (
+        "Shop {code}, {landmark}, {km} km; it had rice {when}, closed now,"
+        " opens {opens}, usually about {minutes} minutes' wait then; want to go there?"
+    ),
+    "nearby_closed_when": ("It opens {opens}, usually about {minutes} minutes' wait then."),
     "nearby_go_now": "You can go now; about {minutes} minutes' wait there.",
     "nearby_accepted": "Okay, Shop {code}.",
     "grievance_sent": ("We sent the complaint text by {via} to file with the officials."),

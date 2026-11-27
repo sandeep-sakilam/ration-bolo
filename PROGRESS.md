@@ -1,6 +1,6 @@
 # Progress
 
-Current: F46 next (`feat/f46-closed-shop-honesty`)
+Current: version 3.2 complete (F46 merged)
 
 ## Functionality backlog
 
@@ -66,4 +66,4 @@ Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main
 
 Version 3.2 "closed-shop honesty" (F46, merge by 29 Nov 2026, 6:00 PM IST):
 
-- [ ] F46 Closed-shop honesty: nearby offers and status answers respect open hours; demo reports keep their real age outside open hours — `feat/f46-closed-shop-honesty`
+- [x] F46 Closed-shop honesty: nearby offers and status answers respect open hours; demo reports keep their real age outside open hours — `feat/f46-closed-shop-honesty`

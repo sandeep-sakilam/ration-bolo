@@ -31,6 +31,9 @@
 | 27 | Ramu "Repu poddhuna book cheyyandi" → tomorrow-morning advice (or "mornings are busy" plus the best other time) | `tests/test_advice_context.py::test_check27_…` |
 | 28 | Machine down: warning at the greeting, not repeated in the stock answer; every scripted reply fits the length budget | `tests/test_reply_budget.py` |
 | 29 | Lakshmi accepts Shop 112 during open hours → "go now" with the quoted wait | `tests/test_nearby_today.py::test_check29_…` |
+| 30 | Machine down at 01:30, 14:00, 21:00: Shop 112 offer says closed and when it opens, and "yes" repeats the same time and wait; 11:00 and 17:00 unchanged | `tests/test_closed_shop.py::test_check30_…` |
+| 31 | At closed hours Ramu's stock answer and `/shop/112` say "this morning" / "yesterday evening", never "in the last 30 minutes"; open hours unchanged | `tests/test_closed_shop.py::test_check31_…` |
+| 32 | Every reply of checks 30–31 fits the length budget and has no "HH:MM" advice time | `tests/test_closed_shop.py` (`_check_budget`) |
 
 Run everything locally:
 

@@ -79,6 +79,26 @@ def say(
     )
 
 
+def earlier(pack: Pack, language: str, day: str, hour: int) -> str:
+    """When reports were made (F46): "ivala poddhuna", "ninna saayantram", "this morning".
+    ``day`` is today | yesterday; ``hour`` is the start of that session."""
+    part = part_of_day(hour)
+    t = _templates(pack, language)
+    english = {"today": "this {part}", "yesterday": "yesterday {part}"}
+    if t is None or day not in t.get("earlier", {}):
+        return english.get(day, english["today"]).format(part=part)
+    names = t.get("part_names") or t["parts"]
+    return str(t["earlier"][day]).format(part=names[part])
+
+
+def opens(pack: Pack, language: str, day: str, hour: int) -> str:
+    """An opening time: "saayantram 4 gantalaku", or "repu poddhuna 8 gantalaku" (F46)."""
+    at = say(pack, language, "at_hour", hour)
+    if day == "tomorrow":
+        return f"{pack.display('tomorrow', language).lower()} {at}"
+    return at
+
+
 def advice_when(pack: Pack, language: str, hour: int, session_starts: list[int]) -> str:
     """An advice hour as speech: "before 9 in the morning" when it is a session's first
     hour (go early), otherwise "after 7 in the evening"."""
