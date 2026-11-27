@@ -17,10 +17,12 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import besttime, crowd, demo, levels, nearby, queue, reminders, shopstate
+from app import besttime, crowd, demo, grievance, levels, nearby, queue, reminders, shopstate
 from app.clock import fmt_time, ist_today, now_utc, to_ist
+from app.config import Settings
 from app.models import (
     Card,
+    Complaint,
     DialogueSession,
     Outbox,
     PhoneLink,
@@ -131,12 +133,14 @@ class Dialogue:
         verify_links: bool = True,
         demo_mode: bool = False,
         reporter_salt: str = "ration-bolo-reporter-salt",
+        settings: Settings | None = None,
     ) -> None:
         self.db = db
         self.send = send or outbox_sender(db)
         self.verify_links = verify_links
         self.demo_mode = demo_mode
         self.reporter_salt = reporter_salt
+        self.settings = settings
 
     # --- sessions ---------------------------------------------------------
 
@@ -397,6 +401,9 @@ class Dialogue:
         if u.intent == "checkin":
             self._checkin(session, out)
             return True
+        if u.intent == "grievance_ref" or ("grievance_ref" in u.scores and u.digits):
+            self._reference(session, u, out)
+            return True
         if u.intent in REPORT_INTENTS:
             self._report(session, u, out)
             return True
@@ -480,6 +487,91 @@ class Dialogue:
             }
         )
         self._summary(session, f"Complaint {complaint.complaint_no}")
+        routed = grievance.file(
+            self.db,
+            complaint,
+            session.language,
+            session.phone_e164,
+            session.channel,
+            self.send,
+            self.settings,
+        )
+        out.actions.append({"type": "grievance_routed", "channel": routed.channel})
+        if routed.channel != "mock" and session.phone_e164:
+            out.say("grievance_sent", via="WhatsApp" if session.channel == "whatsapp" else "SMS")
+        pack = get_pack(card.state_pack)
+        if grievance.helpline_available(pack, self.settings, session.channel):
+            session.data = {**session.data, "helpline_for": complaint.complaint_no}
+            out.say("helpline_offer")
+            self._goto(session, "helpline_offer", out)
+            return True
+        out.say("anything_else")
+        self._goto(session, "main", out)
+        return True
+
+    # --- official complaint routing (F35) -------------------------------------------
+
+    def _in_helpline_offer(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if u.yes:
+            pack = get_pack(session.state_pack)
+            number = grievance.contacts(pack, self.settings).helpline
+            out.say("helpline_connecting", complaint_no=session.data.get("helpline_for", ""))
+            out.actions.append({"type": "dial", "number": number})
+            self._goto(session, "ended", out)
+            return True
+        if u.no or u.intent:
+            self._goto(session, "main", out)
+            if u.intent:
+                return self._in_main(session, u, out)
+            out.say("anything_else")
+            return True
+        return False
+
+    def _open_complaint(self, session: DialogueSession) -> Complaint | None:
+        return self.db.scalars(
+            select(Complaint)
+            .where(Complaint.card_id == session.card_id, Complaint.status == "open")
+            .order_by(Complaint.id.desc())
+        ).first()
+
+    def _reference(self, session: DialogueSession, u: Understanding, out: _Out) -> None:
+        if self._open_complaint(session) is None:
+            out.say("no_open_complaint")
+            out.say("anything_else")
+            self._goto(session, "main", out)
+            return
+        if len(u.digits) >= 4:
+            self._read_back_reference(session, u.digits, out)
+        else:
+            out.say("ask_reference")
+            self._goto(session, "ask_reference", out)
+
+    def _read_back_reference(self, session: DialogueSession, ref: str, out: _Out) -> None:
+        session.data = {**session.data, "reference": ref}
+        out.say("reference_readback", ref=" ".join(ref))
+        self._goto(session, "confirm_reference", out)
+
+    def _in_ask_reference(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if len(u.digits) < 4:
+            return False
+        self._read_back_reference(session, u.digits, out)
+        return True
+
+    def _in_confirm_reference(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if len(u.digits) >= 4 and not u.yes:
+            self._read_back_reference(session, u.digits, out)
+            return True
+        if u.no:
+            out.say("ask_reference")
+            self._goto(session, "ask_reference", out)
+            return True
+        if not u.yes:
+            return False
+        complaint = self._open_complaint(session)
+        if complaint is not None:
+            grievance.record_reference(self.db, complaint, str(session.data.get("reference")))
+            out.say("reference_saved", complaint_no=complaint.complaint_no)
+            out.actions.append({"type": "reference_saved", "complaint_no": complaint.complaint_no})
         out.say("anything_else")
         self._goto(session, "main", out)
         return True
@@ -1080,6 +1172,8 @@ _PART = {
 }
 
 _YES_NO_STATES = {
+    "helpline_offer",
+    "confirm_reference",
     "nearby_offer",
     "confirm_at_shop",
     "confirm_report",

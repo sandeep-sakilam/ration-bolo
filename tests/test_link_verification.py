@@ -70,4 +70,8 @@ def test_expired_code(db: Session) -> None:
 def test_code_never_stored_in_plain_text(db: Session) -> None:
     call = _register(db)
     code = _code(db)
-    assert code not in str(call.session.data)
+    verify = call.session.data["verify"]
+    # Only a salted hash is kept (substring checks were flaky: a 4-digit code can appear
+    # by chance inside the hex hash or the expiry timestamp).
+    assert code not in verify.values() and set(verify) == {"link_id", "hash", "tries", "expires"}
+    assert len(verify["hash"]) == 64

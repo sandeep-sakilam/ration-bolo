@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import besttime, demo, levels, queue
+from app import besttime, demo, grievance, levels, queue
 from app.clock import fmt_time, now_utc, to_ist
 from app.models import Outbox, PhoneLink, Reminder, Shop, Token
 from app.packs import get_pack
@@ -174,6 +174,18 @@ def start_scheduler(
 
     scheduler.add_job(
         poll_public_pds, "interval", minutes=10, id="public_pds", coalesce=True, max_instances=1
+    )
+
+    def escalate() -> None:
+        try:
+            with factory() as db:
+                if grievance.run_due(db, services.sender(db), services.settings):
+                    db.commit()
+        except Exception:
+            log.exception("grievance escalation failed")
+
+    scheduler.add_job(
+        escalate, "interval", hours=1, id="grievances", coalesce=True, max_instances=1
     )
 
     def nightly_profiles() -> None:

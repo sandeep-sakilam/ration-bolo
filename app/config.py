@@ -60,6 +60,12 @@ class Settings(BaseSettings):
     # portal only when its pack enables it (else demo fixtures), "mock" fixtures only, "off".
     public_pds_mode: str = "auto"
     public_pds_fixtures: str = "tests/fixtures/public_pds"
+    # Official complaint routing: "auto" (prepared complaint text by SMS/WhatsApp, plus a
+    # helpline handoff on calls when a helpline number is configured), "prepared", "helpline"
+    # or "mock" (record only). Contacts override the state pack's grievance section.
+    grievance_channel: str = "auto"
+    grievance_helpline_number: str = ""
+    district_grievance_contact: str = ""
     # Salt for hashing reporters' phone numbers (cardholder reports store only the hash).
     reporter_salt: str = "ration-bolo-reporter-salt"
     # Optional second Twilio number for free missed-call check-ins (answered with <Reject>).

@@ -116,9 +116,38 @@ V3_PHRASES: dict[str, str] = {
         "Want to go there?"
     ),
     "nearby_accepted": "Okay, Shop {code}.",
+    "grievance_sent": ("We sent the complaint text by {via} to file with the officials."),
+    "helpline_offer": ("Shall I connect you to the state food helpline now?"),
+    "helpline_connecting": (
+        "Connecting you to the helpline. Your complaint number is {complaint_no}."
+    ),
+    "ask_reference": ("Please say the reference number you were given."),
+    "reference_readback": ("Reference number {ref}, right?"),
+    "reference_saved": ("Saved the reference number with complaint {complaint_no}."),
+    "no_open_complaint": ("Your card has no open complaint."),
+    "grievance_formal": (
+        "Complaint {complaint_no}: at Fair Price Shop {shop} ({area}) on {date}, card ending "
+        "{last4} received {kg} kg against {due} kg due. Under the National Food Security Act, "
+        "2013 (Sections 14 and 15: grievance redressal), please inquire and ensure the full "
+        "entitlement."
+    ),
+    "grievance_steps": (
+        "To file it: {state_portal} or {national_portal}. Quote complaint {complaint_no}."
+    ),
+    "escalate_district": (
+        "Ration Bolo: complaint {complaint_no} is not resolved after 7 days. Escalate it to the "
+        "District Grievance Redressal Officer: {district}. Call us and say the reference number "
+        "they give you."
+    ),
+    "escalate_national": (
+        "Ration Bolo: complaint {complaint_no} is still open after 21 days. File it on the "
+        "national public grievance portal {national_portal} with the text below."
+    ),
+    "district_unknown": ("your District Supply Officer's office"),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [
+    "grievance_ref",
     "report_stock_in",
     "report_stock_out",
     "report_machine_down",

@@ -29,6 +29,7 @@ CUSTOMER_INTENTS = (
     "report_queue",
     "checkin",
     "nearby_yes",
+    "grievance_ref",
 )
 REPORT_INTENTS = {
     "report_stock_in": "stock_in",

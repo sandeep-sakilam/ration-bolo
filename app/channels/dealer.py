@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import crowd, demo, levels, queue, reminders, shopstate
+from app import crowd, demo, grievance, levels, queue, reminders, shopstate
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -24,6 +24,7 @@ from app.models import (
     CardHolder,
     Complaint,
     DialogueSession,
+    Grievance,
     Outbox,
     PhoneLink,
     Shop,
@@ -109,6 +110,13 @@ def _token_row(t: Token) -> dict[str, Any]:
     }
 
 
+def _stage(db: Session, complaint: Complaint) -> str:
+    g = db.scalars(select(Grievance).where(Grievance.complaint_id == complaint.id)).first()
+    if g is None:
+        return ""
+    return g.stage.replace("_", " ") + (f" · ref {g.external_ref}" if g.external_ref else "")
+
+
 def _report_counts(db: Session, shop: Shop) -> dict[str, int]:
     """Cardholder reports in the last 3 hours, by kind (no identifiers)."""
     counts: dict[str, int] = {}
@@ -186,6 +194,7 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
                 "kg_due": c.grams_due / 1000,
                 "kg_received": c.grams_received / 1000,
                 "status": c.status,
+                "stage": _stage(db, c),
                 "outcome": c.outcome,
                 "created": to_ist(c.created_at).strftime("%d %b %H:%M"),
             }
@@ -349,6 +358,7 @@ def resolve(complaint_id: int, body: ResolveIn, db: Session = Depends(get_db)) -
     if complaint is None:
         raise HTTPException(404)
     queue.resolve_complaint(db, complaint, body.outcome[:300] or "Resolved")
+    grievance.mark_resolved(db, complaint)
     db.commit()
     return {"complaint_no": complaint.complaint_no, "status": complaint.status}
 
