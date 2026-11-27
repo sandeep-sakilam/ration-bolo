@@ -11,7 +11,7 @@ from app.queue import BookingRefused
 
 
 def _shop(db: Session) -> Shop:
-    return db.scalars(select(Shop)).one()
+    return db.scalars(select(Shop).where(Shop.code == "108")).one()
 
 
 def _card(db: Session, last: str) -> Card:

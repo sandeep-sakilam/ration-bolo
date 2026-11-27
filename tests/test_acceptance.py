@@ -35,7 +35,7 @@ def test_check3_whatsapp_handler_books_with_mock_adapter(db: Session) -> None:
 
 def test_check4_paused_on_every_channel(db: Session) -> None:
     services = build_services(Settings(_env_file=None, speech_mode="mock"))  # type: ignore[call-arg]
-    queue.set_status(db, db.scalars(select(Shop)).one(), machine="down")
+    queue.set_status(db, db.scalars(select(Shop).where(Shop.code == "108")).one(), machine="down")
     db.commit()
     r = handle_message(db, services, "whatsapp:+919000007702", "Kal subah book karo", [])
     assert r.text.index("machine band hai") < r.text.index("booking ruki hai")

@@ -94,7 +94,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     for c, lang in p.languages.items()
                 ],
             }
-            for p in packs.values()
+            for p in sorted(packs.values(), key=lambda p: (p.is_draft, p.name))
         ]
 
     @app.get("/", include_in_schema=False)

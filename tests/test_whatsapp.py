@@ -80,7 +80,7 @@ def test_numbered_menu_fallback(db: Session, services: Services) -> None:
 
 
 def test_machine_down_refused_on_whatsapp(db: Session, services: Services) -> None:
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     shop.status_machine = "down"
     db.commit()
     r = handle_message(db, services, SALMA, "Kal subah book karo", [])

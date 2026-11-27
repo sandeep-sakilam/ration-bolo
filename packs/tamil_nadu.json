@@ -1,0 +1,742 @@
+{
+ "state": "tamil_nadu",
+ "name": "Tamil Nadu",
+ "status": "draft",
+ "version": 1,
+ "languages": [
+  {
+   "code": "ta",
+   "name": "Tamil",
+   "wispr": "ta",
+   "sarvam": "ta-IN",
+   "browser": "ta-IN",
+   "reply_language": "ta"
+  },
+  {
+   "code": "en",
+   "name": "English",
+   "wispr": "en",
+   "sarvam": "en-IN",
+   "browser": "en-IN",
+   "reply_language": "en"
+  }
+ ],
+ "reply_languages": [
+  "ta",
+  "en"
+ ],
+ "default_language": "ta",
+ "kg_per_person": {
+  "rice": 5
+ },
+ "fuzzy_threshold": 82,
+ "intents": {
+  "stock": {
+   "ta": [
+    "arisi",
+    "அரிசி",
+    "vanthucha",
+    "vanthuchaa",
+    "வந்துச்சா",
+    "ration",
+    "resan"
+   ],
+   "en": [
+    "rice",
+    "ration",
+    "stock",
+    "arrived"
+   ]
+  },
+  "queue": {
+   "ta": [
+    "evvalavu per",
+    "எவ்வளவு பேர்",
+    "kootam",
+    "கூட்டம்",
+    "line",
+    "varisai"
+   ],
+   "en": [
+    "queue",
+    "line",
+    "how many people",
+    "how many"
+   ]
+  },
+  "book": {
+   "ta": [
+    "book",
+    "slot",
+    "pathivu",
+    "பதிவு",
+    "naalai",
+    "நாளை"
+   ],
+   "en": [
+    "book",
+    "slot",
+    "booking",
+    "tomorrow"
+   ]
+  },
+  "complaint": {
+   "ta": [
+    "kammi",
+    "கம்மி",
+    "kuraivu",
+    "குறைவு",
+    "pugar",
+    "புகார்",
+    "complaint"
+   ],
+   "en": [
+    "complaint",
+    "less",
+    "short",
+    "short ration"
+   ]
+  },
+  "end": {
+   "ta": [
+    "podhum",
+    "போதும்",
+    "nandri",
+    "நன்றி",
+    "bye"
+   ],
+   "en": [
+    "bye",
+    "thank you",
+    "thanks",
+    "nothing else"
+   ]
+  },
+  "dealer_stock_out": {
+   "ta": [
+    "arisi theernthathu",
+    "theernthathu",
+    "theerndhu pochu",
+    "stock illai"
+   ],
+   "en": [
+    "rice finished",
+    "stock out",
+    "out of stock",
+    "finished"
+   ]
+  },
+  "dealer_stock_in": {
+   "ta": [
+    "arisi vanthathu",
+    "stock vanthathu"
+   ],
+   "en": [
+    "rice came",
+    "stock in",
+    "rice arrived",
+    "in stock"
+   ]
+  },
+  "dealer_machine_down": {
+   "ta": [
+    "machine down",
+    "machine vela seiyala",
+    "machine kettu pochu"
+   ],
+   "en": [
+    "machine down",
+    "machine not working",
+    "machine broken"
+   ]
+  },
+  "dealer_machine_up": {
+   "ta": [
+    "machine working",
+    "machine vela seiyuthu",
+    "machine sari aachu"
+   ],
+   "en": [
+    "machine working",
+    "machine up",
+    "machine fixed",
+    "machine ok"
+   ]
+  }
+ },
+ "intent_priority": [
+  "complaint",
+  "book",
+  "queue",
+  "stock",
+  "end"
+ ],
+ "units": {
+  "kg": [
+   "kilo",
+   "kg",
+   "kgs",
+   "kilos",
+   "கிலோ"
+  ]
+ },
+ "numbers": {
+  "ta": {
+   "pujjiyam": 0,
+   "onru": 1,
+   "irandu": 2,
+   "moonru": 3,
+   "naangu": 4,
+   "ainthu": 5,
+   "aaru": 6,
+   "ezhu": 7,
+   "ettu": 8,
+   "onbathu": 9,
+   "pathu": 10,
+   "pathinonru": 11,
+   "pannirandu": 12,
+   "pathimoonru": 13,
+   "pathinaangu": 14,
+   "pathinainthu": 15,
+   "pathinaaru": 16,
+   "pathinezhu": 17,
+   "pathinettu": 18,
+   "patthonbathu": 19,
+   "irupathu": 20,
+   "irupathu onru": 21,
+   "irupathi onru": 21,
+   "irupathu irandu": 22,
+   "irupathi irandu": 22,
+   "irupathu moonru": 23,
+   "irupathi moonru": 23,
+   "irupathu naangu": 24,
+   "irupathi naangu": 24,
+   "irupathu ainthu": 25,
+   "irupathi ainthu": 25,
+   "irupathu aaru": 26,
+   "irupathi aaru": 26,
+   "irupathu ezhu": 27,
+   "irupathi ezhu": 27,
+   "irupathu ettu": 28,
+   "irupathi ettu": 28,
+   "irupathu onbathu": 29,
+   "irupathi onbathu": 29,
+   "muppathu": 30,
+   "muppathu onru": 31,
+   "muppathi onru": 31,
+   "muppathu irandu": 32,
+   "muppathi irandu": 32,
+   "muppathu moonru": 33,
+   "muppathi moonru": 33,
+   "muppathu naangu": 34,
+   "muppathi naangu": 34,
+   "muppathu ainthu": 35,
+   "muppathi ainthu": 35,
+   "muppathu aaru": 36,
+   "muppathi aaru": 36,
+   "muppathu ezhu": 37,
+   "muppathi ezhu": 37,
+   "muppathu ettu": 38,
+   "muppathi ettu": 38,
+   "muppathu onbathu": 39,
+   "muppathi onbathu": 39,
+   "naarpathu": 40,
+   "naarpathu onru": 41,
+   "naarpathi onru": 41,
+   "naarpathu irandu": 42,
+   "naarpathi irandu": 42,
+   "naarpathu moonru": 43,
+   "naarpathi moonru": 43,
+   "naarpathu naangu": 44,
+   "naarpathi naangu": 44,
+   "naarpathu ainthu": 45,
+   "naarpathi ainthu": 45,
+   "naarpathu aaru": 46,
+   "naarpathi aaru": 46,
+   "naarpathu ezhu": 47,
+   "naarpathi ezhu": 47,
+   "naarpathu ettu": 48,
+   "naarpathi ettu": 48,
+   "naarpathu onbathu": 49,
+   "naarpathi onbathu": 49,
+   "aimpathu": 50,
+   "aimpathu onru": 51,
+   "aimpathi onru": 51,
+   "aimpathu irandu": 52,
+   "aimpathi irandu": 52,
+   "aimpathu moonru": 53,
+   "aimpathi moonru": 53,
+   "aimpathu naangu": 54,
+   "aimpathi naangu": 54,
+   "aimpathu ainthu": 55,
+   "aimpathi ainthu": 55,
+   "aimpathu aaru": 56,
+   "aimpathi aaru": 56,
+   "aimpathu ezhu": 57,
+   "aimpathi ezhu": 57,
+   "aimpathu ettu": 58,
+   "aimpathi ettu": 58,
+   "aimpathu onbathu": 59,
+   "aimpathi onbathu": 59,
+   "arupathu": 60,
+   "arupathu onru": 61,
+   "arupathi onru": 61,
+   "arupathu irandu": 62,
+   "arupathi irandu": 62,
+   "arupathu moonru": 63,
+   "arupathi moonru": 63,
+   "arupathu naangu": 64,
+   "arupathi naangu": 64,
+   "arupathu ainthu": 65,
+   "arupathi ainthu": 65,
+   "arupathu aaru": 66,
+   "arupathi aaru": 66,
+   "arupathu ezhu": 67,
+   "arupathi ezhu": 67,
+   "arupathu ettu": 68,
+   "arupathi ettu": 68,
+   "arupathu onbathu": 69,
+   "arupathi onbathu": 69,
+   "ezhupathu": 70,
+   "ezhupathu onru": 71,
+   "ezhupathi onru": 71,
+   "ezhupathu irandu": 72,
+   "ezhupathi irandu": 72,
+   "ezhupathu moonru": 73,
+   "ezhupathi moonru": 73,
+   "ezhupathu naangu": 74,
+   "ezhupathi naangu": 74,
+   "ezhupathu ainthu": 75,
+   "ezhupathi ainthu": 75,
+   "ezhupathu aaru": 76,
+   "ezhupathi aaru": 76,
+   "ezhupathu ezhu": 77,
+   "ezhupathi ezhu": 77,
+   "ezhupathu ettu": 78,
+   "ezhupathi ettu": 78,
+   "ezhupathu onbathu": 79,
+   "ezhupathi onbathu": 79,
+   "enpathu": 80,
+   "enpathu onru": 81,
+   "enpathi onru": 81,
+   "enpathu irandu": 82,
+   "enpathi irandu": 82,
+   "enpathu moonru": 83,
+   "enpathi moonru": 83,
+   "enpathu naangu": 84,
+   "enpathi naangu": 84,
+   "enpathu ainthu": 85,
+   "enpathi ainthu": 85,
+   "enpathu aaru": 86,
+   "enpathi aaru": 86,
+   "enpathu ezhu": 87,
+   "enpathi ezhu": 87,
+   "enpathu ettu": 88,
+   "enpathi ettu": 88,
+   "enpathu onbathu": 89,
+   "enpathi onbathu": 89,
+   "thonnooru": 90,
+   "thonnooru onru": 91,
+   "thonnoori onru": 91,
+   "thonnooru irandu": 92,
+   "thonnoori irandu": 92,
+   "thonnooru moonru": 93,
+   "thonnoori moonru": 93,
+   "thonnooru naangu": 94,
+   "thonnoori naangu": 94,
+   "thonnooru ainthu": 95,
+   "thonnoori ainthu": 95,
+   "thonnooru aaru": 96,
+   "thonnoori aaru": 96,
+   "thonnooru ezhu": 97,
+   "thonnoori ezhu": 97,
+   "thonnooru ettu": 98,
+   "thonnoori ettu": 98,
+   "thonnooru onbathu": 99,
+   "thonnoori onbathu": 99,
+   "nooru": 100,
+   "onnu": 1,
+   "rendu": 2,
+   "moonu": 3,
+   "anju": 5,
+   "ஒன்று": 1,
+   "இரண்டு": 2,
+   "மூன்று": 3,
+   "நான்கு": 4,
+   "ஐந்து": 5,
+   "பத்து": 10,
+   "பதினைந்து": 15,
+   "இருபது": 20
+  },
+  "en": {
+   "zero": 0,
+   "one": 1,
+   "two": 2,
+   "three": 3,
+   "four": 4,
+   "five": 5,
+   "six": 6,
+   "seven": 7,
+   "eight": 8,
+   "nine": 9,
+   "ten": 10,
+   "eleven": 11,
+   "twelve": 12,
+   "thirteen": 13,
+   "fourteen": 14,
+   "fifteen": 15,
+   "sixteen": 16,
+   "seventeen": 17,
+   "eighteen": 18,
+   "nineteen": 19,
+   "twenty": 20,
+   "twenty one": 21,
+   "twenty two": 22,
+   "twenty three": 23,
+   "twenty four": 24,
+   "twenty five": 25,
+   "twenty six": 26,
+   "twenty seven": 27,
+   "twenty eight": 28,
+   "twenty nine": 29,
+   "thirty": 30,
+   "thirty one": 31,
+   "thirty two": 32,
+   "thirty three": 33,
+   "thirty four": 34,
+   "thirty five": 35,
+   "thirty six": 36,
+   "thirty seven": 37,
+   "thirty eight": 38,
+   "thirty nine": 39,
+   "forty": 40,
+   "forty one": 41,
+   "forty two": 42,
+   "forty three": 43,
+   "forty four": 44,
+   "forty five": 45,
+   "forty six": 46,
+   "forty seven": 47,
+   "forty eight": 48,
+   "forty nine": 49,
+   "fifty": 50,
+   "fifty one": 51,
+   "fifty two": 52,
+   "fifty three": 53,
+   "fifty four": 54,
+   "fifty five": 55,
+   "fifty six": 56,
+   "fifty seven": 57,
+   "fifty eight": 58,
+   "fifty nine": 59,
+   "sixty": 60,
+   "sixty one": 61,
+   "sixty two": 62,
+   "sixty three": 63,
+   "sixty four": 64,
+   "sixty five": 65,
+   "sixty six": 66,
+   "sixty seven": 67,
+   "sixty eight": 68,
+   "sixty nine": 69,
+   "seventy": 70,
+   "seventy one": 71,
+   "seventy two": 72,
+   "seventy three": 73,
+   "seventy four": 74,
+   "seventy five": 75,
+   "seventy six": 76,
+   "seventy seven": 77,
+   "seventy eight": 78,
+   "seventy nine": 79,
+   "eighty": 80,
+   "eighty one": 81,
+   "eighty two": 82,
+   "eighty three": 83,
+   "eighty four": 84,
+   "eighty five": 85,
+   "eighty six": 86,
+   "eighty seven": 87,
+   "eighty eight": 88,
+   "eighty nine": 89,
+   "ninety": 90,
+   "ninety one": 91,
+   "ninety two": 92,
+   "ninety three": 93,
+   "ninety four": 94,
+   "ninety five": 95,
+   "ninety six": 96,
+   "ninety seven": 97,
+   "ninety eight": 98,
+   "ninety nine": 99,
+   "hundred": 100,
+   "oh": 0
+  }
+ },
+ "yes": {
+  "ta": [
+   "aamaam",
+   "aama",
+   "ஆமாம்",
+   "sari",
+   "சரி",
+   "ok"
+  ],
+  "en": [
+   "yes",
+   "yeah",
+   "ok",
+   "okay",
+   "correct",
+   "right"
+  ]
+ },
+ "no": {
+  "ta": [
+   "illai",
+   "illa",
+   "இல்லை",
+   "vendaam",
+   "வேண்டாம்"
+  ],
+  "en": [
+   "no",
+   "nope",
+   "wrong",
+   "not"
+  ]
+ },
+ "day_words": {
+  "today": {
+   "ta": [
+    "inniku",
+    "indru",
+    "இன்று"
+   ],
+   "en": [
+    "today"
+   ]
+  },
+  "tomorrow": {
+   "ta": [
+    "naalai",
+    "naaliku",
+    "நாளை"
+   ],
+   "en": [
+    "tomorrow"
+   ]
+  }
+ },
+ "session_words": {
+  "morning": {
+   "ta": [
+    "kaalai",
+    "காலை"
+   ],
+   "en": [
+    "morning"
+   ]
+  },
+  "evening": {
+   "ta": [
+    "saayangaalam",
+    "maalai",
+    "மாலை"
+   ],
+   "en": [
+    "evening"
+   ]
+  }
+ },
+ "switch_phrases": {
+  "ta": [
+   "tamil la pesungal",
+   "tamil",
+   "தமிழ்"
+  ],
+  "en": [
+   "english la pesungal",
+   "speak english",
+   "english"
+  ]
+ },
+ "display": {
+  "today": {
+   "ta": "Inniku",
+   "en": "Today"
+  },
+  "tomorrow": {
+   "ta": "Naalai",
+   "en": "Tomorrow"
+  },
+  "morning": {
+   "ta": "kaalai",
+   "en": "morning"
+  },
+  "evening": {
+   "ta": "maalai",
+   "en": "evening"
+  }
+ },
+ "twilio_voices": {
+  "ta": {
+   "voice": "Google.ta-IN-Standard-A",
+   "language": "ta-IN"
+  },
+  "en": {
+   "voice": "Polly.Aditi",
+   "language": "en-IN"
+  }
+ },
+ "phrases": {
+  "greeting": {
+   "ta": "Vanakkam, Ration Bolo.",
+   "en": "Hello, Ration Bolo."
+  },
+  "status_stock_out": {
+   "ta": "Gavanikkavum: kadaiyil arisi theernthathu, pathivu niruthappattullathu.",
+   "en": "Please note: the shop is out of rice and booking is paused."
+  },
+  "status_machine_down": {
+   "ta": "Gavanikkavum: kadaiyil machine vela seiyavillai, pathivu niruthappattullathu.",
+   "en": "Please note: the shop's machine is down and booking is paused."
+  },
+  "confirm_card": {
+   "ta": "Card kadaisi engal {last4}, sariya?",
+   "en": "Card ending {last4}, right?"
+  },
+  "which_card": {
+   "ta": "Ungal phone-il {count} cardgal ullana: {options}. Edhu? Kadaisi engalai sollungal.",
+   "en": "Your phone has {count} cards: {options}. Which one? Say the last digits."
+  },
+  "how_help": {
+   "ta": "Naan ungalukku eppadi udhavalaam?",
+   "en": "How can I help?"
+  },
+  "anything_else": {
+   "ta": "Vera edhavadhu vendumaa?",
+   "en": "Anything else?"
+  },
+  "ask_card_digits": {
+   "ta": "Ungal ration card ennai ovvoru engaaga sollungal.",
+   "en": "Please say your ration card number, digit by digit."
+  },
+  "read_back_digits": {
+   "ta": "Card en {digits}, sariya?",
+   "en": "Card number {digits}, right?"
+  },
+  "card_not_found": {
+   "ta": "Indha ennil card illai. Meendum sollungal.",
+   "en": "No card found with that number. Please say it again."
+  },
+  "card_linked": {
+   "ta": "Sari, card {last4} indha phone-udan inaikkappattathu.",
+   "en": "Done, card {last4} is now linked to this phone."
+  },
+  "stock_yes": {
+   "ta": "Aamaam, arisi vanthullathu. Ungal kudumbathukku {kg} kilo.",
+   "en": "Yes, rice has come. {kg} kg for your family."
+  },
+  "stock_no": {
+   "ta": "Illai, arisi innum varavillai. Ungal kudumbathukku {kg} kilo kidaikkum.",
+   "en": "No, rice has not come yet. {kg} kg is due for your family."
+  },
+  "queue": {
+   "ta": "{ahead} per munnaal irukkiraargal, sumaar {minutes} nimidangal.",
+   "en": "{ahead} ahead, about {minutes} minutes."
+  },
+  "queue_empty": {
+   "ta": "Ippodhu varisai illai, neradiyaaga vaarungal.",
+   "en": "There is no queue right now, come straight in."
+  },
+  "quietest": {
+   "ta": "Naalai {time} manikku kootam kuraivu.",
+   "en": "Tomorrow {time} is the quietest."
+  },
+  "ask_book_when": {
+   "ta": "Endha naal, kaalai allathu maalai?",
+   "en": "Which day, morning or evening?"
+  },
+  "book_offer": {
+   "ta": "{day} {time} manikku, sariya?",
+   "en": "{day} at {time}, okay?"
+  },
+  "booked": {
+   "ta": "Pathivu aagivittathu. Ungal token {token}. {via} moolam anuppappattathu.",
+   "en": "Booked. Your token is {token}. Sent by {via}."
+  },
+  "booking_refused_month": {
+   "ta": "Indha maadham ungal cardukku pathivu ullathu: {day} {time}, token {token}.",
+   "en": "Your card already has a booking this month: {day} {time}, token {token}."
+  },
+  "booking_paused": {
+   "ta": "Ippodhu pathivu niruthappattullathu. Neengal varisaiyil varalaam.",
+   "en": "Booking is paused right now. You can still come and join the line."
+  },
+  "no_slots": {
+   "ta": "{day} {session} kaali slot illai. Vera naal allathu neram sollungal.",
+   "en": "No free slot {day} {session}. Please say another day or time."
+  },
+  "ask_other": {
+   "ta": "Vera naal allathu neram sollungal.",
+   "en": "Please say another day or time."
+  },
+  "ask_kg": {
+   "ta": "Ungalukku evvalavu kilo kidaithathu?",
+   "en": "How many kilos did you get?"
+  },
+  "complaint_readback": {
+   "ta": "{kg} kilo, sariya?",
+   "en": "{kg} kg, right?"
+  },
+  "complaint_filed": {
+   "ta": "Pugar padhivu seiyyappattathu. En {complaint_no}. Oru vaarathil paarkkappadum.",
+   "en": "Complaint filed. Number {complaint_no}. It will be looked at within a week."
+  },
+  "complaint_none": {
+   "ta": "Ungalukku {due} kilo kidaikka vendum, {kg} kilo kidaithathu. Idhu sariyaanathu.",
+   "en": "{due} kg was due and you got {kg} kg. That is the full amount."
+  },
+  "sorry": {
+   "ta": "Mannikkavum, puriyavillai. Meendum sollungal.",
+   "en": "Sorry, I didn't catch that. Please say it again."
+  },
+  "menu": {
+   "ta": "Stock-kku 1, varisaikku 2, pathivukku 3, kuraivaana rationukku 4 azhuthavum.",
+   "en": "Press 1 for stock, 2 for queue, 3 to book, 4 to report short ration."
+  },
+  "menu_text": {
+   "ta": "En anuppungal: 1 Stock, 2 Varisai, 3 Pathivu, 4 Kuraivu ration.",
+   "en": "Reply with a number: 1 Stock, 2 Queue, 3 Book, 4 Short ration."
+  },
+  "silence": {
+   "ta": "Neengal kettukkondu irukkireergalaa? Sollungal.",
+   "en": "Are you there? Please say something."
+  },
+  "goodbye": {
+   "ta": "Nandri. Meendum azhaiyungal.",
+   "en": "Thank you. Call again any time."
+  },
+  "language_switched": {
+   "ta": "Sari, ippodhu Tamil-il pesugiren.",
+   "en": "Okay, I will speak English now."
+  },
+  "reminder": {
+   "ta": "Ration Bolo: kilambungal, ungal slot {time} manikku. Munnaal {ahead} per irukkiraargal.",
+   "en": "Ration Bolo: leave now, your slot is at {time}. {ahead} are ahead."
+  },
+  "sms_booking": {
+   "ta": "Ration Bolo: {date} {time}, token {token}, card ••{last4}, Shop {shop}.",
+   "en": "Ration Bolo: {date} {time}, token {token}, card ••{last4}, Shop {shop}."
+  },
+  "summary": {
+   "ta": "Ration Bolo surukkam: {items}",
+   "en": "Ration Bolo summary: {items}"
+  },
+  "dealer_updated": {
+   "ta": "Nilai maatrappattathu: {status}.",
+   "en": "Status updated: {status}."
+  }
+ }
+}

@@ -34,6 +34,7 @@ DEMO_CALLERS = {
     "lakshmi": {"phone": "+919000004401", "label": "Lakshmi (Telugu, card 0421)"},
     "salma": {"phone": "+919000007702", "label": "Salma (Hindi, card 0513)"},
     "family": {"phone": "+919000009903", "label": "Family phone (2 cards)"},
+    "meena": {"phone": "+919000006603", "label": "Meena (Tamil, draft Tamil Nadu pack)"},
     "unknown": {"phone": "+919000000000", "label": "Unknown number"},
 }
 
@@ -175,6 +176,7 @@ def seed_demo(db: Session, now: datetime | None = None) -> None:
             )
 
     _seed_history(db, shop, others, today, rng)
+    _seed_tamil_nadu(db)
     db.add(Event(at=now, actor="system", action="demo_seeded", object=f"shop:{shop.code}"))
     db.commit()
 
@@ -291,6 +293,30 @@ def _seed_history(
             created_at=ist_to_utc(today - timedelta(days=2), time(17, 0)),
         )
     )
+
+
+def _seed_tamil_nadu(db: Session) -> None:
+    """A second, draft state pack's shop: proves a new state is a file plus data."""
+    shop = Shop(
+        code="201",
+        name="Fair Price Shop 201",
+        area="Tambaram, Chennai (draft pack)",
+        state_pack="tamil_nadu",
+        sessions=PILOT_SESSIONS,
+        families_per_hour=30,
+        booked_share=0.5,
+        status_stock="in_stock",
+        status_machine="working",
+    )
+    db.add(shop)
+    db.flush()
+    meena = Card(
+        card_no="TN-201-0618", shop_id=shop.id, members=3, language="ta", state_pack="tamil_nadu"
+    )
+    db.add(meena)
+    db.flush()
+    db.add(CardHolder(card_id=meena.id, display_name="Meena (demo)"))
+    db.add(PhoneLink(phone_e164=DEMO_CALLERS["meena"]["phone"], card_id=meena.id, source="seed"))
 
 
 def reset_demo(db: Session, now: datetime | None = None) -> None:
