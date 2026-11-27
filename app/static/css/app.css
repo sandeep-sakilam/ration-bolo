@@ -7,6 +7,7 @@
   --brand: #0d6b4f;
   --brand-ink: #ffffff;
   --accent: #e07a1f;
+  --demo: #a3500c;
   --warn-bg: #fff1dc;
   --warn-ink: #7a4300;
   --bad: #b3261e;
@@ -29,7 +30,7 @@ header.top h1 { font-size: 1.15rem; margin: 0; letter-spacing: .2px; }
 header.top nav a { color: var(--brand-ink); margin-left: 14px; text-decoration: none; font-weight: 600; opacity: .92; }
 header.top nav a[aria-current="page"] { text-decoration: underline; opacity: 1; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; font-weight: 700; }
-.badge.demo { background: var(--accent); color: #fff; }
+.badge.demo { background: var(--demo); color: #fff; }
 .badge.ok { background: #d8efe5; color: var(--brand); }
 .badge.mock { background: #ece7dc; color: var(--muted); }
 .badge.bad { background: #f8dcd9; color: var(--bad); }

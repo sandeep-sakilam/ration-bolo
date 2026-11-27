@@ -57,7 +57,7 @@
           <input type="number" id="serve-kg" min="0" step="0.5" placeholder="kg (full if empty)" style="width:150px">
           <button type="button" id="walkin">+ Walk-in token</button>
         </div>
-        <div class="scroll"><table><thead><tr><th>#</th><th>Token</th><th>Type</th><th>Card</th><th>Since</th></tr></thead>
+        <div class="scroll" tabindex="0" role="region" aria-label="Live queue table"><table><thead><tr><th>#</th><th>Token</th><th>Type</th><th>Card</th><th>Since</th></tr></thead>
           <tbody id="queue-body"></tbody></table></div>
         <p class="small" id="queue-empty" hidden>Nobody waiting.</p>
       </section>
@@ -84,7 +84,7 @@
 
       <section class="card" aria-labelledby="b-h">
         <h2 id="b-h">Bookings (today and tomorrow)</h2>
-        <div class="scroll"><table><thead><tr><th>Day</th><th>Window</th><th>Token</th><th>Card</th><th>Status</th><th></th></tr></thead>
+        <div class="scroll" tabindex="0" role="region" aria-label="Bookings table"><table><thead><tr><th>Day</th><th>Window</th><th>Token</th><th>Card</th><th>Status</th><th></th></tr></thead>
           <tbody id="bookings-body"></tbody></table></div>
       </section>
 
@@ -103,7 +103,7 @@
       <section class="card" aria-labelledby="o-h">
         <h2 id="o-h">Outbox (SMS, WhatsApp, calls)</h2>
         <p class="small">With no Twilio keys every message is a mock send and lands here.</p>
-        <div class="scroll"><table><thead><tr><th>When</th><th>To</th><th>Message</th></tr></thead>
+        <div class="scroll" tabindex="0" role="region" aria-label="Outbox table"><table><thead><tr><th>When</th><th>To</th><th>Message</th></tr></thead>
           <tbody id="outbox-body"></tbody></table></div>
       </section>
 
