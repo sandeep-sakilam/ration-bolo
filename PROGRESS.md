@@ -1,6 +1,6 @@
 # Progress
 
-Current: F18 merged; next is F19 on `feat/f19-link-verification`
+Current: F19 merged; next is F20 on `feat/f20-indian-telephony`
 
 ## Functionality backlog
 
@@ -27,7 +27,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 Finale:
 
 - [x] F18 Second state pack (Tamil Nadu, draft) — `feat/f18-second-pack`
-- [ ] F19 Phone-to-card link verification — `feat/f19-link-verification`
+- [x] F19 Phone-to-card link verification — `feat/f19-link-verification`
 - [ ] F20 Indian telephony adapter stub (Exotel) — `feat/f20-indian-telephony`
 - [ ] F21 Accessibility and low-bandwidth audit — `feat/f21-accessibility`
 - [ ] F22 Multi-shop admin and CSV import — `feat/f22-multi-shop`

@@ -1170,6 +1170,26 @@
    "te": "Status maarchamu: {status}.",
    "hi": "Status badal diya: {status}.",
    "en": "Status updated: {status}."
+  },
+  "code_sent": {
+   "te": "Dhruveekarana kosam ee phone ki 4 ankela code SMS lo pampamu. Code cheppandi, leka vaddu ante 'kaadu' ani cheppandi.",
+   "hi": "Pushti ke liye is phone par 4 ank ka code SMS se bheja hai. Code boliye, ya chhodne ke liye 'nahi' boliye.",
+   "en": "To verify, we sent a 4-digit code to this phone by SMS. Say the code, or say no to skip."
+  },
+  "code_ok": {
+   "te": "Dhanyavaadalu, mee phone dhruveekarinchabadindi.",
+   "hi": "Dhanyavaad, aapka phone pramanit ho gaya.",
+   "en": "Thank you, your phone is verified."
+  },
+  "code_wrong": {
+   "te": "Code sari kaadu. Malli cheppandi.",
+   "hi": "Code galat hai. Phir se boliye.",
+   "en": "That code is not right. Please say it again."
+  },
+  "sms_code": {
+   "te": "Ration Bolo code: {code}. Evvariki cheppakandi.",
+   "hi": "Ration Bolo code: {code}. Kisi ko na batayein.",
+   "en": "Ration Bolo code: {code}. Do not share it."
   }
  }
 }

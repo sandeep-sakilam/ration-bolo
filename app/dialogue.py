@@ -7,9 +7,11 @@ WhatsApp and the call simulator are thin wrappers around ``Dialogue.handle``.
 
 from __future__ import annotations
 
+import hashlib
+import secrets
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from typing import Any
 
 from sqlalchemy import select
@@ -32,6 +34,8 @@ from app.packs import Pack, get_pack
 from app.understanding import Understanding, understand
 
 MAX_OFFERS = 3  # the first offer plus up to two more
+CODE_TTL = timedelta(minutes=10)
+CODE_ATTEMPTS = 3
 MENU = {"1": "stock", "2": "queue", "3": "book", "4": "complaint"}
 YES_KEY, NO_KEY = "1", "2"
 
@@ -102,9 +106,10 @@ class _Out:
 
 
 class Dialogue:
-    def __init__(self, db: Session, send: Sender | None = None) -> None:
+    def __init__(self, db: Session, send: Sender | None = None, verify_links: bool = True) -> None:
         self.db = db
         self.send = send or outbox_sender(db)
+        self.verify_links = verify_links
 
     # --- sessions ---------------------------------------------------------
 
@@ -284,17 +289,75 @@ class Dialogue:
                 )
             ).first()
             if not exists:
-                self.db.add(
-                    PhoneLink(
-                        phone_e164=session.phone_e164, card_id=card.id, source="self_registered"
-                    )
+                link = PhoneLink(
+                    phone_e164=session.phone_e164, card_id=card.id, source="self_registered"
                 )
+                self.db.add(link)
+                self.db.flush()
                 out.actions.append({"type": "phone_linked", "last4": card.last4})
+                if self.verify_links:
+                    self._set_card(session, card, out)
+                    out.say("card_linked", last4=card.last4)
+                    self._send_code(session, link, out)
+                    return True
         self._set_card(session, card, out)
         out.say("card_linked", last4=card.last4)
-        self._status_alerts(card.shop, out)
+        self._ready(session, out)
+        return True
+
+    def _ready(self, session: DialogueSession, out: _Out) -> None:
+        self._status_alerts(self._card(session).shop, out)
         out.say("how_help")
         self._goto(session, "main", out)
+
+    # --- phone link verification by one-time code ---------------------------
+
+    def _send_code(self, session: DialogueSession, link: PhoneLink, out: _Out) -> None:
+        code = f"{secrets.randbelow(10000):04d}"
+        expires = now_utc() + CODE_TTL
+        session.data = {
+            **session.data,
+            "verify": {
+                "link_id": link.id,
+                "hash": _code_hash(code, link.id),
+                "tries": 0,
+                "expires": expires.isoformat(),
+            },
+        }
+        pack = get_pack(session.state_pack)
+        body = pack.phrase("sms_code", session.language, code=code)
+        if session.phone_e164:
+            channel = "whatsapp" if session.channel == "whatsapp" else "sms"
+            self.send(channel, session.phone_e164, body)
+        out.say("code_sent")
+        out.actions.append({"type": "code_sent"})
+        self._goto(session, "verify_code", out)
+
+    def _in_verify_code(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        info = dict(session.data.get("verify", {}))
+        if u.no or u.intent or not info:
+            self._goto(session, "main", out)  # skipped: the link stays self-registered
+            if u.intent and not u.no:
+                return self._in_main(session, u, out)
+            self._ready(session, out)
+            return True
+        if len(u.digits) != 4:
+            return False
+        expired = now_utc() > datetime.fromisoformat(info["expires"])
+        given = _code_hash(u.digits, int(info["link_id"]))
+        if not expired and secrets.compare_digest(given, info["hash"]):
+            link = self.db.get_one(PhoneLink, info["link_id"])
+            link.source = "verified"
+            out.say("code_ok")
+            out.actions.append({"type": "phone_verified"})
+            self._ready(session, out)
+            return True
+        info["tries"] = int(info["tries"]) + 1
+        session.data = {**session.data, "verify": info}
+        if expired or info["tries"] >= CODE_ATTEMPTS:
+            self._ready(session, out)
+        else:
+            out.say("code_wrong")
         return True
 
     def _in_main(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
@@ -689,6 +752,10 @@ class Dialogue:
         if day == today + timedelta(days=1):
             return Word("tomorrow")
         return day.strftime("%d %b")
+
+
+def _code_hash(code: str, salt: int) -> str:
+    return hashlib.sha256(f"{salt}:{code}".encode()).hexdigest()
 
 
 _YES_NO_STATES = {"confirm_card", "confirm_digits", "confirm_booking", "confirm_kg"}

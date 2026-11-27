@@ -8,13 +8,16 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import httpx
 from sqlalchemy.orm import Session
 
 from app.channels.messaging import Messenger, MockMessenger, TwilioMessenger
 from app.config import Settings
+
+if TYPE_CHECKING:
+    from app.dialogue import Dialogue
 from app.packs import all_packs
 from app.speech.stt import MockSTT, SarvamSTT, SpeechToText, WisprSTT
 from app.speech.tts import MockTTS, ReplyVoice, SarvamTTS, TextToSpeech
@@ -39,6 +42,11 @@ class Services:
     @property
     def server_stt(self) -> bool:
         return self.stt_primary is not None or self.stt_backup is not None
+
+    def dialogue(self, db: Session) -> Dialogue:
+        from app.dialogue import Dialogue
+
+        return Dialogue(db, self.sender(db), self.settings.link_verification != "off")
 
     def sender(self, db: Session) -> Callable[[str, str, str], None]:
         """Dialogue sender backed by the messenger."""

@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 
 from app.channels.twilio_common import IP_LIMIT
 from app.db import get_db
-from app.dialogue import Dialogue, Event, Reply
+from app.dialogue import Event, Reply
 from app.models import DialogueSession
 from app.packs import get_pack
 from app.seed import DEMO_CALLERS
@@ -90,7 +90,7 @@ def start(body: StartIn, request: Request, db: Session = Depends(get_db)) -> dic
         raise HTTPException(400, "unknown state pack")
     services = services_of(request)
     channel = "whatsapp" if body.mode == "whatsapp" else "simulator"
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session = dialogue.start_session(channel, DEMO_CALLERS[body.caller]["phone"], body.state)
     reply = dialogue.handle(session, Event("start"))
     db.commit()
@@ -104,7 +104,7 @@ def text(
     services = services_of(request)
     session = _session(db, session_id)
     engine = body.engine if body.engine in ("browser", "text") else "text"
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     reply = dialogue.handle(
         session, Event("text", body.text[:500], body.language, engine, body.confidence)
     )
@@ -119,7 +119,7 @@ def audio(
     services = services_of(request)
     session = _session(db, session_id)
     heard = pipeline.transcribe(services, session, file.file.read())
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     reply = dialogue.handle(
         session, Event("text", heard.text, heard.language, heard.engine, heard.confidence)
     )
@@ -135,7 +135,7 @@ def digit(
     services = services_of(request)
     session = _session(db, session_id)
     key = "".join(c for c in body.key if c.isdigit() or c in "*#")[:20]
-    reply = Dialogue(db, services.sender(db)).handle(session, Event("digit", key, engine="keypad"))
+    reply = services.dialogue(db).handle(session, Event("digit", key, engine="keypad"))
     db.commit()
     return reply_payload(services, session, reply)
 
@@ -144,7 +144,7 @@ def digit(
 def silence(session_id: int, request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
     services = services_of(request)
     session = _session(db, session_id)
-    reply = Dialogue(db, services.sender(db)).handle(session, Event("silence"))
+    reply = services.dialogue(db).handle(session, Event("silence"))
     db.commit()
     return reply_payload(services, session, reply)
 
@@ -153,6 +153,6 @@ def silence(session_id: int, request: Request, db: Session = Depends(get_db)) ->
 def end(session_id: int, request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
     services = services_of(request)
     session = _session(db, session_id)
-    reply = Dialogue(db, services.sender(db)).handle(session, Event("end"))
+    reply = services.dialogue(db).handle(session, Event("end"))
     db.commit()
     return reply_payload(services, session, reply)

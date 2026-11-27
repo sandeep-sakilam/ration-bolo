@@ -86,7 +86,7 @@ def handle_message(
 ) -> WhatsAppReply:
     """Channel handler, independent of HTTP: one incoming WhatsApp message → reply."""
     phone = plain_phone(sender)
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session, greeting = current_session(db, dialogue, phone, state_pack)
     replies = [greeting] if greeting else []
     audio = next((url for url, ctype in media if ctype.startswith("audio/")), None)
