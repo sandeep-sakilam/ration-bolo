@@ -1,6 +1,6 @@
 # Progress
 
-Current: F13 merged; next is F14 on `feat/f14-metrics`
+Current: F14 merged; next is F15 on `feat/f15-acceptance`
 
 ## Functionality backlog
 
@@ -19,7 +19,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F11 Reminders and outbox — `feat/f11-reminders`
 - [x] F12 Twilio Voice channel — `feat/f12-voice-channel`
 - [x] F13 Twilio WhatsApp channel — `feat/f13-whatsapp`
-- [ ] F14 Impact metrics page — `feat/f14-metrics`
+- [x] F14 Impact metrics page — `feat/f14-metrics`
 - [ ] F15 Acceptance suite — `feat/f15-acceptance`
 - [ ] F16 Railway deployment — `feat/f16-deploy`
 - [ ] F17 Submission pack — `feat/f17-submission-pack`

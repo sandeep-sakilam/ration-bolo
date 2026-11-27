@@ -230,6 +230,7 @@ def _seed_history(
             c = rng.choice(cards)
             started = ist_to_utc(day, time(rng.randint(7, 19), rng.randint(0, 59)))
             menu = rng.random() < 0.12
+            heard_by = rng.choice(engines)
             sess = DialogueSession(
                 channel=rng.choice(["call", "call", "whatsapp"]),
                 phone_masked="+91 •••• ••" + str(rng.randint(1000, 9999)),
@@ -237,7 +238,7 @@ def _seed_history(
                 language=c.language,
                 state="ended",
                 used_menu=menu,
-                engine=rng.choice(engines),
+                engine="backup" if heard_by == "sarvam" else "primary",
                 started_at=started,
                 last_activity_at=started,
                 ended_at=started + timedelta(minutes=2),
@@ -245,18 +246,26 @@ def _seed_history(
             db.add(sess)
             db.flush()
             for t in range(rng.randint(2, 4)):
-                engine = sess.engine if sess.engine != "primary" else "wispr"
                 db.add(
                     Turn(
                         session_id=sess.id,
                         role="caller",
                         text="(demo transcript)",
                         language=c.language,
-                        engine=engine,
+                        engine=heard_by,
                         understood=not (menu and t == 0),
                         created_at=started + timedelta(seconds=20 * t),
                     )
                 )
+            db.add(
+                Event(
+                    at=started,
+                    actor=sess.channel,
+                    action="intent",
+                    object=f"session:{sess.id}",
+                    detail={"intent": rng.choice(["stock", "queue", "book"])},
+                )
+            )
     c1, c2 = cards[60], cards[61]
     db.add(
         Complaint(

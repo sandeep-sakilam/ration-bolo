@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ration Bolo · Impact metrics</title>
+<link rel="stylesheet" href="/static/css/app.css">
+<style>
+  .bars { display: grid; gap: 6px; }
+  .bar { display: grid; grid-template-columns: 90px 1fr 70px; gap: 8px; align-items: center; font-size: .85rem; }
+  .bar .track { background: #ece7dc; border-radius: 6px; height: 16px; overflow: hidden; display: flex; }
+  .bar .fill { background: var(--brand); height: 100%; }
+  .bar .fill.walk { background: #c9b99a; }
+  .good { color: var(--brand); } .short { color: var(--bad); }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Ration Bolo <span class="badge demo">Demo data</span></h1>
+  <nav aria-label="Pages">
+    <a href="/simulator">Call simulator</a>
+    <a href="/dealer">Dealer dashboard</a>
+    <a href="/metrics" aria-current="page">Impact metrics</a>
+  </nav>
+</header>
+<main>
+  <div class="row" style="justify-content:space-between;margin-bottom:12px">
+    <h2 style="margin:0">Impact metrics · last <span id="days">7</span> days</h2>
+    <label class="small" for="range" style="margin:0">Period
+      <select id="range" style="width:auto"><option value="7">7 days</option><option value="30">30 days</option></select>
+    </label>
+  </div>
+  <p class="small">Pilot targets from Round 1 are shown under each number. Includes seeded demo history plus everything done in this demo.</p>
+  <div class="kpis" id="kpis"></div>
+  <div class="grid two">
+    <section class="card"><h2>Served per day (booked vs walk-in)</h2><div class="bars" id="daily"></div>
+      <p class="small">Dark = booked, light = walk-in; right: families served · average wait.</p></section>
+    <section class="card"><h2>Speech engines (caller turns)</h2><div class="bars" id="engines"></div>
+      <p class="small" id="engine-note"></p></section>
+  </div>
+</main>
+<footer class="foot">Metrics come from the event log, tokens, sessions and complaints. Demo data only.</footer>
+<script src="/static/js/metrics.js"></script>
+</body>
+</html>
