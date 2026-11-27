@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import besttime, demo, grievance, levels, queue
+from app import besttime, demo, grievance, incentives, levels, queue
 from app.clock import fmt_time, now_utc, to_ist
 from app.models import Outbox, PhoneLink, Reminder, Shop, Token
 from app.packs import get_pack
@@ -165,7 +165,12 @@ def start_scheduler(
         try:
             with factory() as db:
                 pds = current_public_pds()
-                added = sum(pds.store(db, shop) for shop in db.scalars(select(Shop)))
+                added = 0
+                for shop in db.scalars(select(Shop)):
+                    new = pds.store(db, shop)
+                    added += new
+                    if new:
+                        incentives.stock_arrived(db, shop, services.sender(db), "public_pds")
                 db.commit()
                 if added:
                     log.info("stored %d public PDS sale snapshots", added)

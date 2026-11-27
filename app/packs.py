@@ -144,6 +144,15 @@ V3_PHRASES: dict[str, str] = {
         "national public grievance portal {national_portal} with the text below."
     ),
     "district_unknown": ("your District Supply Officer's office"),
+    "dealer_menu": (
+        "Dealer menu: press 1 or say 'stock arrived', 2 'stock finished', "
+        "3 'machine down', 4 'machine working'."
+    ),
+    "dealer_again": ("Say or press another update, or hang up."),
+    "optin_saved": ("Okay, we will tell you when rice arrives at your shop."),
+    "optout_saved": ("Okay, we will stop rice arrival messages."),
+    "broadcast_rice_arrived": ("Ration Bolo: rice has arrived at your shop {shop}."),
+    "fair_shop_note": ("It has the 'Fair shop' badge."),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [

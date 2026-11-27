@@ -30,6 +30,8 @@ CUSTOMER_INTENTS = (
     "checkin",
     "nearby_yes",
     "grievance_ref",
+    "broadcast_optin",
+    "broadcast_optout",
 )
 REPORT_INTENTS = {
     "report_stock_in": "stock_in",

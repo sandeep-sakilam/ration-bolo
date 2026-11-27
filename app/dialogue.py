@@ -17,7 +17,18 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import besttime, crowd, demo, grievance, levels, nearby, queue, reminders, shopstate
+from app import (
+    besttime,
+    crowd,
+    demo,
+    grievance,
+    incentives,
+    levels,
+    nearby,
+    queue,
+    reminders,
+    shopstate,
+)
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.config import Settings
 from app.models import (
@@ -33,7 +44,7 @@ from app.models import (
     mask_phone,
 )
 from app.packs import Pack, get_pack
-from app.understanding import REPORT_INTENTS, Understanding, understand
+from app.understanding import REPORT_INTENTS, Understanding, dealer_intent, understand
 
 MAX_OFFERS = 3  # the first offer plus up to two more
 CODE_TTL = timedelta(minutes=10)
@@ -210,6 +221,15 @@ class Dialogue:
     # --- event handlers ---------------------------------------------------
 
     def _start(self, session: DialogueSession, out: _Out) -> None:
+        dealer_of = incentives.dealer_shop(self.db, session.phone_e164, self.reporter_salt)
+        if dealer_of is not None:
+            # A registered dealer phone gets the dealer menu (F37).
+            session.state_pack = dealer_of.state_pack
+            session.data = {**session.data, "dealer_shop": dealer_of.id}
+            out.say("greeting")
+            out.say("dealer_menu")
+            self._goto(session, "dealer_menu", out)
+            return
         out.say("greeting")
         cards = self._linked_cards(session.phone_e164)
         if len(cards) == 1:
@@ -231,7 +251,9 @@ class Dialogue:
 
     def _digit(self, session: DialogueSession, key: str, out: _Out) -> None:
         state = session.state
-        if state in ("main", "menu") and key == CHECKIN_KEY:
+        if state == "dealer_menu" and key in incentives.DEALER_KEYS:
+            self._dealer_update(session, incentives.DEALER_KEYS[key], out)
+        elif state in ("main", "menu") and key == CHECKIN_KEY:
             session.failures = 0
             self._checkin(session, out)
         elif state in ("main", "menu") and key in MENU:
@@ -400,6 +422,16 @@ class Dialogue:
     def _in_main(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
         if u.intent == "checkin":
             self._checkin(session, out)
+            return True
+        if u.intent in ("broadcast_optin", "broadcast_optout"):
+            card = self._card(session)
+            channel = "whatsapp" if session.channel == "whatsapp" else "call"
+            opt_in = u.intent == "broadcast_optin"
+            incentives.opt(self.db, card.id, card.shop_id, channel, opt_in)
+            out.say("optin_saved" if opt_in else "optout_saved")
+            out.actions.append({"type": "broadcast_optin" if opt_in else "broadcast_optout"})
+            out.say("anything_else")
+            self._goto(session, "main", out)
             return True
         if u.intent == "grievance_ref" or ("grievance_ref" in u.scores and u.digits):
             self._reference(session, u, out)
@@ -757,6 +789,8 @@ class Dialogue:
             for kind, value in session.data.get("pending_reports", []):
                 crowd.save(self.db, shop, kind, reporter, "caller", value)
                 saved.append(kind)
+            if "stock_in" in saved and incentives.crowd_confirmed_today(self.db, shop):
+                incentives.stock_arrived(self.db, shop, self.send, "reports")
             session.data = {**session.data, "pending_reports": []}
             out.say("report_saved")
             out.actions.append({"type": "report_saved", "kinds": saved})
@@ -782,6 +816,33 @@ class Dialogue:
         out.actions.append({"type": "checkin", "count": before + 1})
         out.say("anything_else")
         self._goto(session, "main", out)
+
+    # --- dealer phone line (F37) ----------------------------------------------------
+
+    def _dealer_update(self, session: DialogueSession, intent: str, out: _Out) -> None:
+        shop = self.db.get_one(Shop, int(session.data["dealer_shop"]))
+        label = incentives.apply_dealer_update(
+            self.db, shop, intent, session.phone_e164 or "", self.reporter_salt, self.send
+        )
+        session.failures = 0
+        out.say("dealer_updated", status=label)
+        out.actions.append({"type": "dealer_update", "shop": shop.code, "intent": intent})
+        out.say("dealer_again")
+        self._goto(session, "dealer_menu", out)
+
+    def _in_dealer_menu(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        pack = get_pack(session.state_pack)
+        intent = dealer_intent(" ".join(u.tokens), pack)
+        if intent is None and u.numbers and str(u.numbers[0]) in incentives.DEALER_KEYS:
+            intent = incentives.DEALER_KEYS[str(u.numbers[0])]
+        if intent is not None:
+            self._dealer_update(session, intent, out)
+            return True
+        if u.intent == "end" or u.no:
+            out.say("goodbye")
+            self._goto(session, "ended", out)
+            return True
+        return False
 
     # --- nearby shops (F34) -------------------------------------------------------
 
@@ -817,6 +878,8 @@ class Dialogue:
             "minutes": max(1, c.wait),
         }
         out.say("nearby_offer" if c.confirmed_ok else "nearby_offer_plain", **values)
+        if incentives.fair_shop(self.db, c.shop):
+            out.say("fair_shop_note")
         out.say("nearby_ask")
         out.actions.append(
             {
@@ -1053,12 +1116,14 @@ class Dialogue:
         text = out.render(session.language)
         if out.menu is None and session.state == "menu":
             out.menu = [{"key": k, "intent": v} for k, v in MENU.items()]
+        if out.menu is None and session.state == "dealer_menu":
+            out.menu = [{"key": k, "intent": v} for k, v in incentives.DEALER_KEYS.items()]
         expect = out.expect
         if session.state in _YES_NO_STATES:
             expect = "yes_no"
         elif session.state in ("ask_digits", "choose_card"):
             expect = "digits"
-        elif session.state == "menu":
+        elif session.state in ("menu", "dealer_menu"):
             expect = "menu"
         if log and text:
             self.db.add(

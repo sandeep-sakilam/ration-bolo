@@ -313,3 +313,14 @@ class Grievance(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
     complaint: Mapped[Complaint] = relationship()
+
+
+class BroadcastOptin(Base):
+    """Consent record for the "Rice arrived" broadcast (F37)."""
+
+    __tablename__ = "broadcast_optins"
+    card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"), primary_key=True)
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), index=True)
+    channel: Mapped[str] = mapped_column(String(12))  # call | whatsapp
+    opted_in_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+    opted_out_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

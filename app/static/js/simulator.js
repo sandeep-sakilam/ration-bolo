@@ -14,7 +14,9 @@
          "I got 15 kg", "Thank you, bye"],
     digits: ["1 0 8 0 4 2 1", "1 0 8 0 5 1 3", "0 6 1 0", "0 7 3 3"],
   };
-  const MENU_LABELS = { stock: "Stock", queue: "Queue", book: "Book a slot", complaint: "Short ration" };
+  const MENU_LABELS = { stock: "Stock", queue: "Queue", book: "Book a slot", complaint: "Short ration",
+    dealer_stock_in: "Stock arrived", dealer_stock_out: "Stock finished",
+    dealer_machine_down: "Machine down", dealer_machine_up: "Machine working" };
 
   async function api(path, body) {
     const opts = body instanceof FormData ? { method: "POST", body }

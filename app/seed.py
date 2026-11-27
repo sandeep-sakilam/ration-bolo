@@ -9,7 +9,9 @@ from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
 from app.clock import ist_to_utc, ist_today, now_utc
+from app.crowd import reporter_hash
 from app.models import (
+    BroadcastOptin,
     Card,
     CardHolder,
     Complaint,
@@ -34,6 +36,9 @@ from app.models import (
 )
 from app.slots import build_windows
 
+# Salt used for demo hashes; must equal Settings.reporter_salt's default.
+DEMO_REPORTER_SALT = "ration-bolo-reporter-salt"
+
 SHOP_CODE = "108"
 PILOT_SESSIONS = [["08:00", "12:00"], ["16:00", "20:00"]]
 KG_PER_PERSON_RICE = 6
@@ -44,11 +49,13 @@ DEMO_CALLERS = {
     "family": {"phone": "+919000009903", "label": "Family phone (2 cards)"},
     "meena": {"phone": "+919000006603", "label": "Meena (Tamil, draft Tamil Nadu pack)"},
     "ramu": {"phone": "+919000008804", "label": "Ramu (Telugu, Shop 112 · Level 0)"},
+    "dealer108": {"phone": "+919000001080", "label": "Dealer of Shop 108 (dealer phone line)"},
     "unknown": {"phone": "+919000000000", "label": "Unknown number"},
 }
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
+    BroadcastOptin,
     Grievance,
     HourlyProfile,
     PublicSale,
@@ -387,8 +394,23 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             ward="Malakpet",
             landmark="near Malakpet railway station",
             portability=True,
+            dealer_phone_hash=reporter_hash(DEMO_CALLERS["dealer108"]["phone"], DEMO_REPORTER_SALT),
         )
     )
+    # Two opted-in cardholders for the "Rice arrived" broadcast (fictional phones).
+    for n, (card_no, phone, channel) in enumerate(
+        (("TS-108-1065", "+919000001165", "call"), ("TS-108-1066", "+919000001166", "whatsapp"))
+    ):
+        card = db.scalars(select(Card).where(Card.card_no == card_no)).one()
+        db.add(PhoneLink(phone_e164=phone, card_id=card.id, source="seed"))
+        db.add(
+            BroadcastOptin(
+                card_id=card.id,
+                shop_id=shop108.id,
+                channel=channel,
+                opted_in_at=now_utc() - timedelta(days=3 + n),
+            )
+        )
     for code, name, area, level, lat, lon, ward, landmark in V3_SHOPS:
         shop = Shop(
             code=code,

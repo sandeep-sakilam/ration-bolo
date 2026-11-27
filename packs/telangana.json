@@ -388,6 +388,36 @@
     "reference number",
     "reference"
    ]
+  },
+  "broadcast_optin": {
+   "te": [
+    "stock vachinappudu cheppandi",
+    "vachinappudu cheppandi",
+    "biyyam vachinappudu cheppandi"
+   ],
+   "hi": [
+    "stock aane par batana",
+    "aane par batana",
+    "chawal aane par batana"
+   ],
+   "en": [
+    "tell me when rice arrives",
+    "notify me"
+   ]
+  },
+  "broadcast_optout": {
+   "te": [
+    "cheppakandi",
+    "samacharam vaddu"
+   ],
+   "hi": [
+    "mat batana",
+    "suchna band"
+   ],
+   "en": [
+    "stop alerts",
+    "stop notifications"
+   ]
   }
  },
  "intent_priority": [
@@ -397,6 +427,8 @@
   "report_machine_down",
   "report_stock_in",
   "checkin",
+  "broadcast_optout",
+  "broadcast_optin",
   "book",
   "queue",
   "stock",
@@ -1485,6 +1517,36 @@
    "te": "mee District Supply Officer office",
    "hi": "aapke District Supply Officer ka daftar",
    "en": "your District Supply Officer's office"
+  },
+  "dealer_menu": {
+   "te": "Dealer menu: biyyam vachindi ante 1, biyyam aipoyindi ante 2, machine down ante 3, machine pani chestondi ante 4 nokkandi leka cheppandi.",
+   "hi": "Dealer menu: chawal aa gaya 1, chawal khatam 2, machine band 3, machine chalu 4 dabaiye ya boliye.",
+   "en": "Dealer menu: press 1 or say 'stock arrived', 2 'stock finished', 3 'machine down', 4 'machine working'."
+  },
+  "dealer_again": {
+   "te": "Inka emaina maarpu unte cheppandi.",
+   "hi": "Aur koi badlaav ho to boliye.",
+   "en": "Say or press another update, or hang up."
+  },
+  "optin_saved": {
+   "te": "Sare, shop lo biyyam vachinappudu meeku cheptamu.",
+   "hi": "Theek hai, dukaan mein chawal aane par aapko batayenge.",
+   "en": "Okay, we will tell you when rice arrives at your shop."
+  },
+  "optout_saved": {
+   "te": "Sare, ika biyyam samacharam pampamu.",
+   "hi": "Theek hai, ab chawal ki suchna nahi bhejenge.",
+   "en": "Okay, we will stop rice arrival messages."
+  },
+  "broadcast_rice_arrived": {
+   "te": "Ration Bolo: mee shop {shop} lo biyyam vachindi.",
+   "hi": "Ration Bolo: aapki dukaan {shop} mein chawal aa gaya hai.",
+   "en": "Ration Bolo: rice has arrived at your shop {shop}."
+  },
+  "fair_shop_note": {
+   "te": "Idi 'Fair shop' gurtimpu unna shop.",
+   "hi": "Yeh 'Fair shop' wali dukaan hai.",
+   "en": "It has the 'Fair shop' badge."
   }
  },
  "default_busy_pattern": {

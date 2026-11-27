@@ -34,4 +34,12 @@ def test_simulator_rejects_bad_input(client: TestClient) -> None:
     assert client.post("/api/sim/start", json={"state": "atlantis"}).status_code == 400
     assert client.post("/api/sim/99999/text", json={"text": "hi"}).status_code == 404
     callers = client.get("/api/sim/callers").json()
-    assert {c["id"] for c in callers} == {"lakshmi", "salma", "family", "meena", "ramu", "unknown"}
+    assert {c["id"] for c in callers} == {
+        "lakshmi",
+        "salma",
+        "family",
+        "meena",
+        "ramu",
+        "dealer108",
+        "unknown",
+    }
