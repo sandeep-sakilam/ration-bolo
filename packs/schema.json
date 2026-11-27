@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Ration Bolo state pack",
+  "type": "object",
+  "required": ["state", "name", "status", "languages", "reply_languages", "default_language",
+               "kg_per_person", "fuzzy_threshold", "intents", "intent_priority", "units", "numbers",
+               "yes", "no", "day_words", "session_words", "switch_phrases", "display", "phrases"],
+  "additionalProperties": false,
+  "$defs": {
+    "wordLists": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "array", "items": {"type": "string", "minLength": 1}}
+    },
+    "perLanguageText": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"type": "string", "minLength": 1}
+    }
+  },
+  "properties": {
+    "state": {"type": "string", "pattern": "^[a-z_]+$"},
+    "name": {"type": "string"},
+    "status": {"enum": ["final", "draft"]},
+    "version": {"type": "integer"},
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["code", "name", "wispr", "sarvam", "browser", "reply_language"],
+        "additionalProperties": false,
+        "properties": {
+          "code": {"type": "string", "pattern": "^[a-z]{2,3}$"},
+          "name": {"type": "string"},
+          "wispr": {"type": "string"},
+          "sarvam": {"type": "string"},
+          "browser": {"type": "string"},
+          "reply_language": {"type": "string"}
+        }
+      }
+    },
+    "reply_languages": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "default_language": {"type": "string"},
+    "kg_per_person": {
+      "type": "object",
+      "required": ["rice"],
+      "additionalProperties": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "fuzzy_threshold": {"type": "number", "minimum": 50, "maximum": 100},
+    "intents": {
+      "type": "object",
+      "required": ["stock", "queue", "book", "complaint", "end"],
+      "additionalProperties": {"$ref": "#/$defs/wordLists"}
+    },
+    "intent_priority": {"type": "array", "items": {"type": "string"}},
+    "units": {"type": "object", "required": ["kg"], "additionalProperties": {
+      "type": "array", "items": {"type": "string"}}},
+    "numbers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "yes": {"$ref": "#/$defs/wordLists"},
+    "no": {"$ref": "#/$defs/wordLists"},
+    "day_words": {
+      "type": "object",
+      "required": ["today", "tomorrow"],
+      "additionalProperties": {"$ref": "#/$defs/wordLists"}
+    },
+    "session_words": {
+      "type": "object",
+      "required": ["morning", "evening"],
+      "additionalProperties": {"$ref": "#/$defs/wordLists"}
+    },
+    "switch_phrases": {"$ref": "#/$defs/wordLists"},
+    "display": {"type": "object", "additionalProperties": {"$ref": "#/$defs/perLanguageText"}},
+    "twilio_voices": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["voice", "language"],
+        "properties": {"voice": {"type": "string"}, "language": {"type": "string"}}
+      }
+    },
+    "phrases": {"type": "object", "additionalProperties": {"$ref": "#/$defs/perLanguageText"}}
+  }
+}

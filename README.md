@@ -12,3 +12,7 @@ See `SPEC.md` for the full specification and `PROGRESS.md` for build status.
 - GitHub settings: keep the repo public, allow direct pushes to `main`, turn off the email-privacy push block, verify the email on the account.
 - Checking the Telugu and Hindi phrases in the state pack with native speakers.
 - Recording and uploading the demo video, exporting the final deck PDF, and the hackathon submission itself.
+
+## State packs
+
+Each state is one JSON file in `packs/` (languages, keywords, number words, reply phrases, entitlement per person), validated against `packs/schema.json` at startup. A broken pack stops the app with a clear error. Adding a state means adding a file.
