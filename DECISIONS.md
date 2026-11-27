@@ -18,3 +18,6 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · "One booking per month" month · the calendar month of the slot date; cancelled bookings don't count · a booking tomorrow on the 1st belongs to the new month.
 - 2026-11-27 · Live "people ahead" for a reminder · booked families before it (earlier windows, or same window with a lower token) plus, because lines alternate, up to one walk-in for each of them and one more · gives the small, honest numbers the reminder script expects ("three are ahead").
 - 2026-11-27 · Session words → hours · morning 08:00–12:00, evening 16:00–20:00 fixed IST ranges, as in the spec · shops with other hours still match by part of day.
+- 2026-11-27 · Fuzzy matching of short words · words of 4 letters or fewer must match exactly; longer words use rapidfuzz ratio ≥ the pack threshold (82) · "kal" (tomorrow) must never be read as "kam" (less).
+- 2026-11-27 · "Any number of kilos" · a number next to a kilo word adds 2 to the complaint score · so "Naaku 15 kilolu ichharu" is a complaint even without a complaint keyword.
+- 2026-11-27 · Caller language detection · script (Telugu/Devanagari) first, else the language whose words matched most · used as a hint only; replies follow the card's saved language unless the caller asks to switch.
