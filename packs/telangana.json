@@ -1190,6 +1190,57 @@
    "te": "Ration Bolo code: {code}. Evvariki cheppakandi.",
    "hi": "Ration Bolo code: {code}. Kisi ko na batayein.",
    "en": "Ration Bolo code: {code}. Do not share it."
+  },
+  "no_booking_level0": {
+   "te": "Ee shop lo inka booking ledu.",
+   "hi": "Is dukaan mein abhi booking nahi hoti.",
+   "en": "This shop doesn't take bookings yet."
+  },
+  "best_time_usual": {
+   "te": "Sadharananga {day} {time} taruvata rush takkuva.",
+   "hi": "Aam taur par {day} {time} ke baad bheed kam hoti hai.",
+   "en": "{day} after {time} is usually quietest."
+  },
+  "best_time_known": {
+   "te": "{day} {time} taruvata sadharananga {minutes} nimishala lopu.",
+   "hi": "{day} {time} ke baad aam taur par {minutes} minute se kam.",
+   "en": "{day} after {time} is usually under {minutes} minutes."
+  },
+  "no_recent_reports": {
+   "te": "Mee shop gurinchi ippudu kotta samacharam ledu.",
+   "hi": "Aapki dukaan ki abhi koi taaza jaankari nahi hai.",
+   "en": "No recent reports for your shop."
+  },
+  "level_dropped_booking": {
+   "te": "Shop ippudu bookings nirdharinchadam ledu; mee {time} samayam ippatiki rush takkuva samayame.",
+   "hi": "Dukaan ab booking pakki nahi karti; aapka {time} ka samay ab bhi kam bheed wala hai.",
+   "en": "The shop no longer confirms bookings; your {time} time is still a quiet time to go."
   }
+ },
+ "default_busy_pattern": {
+  "hours": {
+   "8": 45,
+   "9": 50,
+   "10": 40,
+   "11": 30,
+   "16": 20,
+   "17": 25,
+   "18": 30,
+   "19": 20
+  },
+  "first_week_factor": 1.4,
+  "default_wait": 30
+ },
+ "portability": true,
+ "public_pds": {
+  "enabled": false,
+  "url_template": "",
+  "format": "csv"
+ },
+ "grievance": {
+  "helpline_number": "",
+  "district_officer": "",
+  "state_portal": "",
+  "national_portal": "https://pgportal.gov.in"
  }
 }

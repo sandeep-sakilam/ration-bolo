@@ -46,7 +46,7 @@ def test_seed_only_when_empty_and_reset(empty_db: Session) -> None:
     db.commit()
     reset_demo(db)
     assert db.scalars(select(Shop).where(Shop.code == "108")).one().status_machine == "working"
-    assert db.scalar(select(func.count()).select_from(Shop)) == 2
+    assert db.scalar(select(func.count()).select_from(Shop)) == 5
 
 
 def test_ensure_windows_idempotent(empty_db: Session) -> None:

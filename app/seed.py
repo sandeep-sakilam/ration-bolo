@@ -21,6 +21,7 @@ from app.models import (
     PhoneLink,
     Reminder,
     Shop,
+    ShopProfile,
     StatusTimer,
     Token,
     Turn,
@@ -37,12 +38,14 @@ DEMO_CALLERS = {
     "salma": {"phone": "+919000007702", "label": "Salma (Hindi, card 0513)"},
     "family": {"phone": "+919000009903", "label": "Family phone (2 cards)"},
     "meena": {"phone": "+919000006603", "label": "Meena (Tamil, draft Tamil Nadu pack)"},
+    "ramu": {"phone": "+919000008804", "label": "Ramu (Telugu, Shop 112 · Level 0)"},
     "unknown": {"phone": "+919000000000", "label": "Unknown number"},
 }
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
     StatusTimer,
+    ShopProfile,
     Turn,
     DialogueSession,
     Reminder,
@@ -182,6 +185,7 @@ def seed_demo(db: Session, now: datetime | None = None) -> None:
 
     _seed_history(db, shop, others, today, rng)
     _seed_tamil_nadu(db)
+    _seed_v3_shops(db, shop)
     db.add(Event(at=now, actor="system", action="demo_seeded", object=f"shop:{shop.code}"))
     db.commit()
 
@@ -323,6 +327,109 @@ def _seed_tamil_nadu(db: Session) -> None:
     db.add(CardHolder(card_id=meena.id, display_name="Meena (demo)"))
     db.add(DemoCard(card_id=meena.id, language="ta"))
     db.add(PhoneLink(phone_e164=DEMO_CALLERS["meena"]["phone"], card_id=meena.id, source="seed"))
+
+
+# Version 3 demo shops near Malakpet (coordinates are approximate and fictional).
+V3_SHOPS = [
+    # code, name, area, level, lat, lon, ward, landmark
+    (
+        "112",
+        "Fair Price Shop 112",
+        "Saidabad, Hyderabad",
+        0,
+        17.3644,
+        78.4983,
+        "Saidabad",
+        "near Saidabad bus stop",
+    ),
+    (
+        "115",
+        "Fair Price Shop 115",
+        "Moosarambagh, Hyderabad",
+        1,
+        17.3752,
+        78.5153,
+        "Moosarambagh",
+        "near Moosarambagh bridge",
+    ),
+    (
+        "109",
+        "Fair Price Shop 109",
+        "Chanchalguda, Hyderabad",
+        0,
+        17.3800,
+        78.4850,
+        "Chanchalguda",
+        "near Chanchalguda junction",
+    ),
+]
+
+
+def _seed_v3_shops(db: Session, shop108: Shop) -> None:
+    """Version 3: Shop 108 is Level 2; nearby Level 0 and Level 1 shops; caller Ramu."""
+    db.add(
+        ShopProfile(
+            shop_id=shop108.id,
+            level=2,
+            lat=17.3752,
+            lon=78.4983,
+            ward="Malakpet",
+            landmark="near Malakpet railway station",
+            portability=True,
+        )
+    )
+    for code, name, area, level, lat, lon, ward, landmark in V3_SHOPS:
+        shop = Shop(
+            code=code,
+            name=name,
+            area=area,
+            state_pack="telangana",
+            sessions=PILOT_SESSIONS,
+            families_per_hour=30,
+            booked_share=0.5,
+            status_stock="in_stock",
+            status_machine="working",
+        )
+        db.add(shop)
+        db.flush()
+        db.add(
+            ShopProfile(
+                shop_id=shop.id,
+                level=level,
+                lat=lat,
+                lon=lon,
+                ward=ward,
+                landmark=landmark,
+                portability=True,
+            )
+        )
+        if code == "112":
+            ramu = Card(
+                card_no="TS-112-0207",
+                shop_id=shop.id,
+                members=5,
+                language="te",
+                state_pack="telangana",
+            )
+            db.add(ramu)
+            db.flush()
+            db.add(CardHolder(card_id=ramu.id, display_name="Ramu (demo)"))
+            db.add(DemoCard(card_id=ramu.id, language="te"))
+            db.add(
+                PhoneLink(phone_e164=DEMO_CALLERS["ramu"]["phone"], card_id=ramu.id, source="seed")
+            )
+        for i in range(1, 9):
+            card = Card(
+                card_no=f"TS-{code}-{3000 + i}",
+                shop_id=shop.id,
+                members=1 + i % 5,
+                language="te" if i % 3 else "hi",
+                state_pack="telangana",
+            )
+            db.add(card)
+            db.flush()
+            db.add(CardHolder(card_id=card.id, display_name=f"Demo family {code}-{i}"))
+            db.add(DemoCard(card_id=card.id, language=card.language))
 
 
 def reset_demo(db: Session, now: datetime | None = None) -> None:

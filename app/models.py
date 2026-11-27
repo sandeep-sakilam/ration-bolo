@@ -231,3 +231,18 @@ class StatusTimer(Base):
     shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), primary_key=True)
     kind: Mapped[str] = mapped_column(String(10), primary_key=True)  # stock|machine
     set_at: Mapped[datetime] = mapped_column(DateTime)
+
+
+class ShopProfile(Base):
+    """Version 3 shop fields in a new table (no new columns on `shops`): level 0/1/2,
+    location for nearby-shop suggestions, portability and the dealer's phone hash."""
+
+    __tablename__ = "shop_profiles"
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), primary_key=True)
+    level: Mapped[int] = mapped_column(Integer, default=1)
+    lat: Mapped[float | None] = mapped_column(nullable=True)
+    lon: Mapped[float | None] = mapped_column(nullable=True)
+    ward: Mapped[str] = mapped_column(String(80), default="")
+    landmark: Mapped[str] = mapped_column(String(120), default="")
+    portability: Mapped[bool] = mapped_column(default=True)
+    dealer_phone_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)

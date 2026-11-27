@@ -4,8 +4,10 @@
   let pin = "";
   try { pin = sessionStorage.getItem("adminPin") || ""; } catch (e) { /* storage blocked */ }
 
-  async function api(path, body) {
-    const opts = { method: body ? "POST" : "GET", headers: { "X-Admin-Pin": pin }, body };
+  async function api(path, body, json) {
+    const headers = { "X-Admin-Pin": pin };
+    if (json) headers["Content-Type"] = "application/json";
+    const opts = { method: body ? "POST" : "GET", headers, body };
     const res = await fetch("/api/admin" + path, opts);
     if (res.status === 401) { $("dash").hidden = true; $("login").hidden = false; throw new Error("Wrong PIN"); }
     const text = await res.text();
@@ -21,7 +23,23 @@
     const body = $("shops-body"); body.innerHTML = "";
     for (const s of shops) {
       const tr = document.createElement("tr");
-      for (const v of [s.code, `${s.name} · ${s.area}`, s.state_pack, s.sessions,
+      for (const v of [s.code, `${s.name} · ${s.area}`]) {
+        const td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
+      }
+      const lvl = document.createElement("select");
+      lvl.setAttribute("aria-label", `Level of shop ${s.code}`);
+      for (const n of [0, 1, 2]) lvl.add(new Option(`Level ${n}`, String(n)));
+      lvl.value = String(s.base_level);
+      lvl.addEventListener("change", async () => {
+        try {
+          const r = await api(`/shops/${s.code}/profile`, JSON.stringify({ level: Number(lvl.value) }), true);
+          flash(r.message); await load();
+        } catch (e) { flash("Could not change the level"); }
+      });
+      const ltd = document.createElement("td"); ltd.appendChild(lvl);
+      if (s.level !== s.base_level) ltd.append(` (now ${s.level})`);
+      tr.appendChild(ltd);
+      for (const v of [s.state_pack, s.sessions,
         `${s.stock === "in_stock" ? "rice in stock" : "rice finished"}, machine ${s.machine}`,
         s.cards, s.waiting, s.upcoming_bookings, s.open_complaints]) {
         const td = document.createElement("td"); td.textContent = v; tr.appendChild(td);

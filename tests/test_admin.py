@@ -5,11 +5,11 @@ DEALER = {"X-Dealer-Pin": "1234"}
 
 SHOPS = (
     "code,name,area,state_pack,sessions,families_per_hour,booked_share\n"
-    '109,Fair Price Shop 109,"Saidabad, Hyderabad",telangana,09:00-13:00;15:00-19:00,24,0.5\n'
+    '130,Fair Price Shop 130,"Saidabad, Hyderabad",telangana,09:00-13:00;15:00-19:00,24,0.5\n'
 )
 CARDS = (
     "card_no,shop_code,members,language,phone\n"
-    "TS-109-0007,109,2,hi,+919000001234\n"
+    "TS-130-0007,130,2,hi,+919000001234\n"
     "TS-108-0421,108,5,te,\n"
 )
 
@@ -25,7 +25,7 @@ def _post(client: TestClient, kind: str, text: str):  # type: ignore[no-untyped-
 def test_admin_open_without_pin(client: TestClient) -> None:
     assert client.get("/api/admin/shops").status_code == 200
     shops = client.get("/api/admin/shops", headers=ADMIN).json()
-    assert [s["code"] for s in shops] == ["108", "201"]
+    assert [s["code"] for s in shops] == ["108", "109", "112", "115", "201"]
     assert shops[0]["waiting"] == 18 and shops[0]["cards"] >= 74
     assert client.get("/admin").status_code == 200
 
@@ -36,7 +36,7 @@ def test_import_shops_and_cards_then_call(client: TestClient) -> None:
     r = _post(client, "cards", CARDS)
     assert r.json() == {"created": 1, "updated": 1, "message": "Imported: 1 new, 1 updated"}
     shops = {s["code"]: s for s in client.get("/api/admin/shops", headers=ADMIN).json()}
-    assert shops["109"]["sessions"] == "09:00-13:00;15:00-19:00" and shops["109"]["cards"] == 1
+    assert shops["130"]["sessions"] == "09:00-13:00;15:00-19:00" and shops["130"]["cards"] == 1
     # The imported phone is recognised; the new shop's own hours are used for bookings.
     from app.seed import DEMO_CALLERS
 
@@ -54,8 +54,8 @@ def test_import_shops_and_cards_then_call(client: TestClient) -> None:
     r = client.post(f"/api/sim/{sid}/text", json={"text": "biyyam vachaya"}).json()
     assert "30 kilolu" in r["text"]
     # The dealer dashboard can switch to the new shop.
-    d = client.get("/api/dealer/overview", headers={**DEALER, "X-Shop-Code": "109"}).json()
-    assert d["shop"]["code"] == "109" and len(d["shops"]) == 3
+    d = client.get("/api/dealer/overview", headers={**DEALER, "X-Shop-Code": "130"}).json()
+    assert d["shop"]["code"] == "130" and len(d["shops"]) == 6
 
 
 def test_bad_rows_import_nothing(client: TestClient) -> None:

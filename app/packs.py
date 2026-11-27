@@ -5,6 +5,7 @@ Adding a state means adding a file, not changing code.
 
 from __future__ import annotations
 
+import copy
 import json
 import string
 from dataclasses import dataclass, field
@@ -62,6 +63,44 @@ REQUIRED_PHRASES = [
 ]
 REQUIRED_DISPLAY = ["today", "tomorrow", "morning", "evening"]
 
+# Version 3 fields: optional, so older packs (e.g. the Tamil Nadu draft) keep loading.
+# Missing ones fall back to these safe defaults and are listed on the status page.
+V3_DEFAULTS: dict[str, Any] = {
+    "default_busy_pattern": {
+        "hours": {"8": 45, "9": 50, "10": 40, "11": 30, "16": 20, "17": 25, "18": 30, "19": 20},
+        "first_week_factor": 1.4,
+        "default_wait": 30,
+    },
+    "portability": True,
+    "public_pds": {"enabled": False, "url_template": "", "format": "csv"},
+    "grievance": {
+        "helpline_number": "",
+        "district_officer": "",
+        "state_portal": "",
+        "national_portal": "https://pgportal.gov.in",
+    },
+}
+# Version 3 phrases: English fallback when a pack has no text for them yet.
+V3_PHRASES: dict[str, str] = {
+    "no_booking_level0": "This shop doesn't take bookings yet.",
+    "best_time_usual": "{day} after {time} is usually quietest.",
+    "best_time_known": "{day} after {time} is usually under {minutes} minutes.",
+    "no_recent_reports": "No recent reports for your shop.",
+    "level_dropped_booking": (
+        "The shop no longer confirms bookings; your {time} time is still a quiet time to go."
+    ),
+}
+V3_INTENTS = [
+    "report_stock_in",
+    "report_stock_out",
+    "report_machine_down",
+    "report_queue",
+    "checkin",
+    "broadcast_optin",
+    "broadcast_optout",
+    "nearby_yes",
+]
+
 
 class PackError(RuntimeError):
     """A state pack is missing, malformed or incomplete. Stops startup."""
@@ -72,8 +111,21 @@ class Pack:
     raw: dict[str, Any]
     languages: dict[str, dict[str, str]] = field(init=False)
 
+    missing_v3: list[str] = field(init=False, default_factory=list)
+
     def __post_init__(self) -> None:
         self.languages = {lang["code"]: lang for lang in self.raw["languages"]}
+        for key, default in V3_DEFAULTS.items():
+            if key not in self.raw:
+                self.raw[key] = copy.deepcopy(default)
+                self.missing_v3.append(key)
+        for key in V3_PHRASES:
+            if key not in self.raw["phrases"]:
+                self.missing_v3.append(f"phrases.{key}")
+        for intent in V3_INTENTS:
+            if intent not in self.raw["intents"]:
+                self.raw["intents"][intent] = {}
+                self.missing_v3.append(f"intents.{intent}")
 
     @property
     def state(self) -> str:
@@ -118,7 +170,7 @@ class Pack:
         return [lang[engine] for lang in self.raw["languages"]]
 
     def phrase(self, key: str, language: str, **values: object) -> str:
-        texts = self.raw["phrases"][key]
+        texts = self.raw["phrases"].get(key) or {self.default_language: V3_PHRASES[key]}
         lang = self.reply_language(language)
         template = texts.get(lang) or texts[self.default_language]
         return template.format(**values)

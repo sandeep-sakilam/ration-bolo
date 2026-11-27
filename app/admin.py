@@ -15,10 +15,11 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, File, Header, HTTPException, Request, UploadFile
 from fastapi.responses import PlainTextResponse
+from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app import queue
+from app import levels, queue
 from app.clock import ist_today
 from app.db import get_db
 from app.models import Card, Complaint, PhoneLink, Shop, Token
@@ -36,10 +37,11 @@ SHOP_FIELDS = [
 ]
 CARD_FIELDS = ["card_no", "shop_code", "members", "language", "phone"]
 SHOP_TEMPLATE = (
-    ",".join(SHOP_FIELDS) + "\n"
-    '109,Fair Price Shop 109,"Saidabad, Hyderabad",telangana,08:00-12:00;16:00-20:00,30,0.5\n'
+    ",".join(SHOP_FIELDS) + ",level,lat,lon,ward,landmark,portability\n"
+    '120,Fair Price Shop 120,"Saidabad, Hyderabad",telangana,08:00-12:00;16:00-20:00,30,0.5,'
+    '0,17.3600,78.5000,Saidabad,"near the bus stop",yes\n'
 )
-CARD_TEMPLATE = ",".join(CARD_FIELDS) + "\nTS-109-0001,109,4,te,+919000001234\n"
+CARD_TEMPLATE = ",".join(CARD_FIELDS) + "\nTS-120-0001,120,4,te,+919000001234\n"
 SESSION_RE = re.compile(r"^([01]\d|2[0-3]):[0-5]\d-([01]\d|2[0-3]):[0-5]\d$")
 PHONE_RE = re.compile(r"^\+[1-9]\d{9,14}$")
 MAX_ROWS = 20000
@@ -106,8 +108,10 @@ def import_shops(db: Session, rows: list[dict[str, str]]) -> ImportResult:
                 raise ValueError("families_per_hour 3–300, booked_share 0–1")
             if not row["name"]:
                 raise ValueError("name is empty")
+            profile = _profile_fields(row)
             parsed.append(
                 {
+                    "_profile": profile,
                     "code": code,
                     "name": row["name"],
                     "area": row["area"],
@@ -122,17 +126,76 @@ def import_shops(db: Session, rows: list[dict[str, str]]) -> ImportResult:
     if result.errors:
         return result
     for data in parsed:
+        profile = data.pop("_profile")
         shop = db.scalars(select(Shop).where(Shop.code == data["code"])).first()
         if shop is None:
-            db.add(Shop(**data, status_stock="in_stock", status_machine="working"))
+            shop = Shop(**data, status_stock="in_stock", status_machine="working")
+            db.add(shop)
+            db.flush()
             result.created += 1
         else:
             for key, value in data.items():
                 setattr(shop, key, value)
             result.updated += 1
+        if profile:
+            levels.set_profile(db, shop, **profile)
     queue.log_event(db, "admin", "shops_imported", rows=len(parsed))
     db.commit()
     return result
+
+
+OPTIONAL_SHOP_FIELDS = ["level", "lat", "lon", "ward", "landmark", "portability"]
+
+
+def _profile_fields(row: dict[str, str]) -> dict[str, Any]:
+    """Optional version 3 columns: level (0/1/2), lat, lon, ward, landmark, portability."""
+    out: dict[str, Any] = {}
+    if row.get("level", ""):
+        level = int(row["level"])
+        if level not in (0, 1, 2):
+            raise ValueError("level must be 0, 1 or 2")
+        out["level"] = level
+    for key, limit in (("lat", 90.0), ("lon", 180.0)):
+        if row.get(key, ""):
+            value = float(row[key])
+            if not -limit <= value <= limit:
+                raise ValueError(f"{key} out of range")
+            out[key] = value
+    for key in ("ward", "landmark"):
+        if row.get(key, ""):
+            out[key] = row[key][:120]
+    if row.get("portability", ""):
+        out["portability"] = row["portability"].lower() in ("1", "true", "yes", "y")
+    return out
+
+
+class ProfileIn(BaseModel):
+    level: int | None = None
+    lat: float | None = None
+    lon: float | None = None
+    ward: str | None = None
+    landmark: str | None = None
+    portability: bool | None = None
+
+
+@router.post("/shops/{code}/profile")
+def update_profile(code: str, body: ProfileIn, db: Session = Depends(get_db)) -> dict[str, Any]:
+    shop = db.scalars(select(Shop).where(Shop.code == code)).first()
+    if shop is None:
+        raise HTTPException(404, "no such shop")
+    try:
+        levels.set_profile(db, shop, **body.model_dump())
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    queue.log_event(
+        db,
+        "admin",
+        "shop_profile",
+        f"shop:{code}",
+        **{k: v for k, v in body.model_dump().items() if v is not None},
+    )
+    db.commit()
+    return {"code": code, "level": levels.base_level(db, shop), "message": f"Shop {code} updated"}
 
 
 def import_cards(db: Session, rows: list[dict[str, str]]) -> ImportResult:
@@ -268,11 +331,20 @@ def shops(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
             .select_from(Complaint)
             .where(Complaint.shop_id == shop.id, Complaint.status == "open")
         )
+        prof = levels.profile(db, shop)
         out.append(
             {
                 "code": shop.code,
                 "name": shop.name,
                 "area": shop.area,
+                "level": levels.effective_level(db, shop),
+                "base_level": prof.level,
+                "level_label": levels.label(db, shop),
+                "ward": prof.ward,
+                "landmark": prof.landmark,
+                "lat": prof.lat,
+                "lon": prof.lon,
+                "portability": prof.portability,
                 "state_pack": shop.state_pack,
                 "stock": shop.status_stock,
                 "machine": shop.status_machine,

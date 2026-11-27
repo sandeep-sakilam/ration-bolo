@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import demo, queue, reminders
+from app import besttime, demo, levels, queue, reminders
 from app.clock import fmt_time, ist_today, now_utc
 from app.models import (
     Card,
@@ -462,6 +462,9 @@ class Dialogue:
         shop = card.shop
         kg_due = queue.entitlement_grams(card) // 1000
         queue.log_event(self.db, session.channel, "intent", f"session:{session.id}", intent=intent)
+        if intent in ("stock", "queue", "book") and not levels.takes_bookings(self.db, shop):
+            self._level0(session, intent, out)
+            return
         if intent == "stock":
             if shop.status_machine != "working":
                 out.say("status_machine_down")
@@ -502,11 +505,45 @@ class Dialogue:
             out.say("goodbye")
             self._goto(session, "ended", out)
 
+    def _level0(self, session: DialogueSession, intent: str, out: _Out) -> None:
+        """Level 0 shop: no dealer source and no bookings. Say what is known, with its
+        source and age, or say that nothing recent is known; then the best time to go."""
+        shop = self._card(session).shop
+        if intent == "book":
+            out.say("no_booking_level0")
+            out.actions.append({"type": "booking_refused", "reason": "level0"})
+        else:
+            out.say("no_recent_reports")
+        self._best_time(shop, out)
+        out.say("anything_else")
+        self._goto(session, "main", out)
+
+    def _best_time(self, shop: Shop, out: _Out) -> None:
+        advice = besttime.best_time(self.db, shop)
+        if advice is None:
+            return
+        day = self._day_label(advice.day)
+        if advice.known:
+            out.say("best_time_known", day=day, time=advice.time, minutes=advice.minutes)
+        else:
+            out.say("best_time_usual", day=day, time=advice.time)
+        out.actions.append(
+            {
+                "type": "best_time_advice",
+                "time": advice.time,
+                "day": advice.day.isoformat(),
+                "known": advice.known,
+            }
+        )
+
     def _plan_booking(
         self, session: DialogueSession, day_word: str | None, session_word: str | None, out: _Out
     ) -> None:
         card = self._card(session)
         shop = card.shop
+        if not levels.takes_bookings(self.db, shop):
+            self._level0(session, "book", out)
+            return
         today = ist_today()
         day = today if day_word == "today" else today + timedelta(days=1)
         if isinstance(day_word, str) and len(day_word) == 10:  # ISO date carried in offer
@@ -754,6 +791,8 @@ class Dialogue:
         return self.db.get_one(Card, session.card_id)
 
     def _status_alerts(self, shop: Shop, out: _Out) -> None:
+        if not levels.takes_bookings(self.db, shop):
+            return  # Level 0: no dealer status; reported status comes from shopstate
         if shop.status_stock != "in_stock":
             out.say("status_stock_out")
         if shop.status_machine != "working":

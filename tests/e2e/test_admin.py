@@ -12,11 +12,11 @@ def test_admin_imports_shop_csv(page: Page, reset: None, tmp_path: Path) -> None
         "150,Fair Price Shop 150,Amberpet,telangana,08:00-12:00,30,0.5\n"
     )
     page.goto("/admin")
-    expect(page.locator("#shops-body tr")).to_have_count(2)
+    expect(page.locator("#shops-body tr")).to_have_count(5)
     page.set_input_files("#shops-file", str(csv))
     page.click("#shops-form button[type=submit]")
     expect(page.locator("#flash")).to_contain_text("Imported: 1 new")
-    expect(page.locator("#shops-body tr")).to_have_count(3)
+    expect(page.locator("#shops-body tr")).to_have_count(6)
     bad = tmp_path / "bad.csv"
     bad.write_text("card_no,shop_code,members,language,phone\nTS-1-0001,999,2,te,\n")
     page.set_input_files("#cards-file", str(bad))
