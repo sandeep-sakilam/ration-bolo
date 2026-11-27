@@ -39,6 +39,17 @@ class Settings(BaseSettings):
     twilio_whatsapp_number: str = ""
     twilio_sms_number: str = ""
 
+    # Telephony provider for outbound calls and SMS: "twilio" (default) or "exotel" (stub).
+    telephony_provider: str = "twilio"
+    exotel_sid: str = ""
+    exotel_api_key: str = ""
+    exotel_api_token: str = ""
+    exotel_caller_id: str = ""
+    exotel_subdomain: str = "api.in.exotel.com"
+    exotel_flow_url: str = ""
+    exotel_dlt_entity_id: str = ""
+    exotel_dlt_template_id: str = ""
+
     audio_cache_dir: str = "./data/audio_cache"
     scheduler_enabled: bool = True
     # After a caller registers a card by digits, send a one-time code by SMS to verify the
@@ -52,6 +63,14 @@ class Settings(BaseSettings):
     @property
     def sarvam_ready(self) -> bool:
         return self.speech_mode != "mock" and bool(self.sarvam_api_key)
+
+    @property
+    def exotel_ready(self) -> bool:
+        return (
+            self.messaging_mode != "mock"
+            and self.telephony_provider == "exotel"
+            and bool(self.exotel_sid and self.exotel_api_key and self.exotel_api_token)
+        )
 
     @property
     def twilio_ready(self) -> bool:

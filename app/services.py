@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 import httpx
 from sqlalchemy.orm import Session
 
+from app.channels.exotel import ExotelMessenger
 from app.channels.messaging import Messenger, MockMessenger, TwilioMessenger
 from app.config import Settings
 
@@ -125,6 +126,16 @@ class Services:
                 "outbox (mock)",
             ),
             {
+                "service": "indian_telephony",
+                "provider": "Exotel (stub)",
+                "mode": "real" if s.exotel_ready else "mock",
+                "ready": s.exotel_ready,
+                "missing_keys": [],
+                "note": "active for outbound calls and SMS"
+                if s.exotel_ready
+                else "not enabled (TELEPHONY_PROVIDER=exotel + EXOTEL_* keys) · using Twilio",
+            },
+            {
                 "service": "state_data",
                 "provider": "State Civil Supplies (ePoS)",
                 "mode": "mock",
@@ -222,6 +233,17 @@ def build_services(settings: Settings) -> Services:
             settings.twilio_whatsapp_number,
             settings.twilio_voice_number,
             voices,
+        )
+    if settings.exotel_ready:
+        messenger = ExotelMessenger(
+            settings.exotel_sid,
+            settings.exotel_api_key,
+            settings.exotel_api_token,
+            settings.exotel_caller_id,
+            settings.exotel_subdomain,
+            settings.exotel_flow_url,
+            settings.exotel_dlt_entity_id,
+            settings.exotel_dlt_template_id,
         )
     return Services(settings, primary, backup, tts, messenger, DealerFedStateData())
 

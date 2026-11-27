@@ -101,3 +101,12 @@ in `.env` and run `docker compose up`.
 - Reply audio is cached by text, so repeated prompts cost nothing after the first time.
 - Every provider sits behind an interface and an environment variable; removing a key
   falls back to the next option (Wispr → Sarvam → keypad/menu; Sarvam voice → Twilio `<Say>`).
+
+## 6. Moving to an Indian toll-free number (Exotel stub)
+
+`app/channels/exotel.py` implements the same messaging interface as Twilio for outbound
+reminder calls and SMS. To try it: set `TELEPHONY_PROVIDER=exotel` and the `EXOTEL_*`
+variables listed in `.env.example` (an ExoPhone as caller ID, a call-flow URL for spoken
+reminders, and DLT entity/template IDs for SMS to India). Check Exotel's current API
+docs first. Inbound calls on the ExoPhone still need an Exotel call flow pointed at this
+app; until then keep Twilio for inbound.

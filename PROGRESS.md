@@ -1,6 +1,6 @@
 # Progress
 
-Current: F19 merged; next is F20 on `feat/f20-indian-telephony`
+Current: F20 merged; next is F21 on `feat/f21-accessibility`
 
 ## Functionality backlog
 
@@ -28,6 +28,6 @@ Finale:
 
 - [x] F18 Second state pack (Tamil Nadu, draft) — `feat/f18-second-pack`
 - [x] F19 Phone-to-card link verification — `feat/f19-link-verification`
-- [ ] F20 Indian telephony adapter stub (Exotel) — `feat/f20-indian-telephony`
+- [x] F20 Indian telephony adapter stub (Exotel) — `feat/f20-indian-telephony`
 - [ ] F21 Accessibility and low-bandwidth audit — `feat/f21-accessibility`
 - [ ] F22 Multi-shop admin and CSV import — `feat/f22-multi-shop`
