@@ -55,7 +55,8 @@ def test_check19_machine_down_offers_112_then_best_time(db: Session) -> None:
         in r.gloss
     )
     r = call.say("Avunu")
-    assert r.text.startswith("Sare, Shop 112.") and "taruvata sadharananga" in r.text
+    # F44 (check 29): open, in stock and working now, so "go now" with the quoted wait.
+    assert r.text.startswith("Sare, Shop 112. Ippude vellochu, akkada sumaru 10 nimishala wait.")
     assert {"type": "nearby_accepted", "shop": "112"} in r.actions
     shop112 = _shop(db, "112")
     assert db.scalars(select(Token).where(Token.shop_id == shop112.id)).first() is None
@@ -70,7 +71,10 @@ def test_no_then_second_shop_and_booking_there(db: Session) -> None:
     r = call.say("nahi")
     assert "Dukaan 115, near Moosarambagh bridge, 1.8 km door hai" in r.text
     r = call.say("haan")
-    assert r.text == "Theek hai, dukaan 115. Kis din, subah ya shaam?"
+    assert r.text == (
+        "Theek hai, dukaan 115. Abhi ja sakte hain, wahan lagbhag 24 minute ka intezaar. "
+        "Kis din, subah ya shaam?"
+    )
     r = call.say("kal subah")
     assert r.text == "Kal 08:00 baje, theek hai?"
     r = call.say("haan")

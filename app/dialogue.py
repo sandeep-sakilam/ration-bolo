@@ -25,6 +25,7 @@ from app import (
     incentives,
     levels,
     nearby,
+    publicpds,
     queue,
     reminders,
     shopstate,
@@ -929,6 +930,7 @@ class Dialogue:
                 "level": c.level,
             }
         )
+        session.data = {**session.data, "nearby_wait": max(1, c.wait)}
         self._goto(session, "nearby_offer", out)
 
     def _in_nearby_offer(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
@@ -941,11 +943,11 @@ class Dialogue:
             out.say("nearby_accepted", code=target.code)
             out.actions.append({"type": "nearby_accepted", "shop": target.code})
             queue.log_event(self.db, session.channel, "nearby_accepted", f"shop:{target.code}")
+            self._nearby_when(session, target, out)
             if levels.takes_bookings(self.db, target):
                 out.say("ask_book_when")
                 self._goto(session, "book_when", out)
             else:
-                self._best_time(target, out)
                 out.say("anything_else")
                 self._goto(session, "main", out)
             return True
@@ -966,6 +968,18 @@ class Dialogue:
             self._goto(session, "main", out)
             return self._in_main(session, u, out)
         return False
+
+    def _nearby_when(self, session: DialogueSession, target: Shop, out: _Out) -> None:
+        """F44: go now with the quoted wait if the shop is open, in stock and working;
+        else today's best remaining time, else tomorrow's (best_time picks the day)."""
+        now = now_utc()
+        ok, _bad = nearby.status_ok(self.db, target, now)
+        if ok and publicpds.is_open(target, now):
+            minutes = int(session.data.get("nearby_wait") or nearby.predicted_wait(self.db, target))
+            out.say("nearby_go_now", minutes=max(1, minutes))
+            out.actions.append({"type": "nearby_go_now", "shop": target.code, "wait": minutes})
+        else:
+            self._best_time(target, out)
 
     def _best_time(
         self, shop: Shop, out: _Out, day_word: str | None = None, part: str | None = None

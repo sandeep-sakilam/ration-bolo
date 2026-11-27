@@ -1463,6 +1463,11 @@
    "hi": "One Nation One Ration Card se aam taur par aap wahan bhi ration le sakte hain. Wahan jaayenge?",
    "en": "Under One Nation One Ration Card you can usually collect your ration there too. Want to go there?"
   },
+  "nearby_go_now": {
+   "te": "Ippude vellochu, akkada sumaru {minutes} nimishala wait.",
+   "hi": "Abhi ja sakte hain, wahan lagbhag {minutes} minute ka intezaar.",
+   "en": "You can go now; about {minutes} minutes' wait there."
+  },
   "nearby_accepted": {
    "te": "Sare, Shop {code}.",
    "hi": "Theek hai, dukaan {code}.",

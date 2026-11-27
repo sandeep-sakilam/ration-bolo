@@ -115,6 +115,7 @@ V3_PHRASES: dict[str, str] = {
         "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait, "
         "and your card usually works there too; want to go there?"
     ),
+    "nearby_go_now": "You can go now; about {minutes} minutes' wait there.",
     "nearby_accepted": "Okay, Shop {code}.",
     "grievance_sent": ("We sent the complaint text by {via} to file with the officials."),
     "helpline_offer": ("Shall I connect you to the state food helpline now?"),
