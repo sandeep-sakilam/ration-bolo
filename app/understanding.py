@@ -12,7 +12,7 @@ from collections import Counter
 from dataclasses import dataclass, field
 from functools import lru_cache
 
-from rapidfuzz import fuzz
+from rapidfuzz import fuzz, process
 
 from app.packs import Pack
 
@@ -144,8 +144,26 @@ def parse_numbers(tokens: list[str], pack: Pack) -> list[tuple[int, int, int, st
                 i += size
                 break
         else:
+            close = _fuzzy_number(tok, table)
+            if close is not None:
+                found.append((i, i + 1, close, str(close)))
             i += 1
     return found
+
+
+NUMBER_FUZZY_MIN_LEN = 6
+NUMBER_FUZZY_THRESHOLD = 85
+
+
+def _fuzzy_number(token: str, table: dict[tuple[str, ...], int]) -> int | None:
+    """Close spellings of long single-word numbers ("padihaaru" → 16)."""
+    if len(token) < NUMBER_FUZZY_MIN_LEN or not token.isalpha():
+        return None
+    singles = {k[0]: v for k, v in table.items() if len(k) == 1 and len(k[0]) >= 5}
+    match = process.extractOne(token, singles.keys(), scorer=fuzz.ratio)
+    if match and match[1] >= NUMBER_FUZZY_THRESHOLD:
+        return singles[match[0]]
+    return None
 
 
 def understand(text: str, pack: Pack) -> Understanding:

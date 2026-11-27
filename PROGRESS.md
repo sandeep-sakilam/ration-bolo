@@ -1,6 +1,6 @@
 # Progress
 
-Current: F05 merged; next is F06 on `feat/f06-dialogue`
+Current: F06 merged; next is F07 on `feat/f07-adapters`
 
 ## Functionality backlog
 
@@ -11,7 +11,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F03 State packs: format, schema, loader, Telangana — `feat/f03-state-packs`
 - [x] F04 Slot and queue engine — `feat/f04-slot-engine`
 - [x] F05 Speech understanding — `feat/f05-understanding`
-- [ ] F06 Dialogue engine — `feat/f06-dialogue`
+- [x] F06 Dialogue engine — `feat/f06-dialogue`
 - [ ] F07 Adapter interfaces, mocks, service status — `feat/f07-adapters`
 - [ ] F08 Speech pipeline — `feat/f08-speech-pipeline`
 - [ ] F09 Call simulator — `feat/f09-simulator`
