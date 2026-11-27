@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ration Bolo · Dealer dashboard</title>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<header class="top">
+  <h1>Ration Bolo <span class="badge demo">Demo data</span></h1>
+  <nav aria-label="Pages">
+    <a href="/simulator">Call simulator</a>
+    <a href="/dealer" aria-current="page">Dealer dashboard</a>
+    <a href="/metrics">Impact metrics</a>
+  </nav>
+</header>
+<main>
+  <section class="card" id="login" style="max-width:380px;margin:40px auto">
+    <h2>Dealer login</h2>
+    <form id="login-form">
+      <label for="pin">Dealer PIN</label>
+      <input type="password" id="pin" inputmode="numeric" autocomplete="current-password" placeholder="Demo PIN is 1234">
+      <p class="small">Demo PIN: <strong>1234</strong> (set <code>DEALER_PIN</code> to change it).</p>
+      <button type="submit" class="primary">Open dashboard</button>
+      <p class="small" id="login-error" role="alert"></p>
+    </form>
+  </section>
+
+  <div id="dash" hidden>
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <div>
+        <strong id="shop-name">Shop</strong> · <span id="shop-area" class="small"></span>
+        <div class="small" id="today"></div>
+      </div>
+      <div class="row">
+        <span class="badge" id="stock-badge">stock</span>
+        <span class="badge" id="machine-badge">machine</span>
+        <span class="badge" id="pause-badge" hidden>booking paused</span>
+      </div>
+    </div>
+    <p class="banner" id="flash" role="status" hidden></p>
+
+    <div class="kpis">
+      <div class="card kpi"><div class="value" id="k-waiting">–</div><div class="label">waiting now</div></div>
+      <div class="card kpi"><div class="value" id="k-wait">–</div><div class="label">minutes for the last in line</div></div>
+      <div class="card kpi"><div class="value" id="k-bookings">–</div><div class="label">bookings today and tomorrow</div></div>
+      <div class="card kpi"><div class="value" id="k-complaints">–</div><div class="label">open complaints</div></div>
+    </div>
+
+    <div class="grid two">
+      <section class="card" aria-labelledby="q-h">
+        <h2 id="q-h">Live queue (serving order)</h2>
+        <div class="row" style="margin-bottom:10px">
+          <button type="button" class="primary" id="serve">Serve next (ePoS sale)</button>
+          <label for="serve-kg" class="sr-only">Kilos given (leave empty for full entitlement)</label>
+          <input type="number" id="serve-kg" min="0" step="0.5" placeholder="kg (full if empty)" style="width:150px">
+          <button type="button" id="walkin">+ Walk-in token</button>
+        </div>
+        <div class="scroll"><table><thead><tr><th>#</th><th>Token</th><th>Type</th><th>Card</th><th>Since</th></tr></thead>
+          <tbody id="queue-body"></tbody></table></div>
+        <p class="small" id="queue-empty" hidden>Nobody waiting.</p>
+      </section>
+
+      <section class="card" aria-labelledby="s-h">
+        <h2 id="s-h">Shop status</h2>
+        <div class="row">
+          <button type="button" id="stock-out">🍚 Rice finished</button>
+          <button type="button" id="stock-in">🍚 Rice in stock</button>
+          <button type="button" id="machine-down">🖥 Machine down</button>
+          <button type="button" id="machine-up">🖥 Machine working</button>
+        </div>
+        <h2 style="margin-top:16px">Update by voice</h2>
+        <div class="microw" style="justify-content:flex-start">
+          <button type="button" class="mic" id="dealer-mic" aria-label="Speak a status update" style="width:64px;height:64px;font-size:1.5rem">🎤</button>
+          <div class="small">Say “Biyyam aipoyindi”, “Chawal khatam”, “Machine down”, “Biyyam vachindi” or “Machine working”.</div>
+        </div>
+        <form class="textrow" id="voice-form" style="margin-top:8px">
+          <label for="voice-text" class="sr-only">Status phrase</label>
+          <input type="text" id="voice-text" placeholder="…or type the phrase">
+          <button type="submit">Update</button>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="b-h">
+        <h2 id="b-h">Bookings (today and tomorrow)</h2>
+        <div class="scroll"><table><thead><tr><th>Day</th><th>Window</th><th>Token</th><th>Card</th><th>Status</th><th></th></tr></thead>
+          <tbody id="bookings-body"></tbody></table></div>
+      </section>
+
+      <section class="card" aria-labelledby="c-h">
+        <h2 id="c-h">Complaints</h2>
+        <table><thead><tr><th>ID</th><th>Card</th><th>Due / got</th><th>Status</th><th></th></tr></thead>
+          <tbody id="complaints-body"></tbody></table>
+      </section>
+
+      <section class="card" aria-labelledby="r-h" id="reminders-card" hidden>
+        <h2 id="r-h">Reminders</h2>
+        <table><thead><tr><th>Token</th><th>Due</th><th>Status</th><th></th></tr></thead>
+          <tbody id="reminders-body"></tbody></table>
+      </section>
+
+      <section class="card" aria-labelledby="o-h">
+        <h2 id="o-h">Outbox (SMS, WhatsApp, calls)</h2>
+        <p class="small">With no Twilio keys every message is a mock send and lands here.</p>
+        <div class="scroll"><table><thead><tr><th>When</th><th>To</th><th>Message</th></tr></thead>
+          <tbody id="outbox-body"></tbody></table></div>
+      </section>
+
+      <section class="card" aria-labelledby="t-h">
+        <h2 id="t-h">Tester tools</h2>
+        <form id="link-form">
+          <label for="link-phone">Link my phone to a demo card</label>
+          <input type="tel" id="link-phone" placeholder="+91 98xxxxxxxx">
+          <label for="link-card">Demo card</label>
+          <select id="link-card"></select>
+          <div class="row" style="margin-top:8px"><button type="submit">Link phone</button></div>
+          <p class="small">Then call the Ration Bolo number from that phone and it is recognised.</p>
+        </form>
+        <hr style="border:0;border-top:1px solid var(--line);margin:14px 0">
+        <button type="button" class="danger" id="reset">Reset demo data</button>
+        <button type="button" id="logout">Log out</button>
+      </section>
+    </div>
+  </div>
+</main>
+<footer class="foot">Card numbers show only their last 4 digits; phone numbers are masked. Demo data only.</footer>
+<script src="/static/js/dealer.js"></script>
+</body>
+</html>

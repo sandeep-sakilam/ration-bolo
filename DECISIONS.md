@@ -40,3 +40,6 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Simulator silence · a "Stay silent" button (and the browser's no-speech event) sends the silence event instead of an automatic 8-second timer · an automatic timer would end judges' calls while they read or type.
 - 2026-11-27 · Example-phrase chips under the text box · one tap sends a scripted phrase in the caller's language · browsers without Telugu speech recognition can still run the whole flow; the text box stands in for speech in tests.
 - 2026-11-27 · Playwright browser in tests · `chromium.launch()`, falling back to the pre-installed `/opt/pw-browsers` Chromium · works both in CI (installed browser) and in the cloud dev session (no `playwright install`).
+- 2026-11-27 · Dealer PIN transport · sent as an `X-Dealer-Pin` header on every API call and kept in the tab's sessionStorage, compared in constant time · simple demo protection with no cookies or accounts.
+- 2026-11-27 · Demonstrating the late rule · the dashboard has "+11 min (late)" next to "Mark arrived" for today's bookings · judges can see the walk-in move without waiting 11 real minutes.
+- 2026-11-27 · Single-shop dashboard · the dashboard shows the first shop · the pilot has one shop; multi-shop admin is F22.

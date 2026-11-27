@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
+from app.channels import dealer as dealer_channel
 from app.channels import simulator as simulator_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
@@ -84,5 +85,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return FileResponse(STATIC_DIR / "simulator.html")
 
     app.include_router(simulator_channel.router)
+    app.include_router(dealer_channel.router)
+
+    @app.get("/dealer", include_in_schema=False)
+    def dealer_page() -> FileResponse:
+        return FileResponse(STATIC_DIR / "dealer.html")
+
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     return app

@@ -38,7 +38,9 @@ main { max-width: 1100px; margin: 0 auto; padding: 16px; }
 .banner summary { cursor: pointer; font-weight: 600; }
 .banner ul { margin: 8px 0 0; padding-left: 18px; }
 .grid { display: grid; grid-template-columns: 300px 1fr; gap: 16px; }
-@media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+.grid.two { grid-template-columns: 1fr 1fr; }
+.scroll { max-height: 420px; overflow: auto; }
+@media (max-width: 820px) { .grid, .grid.two { grid-template-columns: 1fr; } }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
 .card h2 { font-size: 1rem; margin: 0 0 10px; }
 label { display: block; font-size: .85rem; color: var(--muted); margin: 10px 0 4px; font-weight: 600; }
