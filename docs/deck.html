@@ -24,6 +24,8 @@
   .box { background: #fff; border: 1px solid #ddd6c8; border-radius: 12px; padding: 0.16in 0.22in; }
   .big { font-size: 34pt; font-weight: 800; color: #0d6b4f; line-height: 1.1; }
   .small, .small li { font-size: 13pt; }
+  .tiny, .tiny li { font-size: 11.5pt; line-height: 1.28; margin-bottom: 0.04in; }
+  .levels { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 0.22in; }
   table { border-collapse: collapse; width: 100%; font-size: 12.5pt; }
   th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid #ddd6c8; vertical-align: top; }
   th { color: #6d756f; font-size: 11pt; text-transform: uppercase; }
@@ -287,26 +289,65 @@
 </section>
 
 <section class="slide">
+  <h2>Works without a partner: three levels</h2>
+  <p class="tiny" style="margin-bottom:0.12in">No product with real-world dependencies is fail-proof. Ration Bolo delivers value at a shop where neither the department nor the dealer cooperates, and gets better as each one joins. A level only adds sources; it never removes the Level 0 ones, and every spoken status names its source and age.</p>
+  <div class="levels">
+    <div class="box">
+      <h3>Level 0 — nobody cooperates</h3>
+      <ul class="tiny">
+        <li><b>Cardholders report to each other</b> by voice ("rice arrived", "20 people here", "I'm at the shop", or a free missed call); confirmed when 2 phones agree, fading with age</li>
+        <li><b>Public PDS data:</b> the state's public shop-wise sales (NFSA Section 27) shows when selling started and how fast</li>
+        <li><b>Best time to go</b> instead of a booking, from each shop's hourly crowd profile</li>
+        <li><b>A nearby shop</b> under One Nation One Ration Card when this one is out, down or crowded</li>
+        <li><b>Complaints reach official channels</b>: helpline handoff, a prepared complaint, 7- and 21-day escalation</li>
+        <li><b>Public transparency page</b> and monthly report for vigilance committees and social audits</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Level 1 — a willing dealer or volunteer</h3>
+      <ul class="tiny">
+        <li>Time-slot tokens and bookings, half of every window kept for walk-ins</li>
+        <li>Dealer status by one phone call or voice, cross-checked against cardholder reports</li>
+        <li>"Rice arrived" broadcast to opted-in cardholders, and a "Fair shop" badge callers hear</li>
+        <li>Where the dealer won't, a self-help-group or ward volunteer can run the tokens</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Level 2 — the department joins</h3>
+      <ul class="tiny">
+        <li>ePoS feed for stock and every sale (simulated today)</li>
+        <li>Card lookups and phone links from department data</li>
+        <li>Complaints and shop metrics routed to officials who can act</li>
+      </ul>
+      <p class="tiny"><b>Demo:</b> Shop 108 is Level 2; Shop 112 Level 0; Shop 115 Level 1 (dealer); Shop 109 Level 1 through a volunteer.</p>
+    </div>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">12</span>
+</section>
+
+<section class="slide">
   <h2>Risks and limits, stated honestly</h2>
   <div class="cols">
-    <ul class="small">
+    <ul class="tiny">
       <li><b>Government data:</b> accurate queues and card lookups need ePoS data and phone-to-card links from each state; the prototype simulates both and labels it "Demo data".</li>
       <li><b>Not yet toll-free:</b> the pilot uses a Twilio US number (an international call for Indian callers); a real toll-free number needs an Indian provider with KYC.</li>
       <li><b>SMS to India</b> from a foreign number may not be delivered without DLT registration; confirmations go on WhatsApp where possible.</li>
       <li><b>Speech accuracy</b> for elderly callers, strong dialects and noisy shops is unproven until piloted; the fallback chain and the voice-success metric exist because of that.</li>
-      <li><b>Dealer resistance:</b> dealers who benefit from crowded, unrecorded queues may resist; department backing is needed.</li>
+      <li><b>Dealer resistance:</b> dealers who benefit from crowded, unrecorded queues may resist; Level 0 works without them, and department backing helps.</li>
       <li><b>Wispr Flow API access and limits</b> to be confirmed with the organisers; Sarvam covers speech if Wispr is unavailable.</li>
     </ul>
-    <div class="box">
-      <h3>Try it</h3>
-      <p class="small"><b>Code:</b> github.com/sandeep-sakilam/ration-bolo — <code>docker compose up</code>, no keys needed, open localhost:8000.</p>
-      <p class="small"><b>Demo video:</b> [YouTube link — add before submitting]</p>
-      <p class="small"><b>Live link:</b> [Railway URL — add before submitting]</p>
-      <p class="small"><b>No login:</b> the simulator, dealer dashboard, metrics and admin pages all open without a PIN. The live demo resets itself for each judge.</p>
-      <p class="small"><b>Build:</b> commit {{COMMIT}} — the live link's footer shows the same commit.</p>
-    </div>
+    <ul class="tiny">
+      <li><b>Level 0 is information, not enforcement:</b> without a dealer or volunteer nobody can guarantee a slot; the app gives the best time to go and a nearby shop instead, and says so.</li>
+      <li><b>Cardholder reports can be wrong or gamed:</b> agreement, decay, outlier rejection and reliability weights reduce this but can't remove it; every spoken status names its source and age.</li>
+      <li><b>Public PDS data formats differ by state</b> and can change or go offline; the adapter is configurable and fails safely, and each state's format must be confirmed.</li>
+      <li><b>Portability</b> depends on the state's ePoS and the cardholder's eligibility; suggestions say "usually" and never promise the other shop will serve them.</li>
+      <li><b>Complaints still depend on officials acting:</b> the app gets them to the right channel, tracks and escalates them, and makes patterns public; it can't force a resolution.</li>
+    </ul>
   </div>
-  <span class="brand">Ration Bolo</span><span class="num">12</span>
+  <div class="box" style="margin-top:0.08in;padding:0.08in 0.18in">
+    <p class="tiny" style="margin:0"><b>Try it:</b> github.com/sandeep-sakilam/ration-bolo — <code>docker compose up</code>, no keys needed, open localhost:8000. <b>Demo video:</b> [YouTube link — add before submitting] · <b>Live link:</b> [Railway URL — add before submitting] · <b>No login</b> on any page; the live demo resets itself for each judge. <b>Build:</b> commit {{COMMIT}}, the same as the live link's footer.</p>
+  </div>
+  <span class="brand">Ration Bolo</span><span class="num">13</span>
 </section>
 
 </body>
