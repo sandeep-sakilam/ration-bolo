@@ -22,6 +22,10 @@ FIXED_NOW = datetime(2026, 11, 27, 5, 30)
 
 @pytest.fixture(autouse=True)
 def frozen_clock() -> Iterator[datetime]:
+    from app.channels.twilio_common import IP_LIMIT, PHONE_LIMIT
+
+    IP_LIMIT.reset()
+    PHONE_LIMIT.reset()
     clock.freeze(FIXED_NOW)
     yield FIXED_NOW
     clock.freeze(None)

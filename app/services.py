@@ -10,9 +10,10 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
+import httpx
 from sqlalchemy.orm import Session
 
-from app.channels.messaging import Messenger, MockMessenger
+from app.channels.messaging import Messenger, MockMessenger, TwilioMessenger
 from app.config import Settings
 from app.packs import all_packs
 from app.speech.stt import MockSTT, SarvamSTT, SpeechToText, WisprSTT
@@ -29,6 +30,7 @@ class Services:
     messenger: Messenger
     state_data: StateData
     extra: dict[str, Any] = field(default_factory=dict)
+    http: httpx.Client = field(default_factory=lambda: httpx.Client(timeout=10))
 
     @property
     def voice(self) -> ReplyVoice:
@@ -199,6 +201,19 @@ def build_services(settings: Settings) -> Services:
             settings.sarvam_tts_model,
             settings.sarvam_tts_speaker,
             timeout,
+        )
+    if settings.twilio_ready:
+        voices: dict[str, dict[str, str]] = {}
+        for pack in all_packs().values():
+            for lang, voice in (pack.raw.get("twilio_voices") or {}).items():
+                voices.setdefault(lang, voice)
+        messenger = TwilioMessenger(
+            settings.twilio_account_sid,
+            settings.twilio_auth_token,
+            settings.twilio_sms_number,
+            settings.twilio_whatsapp_number,
+            settings.twilio_voice_number,
+            voices,
         )
     return Services(settings, primary, backup, tts, messenger, DealerFedStateData())
 

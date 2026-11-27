@@ -47,3 +47,8 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Bookings made less than 20 minutes before the slot · reminder due immediately · the family still gets the live count.
 - 2026-11-27 · Live "people ahead" ignores bookings whose window is over · those are no-shows, not people in the line.
 - 2026-11-27 · Scheduler · APScheduler background job every 30 s reading pending reminders from the database (`SCHEDULER_ENABLED`, on by default, off in unit tests) · one process, no worker; restarts lose nothing.
+- 2026-11-27 · Twilio signature URL · computed from `PUBLIC_BASE_URL` + path (falls back to the request URL); without Twilio keys the webhooks accept unsigned requests for local testing · proxies (Railway) change the scheme/host the app sees; spec requires checks only when keys are set.
+- 2026-11-27 · Call recordings · downloaded as WAV with Twilio auth, transcribed in memory, then deleted from Twilio via the API · "caller audio is deleted right after transcription".
+- 2026-11-27 · Nothing said after <Record> · Twilio falls through to a <Redirect> to `/twilio/voice/silence` · that is the silence event (8 s timeout).
+- 2026-11-27 · Rate limits · in-memory sliding window: 40 webhook requests a minute per phone, 120 per IP (webhooks and simulator starts) · "basic rate limits per phone and IP" in one process without Redis.
+- 2026-11-27 · Twilio send failures (e.g. unverified numbers on a trial account) · recorded as "failed" in the outbox, never break the call · never strand the caller.

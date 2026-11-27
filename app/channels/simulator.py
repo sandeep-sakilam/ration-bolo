@@ -12,6 +12,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
+from app.channels.twilio_common import IP_LIMIT
 from app.db import get_db
 from app.dialogue import Dialogue, Event, Reply
 from app.models import DialogueSession
@@ -82,6 +83,7 @@ def callers() -> list[dict[str, str]]:
 
 @router.post("/start")
 def start(body: StartIn, request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
+    IP_LIMIT.check(f"sim:{request.client.host if request.client else ''}")
     if body.caller not in DEMO_CALLERS:
         raise HTTPException(400, "unknown caller")
     if body.state not in request.app.state.packs:
