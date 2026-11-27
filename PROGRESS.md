@@ -1,6 +1,6 @@
 # Progress
 
-Current: F16 merged; next is F17 on `feat/f17-submission-pack`
+Current: F17 merged (submission build complete); next is F18 on `feat/f18-second-pack`
 
 ## Functionality backlog
 
@@ -22,7 +22,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F14 Impact metrics page — `feat/f14-metrics`
 - [x] F15 Acceptance suite — `feat/f15-acceptance`
 - [x] F16 Railway deployment — `feat/f16-deploy`
-- [ ] F17 Submission pack — `feat/f17-submission-pack`
+- [x] F17 Submission pack — `feat/f17-submission-pack`
 
 Finale:
 
