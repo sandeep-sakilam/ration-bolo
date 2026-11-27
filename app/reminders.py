@@ -14,8 +14,9 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from app import demo, levels, queue
 from app.clock import fmt_time, now_utc, to_ist
-from app.models import Outbox, PhoneLink, Reminder, Token
+from app.models import Outbox, PhoneLink, Reminder, Shop, Token
 from app.packs import get_pack
+from app.publicpds import current as current_public_pds
 from app.seed import reset_demo
 from app.services import Services
 
@@ -158,6 +159,21 @@ def start_scheduler(
         next_run_time=now_utc() + timedelta(seconds=5),
         max_instances=1,
         coalesce=True,
+    )
+
+    def poll_public_pds() -> None:
+        try:
+            with factory() as db:
+                pds = current_public_pds()
+                added = sum(pds.store(db, shop) for shop in db.scalars(select(Shop)))
+                db.commit()
+                if added:
+                    log.info("stored %d public PDS sale snapshots", added)
+        except Exception:
+            log.exception("public PDS poll failed")
+
+    scheduler.add_job(
+        poll_public_pds, "interval", minutes=10, id="public_pds", coalesce=True, max_instances=1
     )
     if demo_on:
 

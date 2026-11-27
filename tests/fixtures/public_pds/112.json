@@ -1,0 +1,166 @@
+{
+ "shop_code": "112",
+ "note": "Demo data: fictional public ePoS sales for Shop 112 (times are IST, today)",
+ "sales": [
+  {
+   "time": "09:10",
+   "count": 4
+  },
+  {
+   "time": "09:20",
+   "count": 4
+  },
+  {
+   "time": "09:30",
+   "count": 5
+  },
+  {
+   "time": "09:40",
+   "count": 4
+  },
+  {
+   "time": "09:50",
+   "count": 4
+  },
+  {
+   "time": "10:00",
+   "count": 4
+  },
+  {
+   "time": "10:10",
+   "count": 4
+  },
+  {
+   "time": "10:20",
+   "count": 4
+  },
+  {
+   "time": "10:30",
+   "count": 5
+  },
+  {
+   "time": "10:40",
+   "count": 4
+  },
+  {
+   "time": "10:50",
+   "count": 4
+  },
+  {
+   "time": "11:00",
+   "count": 4
+  },
+  {
+   "time": "11:10",
+   "count": 4
+  },
+  {
+   "time": "11:20",
+   "count": 4
+  },
+  {
+   "time": "11:30",
+   "count": 5
+  },
+  {
+   "time": "11:40",
+   "count": 4
+  },
+  {
+   "time": "11:50",
+   "count": 4
+  },
+  {
+   "time": "16:00",
+   "count": 4
+  },
+  {
+   "time": "16:10",
+   "count": 4
+  },
+  {
+   "time": "16:20",
+   "count": 5
+  },
+  {
+   "time": "16:30",
+   "count": 4
+  },
+  {
+   "time": "16:40",
+   "count": 4
+  },
+  {
+   "time": "16:50",
+   "count": 4
+  },
+  {
+   "time": "17:00",
+   "count": 4
+  },
+  {
+   "time": "17:10",
+   "count": 4
+  },
+  {
+   "time": "17:20",
+   "count": 5
+  },
+  {
+   "time": "17:30",
+   "count": 4
+  },
+  {
+   "time": "17:40",
+   "count": 4
+  },
+  {
+   "time": "17:50",
+   "count": 4
+  },
+  {
+   "time": "18:00",
+   "count": 4
+  },
+  {
+   "time": "18:10",
+   "count": 4
+  },
+  {
+   "time": "18:20",
+   "count": 5
+  },
+  {
+   "time": "18:30",
+   "count": 4
+  },
+  {
+   "time": "18:40",
+   "count": 4
+  },
+  {
+   "time": "18:50",
+   "count": 4
+  },
+  {
+   "time": "19:00",
+   "count": 4
+  },
+  {
+   "time": "19:10",
+   "count": 4
+  },
+  {
+   "time": "19:20",
+   "count": 5
+  },
+  {
+   "time": "19:30",
+   "count": 4
+  },
+  {
+   "time": "19:40",
+   "count": 4
+  }
+ ]
+}

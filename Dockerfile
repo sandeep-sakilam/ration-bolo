@@ -23,6 +23,7 @@ ENV GIT_SHA=${GIT_SHA}
 
 COPY app ./app
 COPY packs ./packs
+COPY tests/fixtures ./tests/fixtures
 RUN mkdir -p /srv/data
 
 EXPOSE 8000

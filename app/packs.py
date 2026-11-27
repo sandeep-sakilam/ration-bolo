@@ -103,6 +103,10 @@ V3_PHRASES: dict[str, str] = {
     "queue_reported": (
         "By cardholders' reports about {ahead} people are there, about {minutes} minutes."
     ),
+    "public_started": "Public sales data shows the shop started selling at {time}.",
+    "public_stopped": (
+        "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
+    ),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [

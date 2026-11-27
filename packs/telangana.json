@@ -1364,6 +1364,16 @@
    "te": "Meeru shop daggara unnaru ani namodu chesamu. Gata gantalo {count} mandi check-in chesaru.",
    "hi": "Aap dukaan par hain, darj kar liya. Pichhle ghante mein {count} log check-in kar chuke hain.",
    "en": "Noted that you are at the shop. {count} people checked in in the last hour."
+  },
+  "public_started": {
+   "te": "Public ammakala data prakaram shop {time} ki ammakalu modalupettindi.",
+   "hi": "Sarkari bikri data ke anusaar dukaan ne {time} baje bikri shuru ki.",
+   "en": "Public sales data shows the shop started selling at {time}."
+  },
+  "public_stopped": {
+   "te": "Public ammakala data lo {minutes} nimishaluga ammakalu levu; shop aagi undavachu.",
+   "hi": "Sarkari bikri data mein {minutes} minute se koi bikri nahi; dukaan ruki ho sakti hai.",
+   "en": "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
   }
  },
  "default_busy_pattern": {

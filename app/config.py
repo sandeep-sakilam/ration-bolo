@@ -56,6 +56,10 @@ class Settings(BaseSettings):
     exotel_dlt_entity_id: str = ""
     exotel_dlt_template_id: str = ""
 
+    # Public PDS data (shop-wise sales from the state's public portal): "auto" reads a state
+    # portal only when its pack enables it (else demo fixtures), "mock" fixtures only, "off".
+    public_pds_mode: str = "auto"
+    public_pds_fixtures: str = "tests/fixtures/public_pds"
     # Salt for hashing reporters' phone numbers (cardholder reports store only the hash).
     reporter_salt: str = "ration-bolo-reporter-salt"
     # Optional second Twilio number for free missed-call check-ins (answered with <Reject>).

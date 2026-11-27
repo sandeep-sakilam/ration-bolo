@@ -20,6 +20,9 @@ from app.config import Settings
 if TYPE_CHECKING:
     from app.dialogue import Dialogue
 from app.packs import all_packs
+from app.publicpds import MockPublicPds, PublicPdsService
+from app.publicpds import current as current_public_pds
+from app.publicpds import register as register_public_pds
 from app.speech.stt import MockSTT, SarvamSTT, SpeechToText, WisprSTT
 from app.speech.tts import MockTTS, ReplyVoice, SarvamTTS, TextToSpeech
 from app.statedata import DealerFedStateData, StateData
@@ -148,6 +151,7 @@ class Services:
                 if s.exotel_ready
                 else "not enabled (TELEPHONY_PROVIDER=exotel + EXOTEL_* keys) · using Twilio",
             },
+            current_public_pds().status(),
             {
                 "service": "state_data",
                 "provider": "State Civil Supplies (ePoS)",
@@ -258,6 +262,10 @@ def build_services(settings: Settings) -> Services:
             settings.exotel_dlt_entity_id,
             settings.exotel_dlt_template_id,
         )
+    pds = PublicPdsService(
+        mode=settings.public_pds_mode, mock=MockPublicPds(settings.public_pds_fixtures)
+    )
+    register_public_pds(pds)
     return Services(settings, primary, backup, tts, messenger, DealerFedStateData())
 
 
