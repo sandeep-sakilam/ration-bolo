@@ -114,6 +114,21 @@ def _match_lists(
     return len(hits)
 
 
+def _pick(
+    tokens: list[str],
+    groups: dict[str, dict[str, list[str]]],
+    threshold: float,
+    langs: Counter[str],
+) -> str | None:
+    """Which group's words were said. Exact matches win over close ones, so
+    "kaalai" (morning) is never read as "maalai" (evening)."""
+    for t in (100.0, threshold):
+        found = [name for name, lists in groups.items() if _match_lists(tokens, lists, t, langs)]
+        if found:
+            return found[-1]
+    return None
+
+
 def _number_table(pack: Pack) -> dict[tuple[str, ...], int]:
     table: dict[tuple[str, ...], int] = {}
     for words in pack.raw["numbers"].values():
@@ -199,12 +214,8 @@ def understand(text: str, pack: Pack) -> Understanding:
 
     result.yes = _match_lists(tokens, pack.raw["yes"], t, langs) > 0
     result.no = _match_lists(tokens, pack.raw["no"], t, langs) > 0
-    for day, lists in pack.raw["day_words"].items():
-        if _match_lists(tokens, lists, t, langs):
-            result.day = day
-    for session, lists in pack.raw["session_words"].items():
-        if _match_lists(tokens, lists, t, langs):
-            result.session = session
+    result.day = _pick(tokens, pack.raw["day_words"], t, langs)
+    result.session = _pick(tokens, pack.raw["session_words"], t, langs)
     for target, phrases in pack.raw["switch_phrases"].items():
         if any(find_phrase(tokens, p, t) >= 0 for p in phrases):
             result.switch_to = target

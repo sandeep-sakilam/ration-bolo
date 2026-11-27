@@ -79,7 +79,7 @@ def test_booking_refused_twice_in_month(db: Session) -> None:
 
 
 def test_machine_down_status_first_and_booking_refused(db: Session) -> None:
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     queue.set_status(db, shop, machine="down")
     db.commit()
     call = Call(db, SALMA)

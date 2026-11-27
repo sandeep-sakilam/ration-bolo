@@ -66,3 +66,6 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Deployment check · `scripts/smoke_deploy.sh` reads health, status, simulator and checks that unsigned Twilio webhooks are refused · safe to run against the live link; it never calls Twilio.
 - 2026-11-27 · Deck format · `docs/deck.html` with real text on 16:9 pages, printed to `docs/Ration-Bolo-Deck.pdf` by Playwright Chromium; `--video` and `--live` fill slide 11's placeholders · judges read the text; Sandeep adds the links after recording and deploying.
 - 2026-11-27 · Committing the built PDF · yes, rebuilt with `make deck` · the submission needs a PDF even if nobody runs the script.
+- 2026-11-27 · Tamil Nadu pack (draft) · Tamil + English, 5 kg rice per person (NFSA priority-household scale), romanised and Tamil-script keywords, numbers 0–100; a demo shop 201 (Tambaram) and caller "Meena" (+91 90000 06603) · proves a new state is a pack file plus data; marked draft until native speakers and the state's actual scale are checked.
+- 2026-11-27 · Exact before fuzzy for day/session words · an exact match always wins over a close one · "kaalai" (morning) and "maalai" (evening) are 83% similar.
+- 2026-11-27 · Pack order in the simulator · final packs before drafts, then by name · Telangana stays the default choice.

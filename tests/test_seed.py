@@ -11,7 +11,7 @@ from app.seed import ensure_windows, reset_demo, seed_demo, seed_if_empty
 def test_seed_matches_pilot(empty_db: Session) -> None:
     db = empty_db
     seed_demo(db)
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     assert shop.code == "108" and shop.families_per_hour == 30
     lakshmi = db.scalars(select(Card).where(Card.card_no == "TS-108-0421")).one()
     assert lakshmi.members == 4 and lakshmi.language == "te" and lakshmi.last4 == "0421"
@@ -41,18 +41,18 @@ def test_seed_only_when_empty_and_reset(empty_db: Session) -> None:
     db = empty_db
     assert seed_if_empty(db) is True
     assert seed_if_empty(db) is False
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     shop.status_machine = "down"
     db.commit()
     reset_demo(db)
-    assert db.scalars(select(Shop)).one().status_machine == "working"
-    assert db.scalar(select(func.count()).select_from(Shop)) == 1
+    assert db.scalars(select(Shop).where(Shop.code == "108")).one().status_machine == "working"
+    assert db.scalar(select(func.count()).select_from(Shop)) == 2
 
 
 def test_ensure_windows_idempotent(empty_db: Session) -> None:
     db = empty_db
     seed_demo(db)
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     day = ist_today() + timedelta(days=5)
     assert len(ensure_windows(db, shop, day)) == 24
     assert len(ensure_windows(db, shop, day)) == 24

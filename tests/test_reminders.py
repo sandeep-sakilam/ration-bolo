@@ -44,7 +44,7 @@ def test_due_reminder_calls_with_live_count(client: TestClient, db: Session) -> 
 
 def test_reminder_mentions_status_when_paused(client: TestClient, db: Session) -> None:
     _book_lakshmi(client)
-    shop = db.scalars(select(Shop)).one()
+    shop = db.scalars(select(Shop).where(Shop.code == "108")).one()
     queue.set_status(db, shop, stock="out")
     db.commit()
     reminders.send_now(db, SERVICES)
