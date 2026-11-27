@@ -1,6 +1,6 @@
 # Progress
 
-Current: F04 merged; next is F05 on `feat/f05-understanding`
+Current: F05 merged; next is F06 on `feat/f06-dialogue`
 
 ## Functionality backlog
 
@@ -10,7 +10,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F02 Data model, SQLite/PostgreSQL, demo seed, reset — `feat/f02-data-model`
 - [x] F03 State packs: format, schema, loader, Telangana — `feat/f03-state-packs`
 - [x] F04 Slot and queue engine — `feat/f04-slot-engine`
-- [ ] F05 Speech understanding — `feat/f05-understanding`
+- [x] F05 Speech understanding — `feat/f05-understanding`
 - [ ] F06 Dialogue engine — `feat/f06-dialogue`
 - [ ] F07 Adapter interfaces, mocks, service status — `feat/f07-adapters`
 - [ ] F08 Speech pipeline — `feat/f08-speech-pipeline`
