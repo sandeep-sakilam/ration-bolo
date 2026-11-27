@@ -264,7 +264,8 @@ def build_services(settings: Settings) -> Services:
             settings.exotel_dlt_template_id,
         )
     pds = PublicPdsService(
-        mode=settings.public_pds_mode, mock=MockPublicPds(settings.public_pds_fixtures)
+        mode=settings.public_pds_mode,
+        mock=MockPublicPds(settings.public_pds_fixtures, demo=settings.demo_active),
     )
     register_public_pds(pds)
     return Services(settings, primary, backup, tts, messenger, DealerFedStateData())

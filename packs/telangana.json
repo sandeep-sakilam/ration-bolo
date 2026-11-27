@@ -1547,6 +1547,16 @@
    "te": "Idi 'Fair shop' gurtimpu unna shop.",
    "hi": "Yeh 'Fair shop' wali dukaan hai.",
    "en": "It has the 'Fair shop' badge."
+  },
+  "public_not_started": {
+   "te": "Public ammakala data prakaram ivala inka ammakalu modalukaledu.",
+   "hi": "Sarkari bikri data ke anusaar aaj abhi bikri shuru nahi hui.",
+   "en": "Public sales data shows no sales yet today."
+  },
+  "public_closed": {
+   "te": "Ivala {total} ammakalu ayyayi; shop ippudu moosi undi, {opens} terustaru.",
+   "hi": "Aaj {total} bikri hui; dukaan abhi band hai, {opens} khulegi.",
+   "en": "{total} sales today; the shop is closed now and opens {opens}."
   }
  },
  "default_busy_pattern": {

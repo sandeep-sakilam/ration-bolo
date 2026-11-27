@@ -134,13 +134,22 @@ def status_lines(db: Session, shop: Shop, now: datetime) -> list[str]:
                 f"{words[signal.value].capitalize()} — {who}, latest "
                 f"{signal.age_minutes} minutes ago"
             )
-    if view.public is not None and view.public.available and view.public.first_sale:
-        lines.append(
-            f"Public sales data: selling since "
-            f"{to_ist(view.public.first_sale):%H:%M}, "
-            f"{view.public.sales_last_hour} sales in the last hour"
+    public = view.public
+    if public is not None and public.available and public.first_sale:
+        line = (
+            f"Public sales data: selling since {to_ist(public.first_sale):%H:%M}, "
+            f"{public.sales_last_hour} sales in the last hour"
         )
-    elif view.public is not None and not view.public.available:
+        if public.closed_now and public.opens_at:
+            line = (
+                f"Public sales data: {public.total_today} sales today (since "
+                f"{to_ist(public.first_sale):%H:%M}); closed now, opens "
+                f"{to_ist(public.opens_at):%H:%M}"
+            )
+        lines.append(line)
+    elif public is not None and public.available:
+        lines.append("Public sales data: no sales yet today")
+    elif public is not None and not public.available:
         lines.append("Public sales data: unavailable right now")
     lines.extend(f"Sources disagree: {d}" for d in view.disagreements)
     return lines or ["No recent reports for this shop."]

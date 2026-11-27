@@ -154,15 +154,60 @@ def parse_html_table(text: str, day: date) -> list[SaleEvent]:
 # --- adapters -------------------------------------------------------------------
 
 
+DEMO_PATTERN = (4, 4, 5, 4, 4, 4)  # every 10 minutes: 25 an hour
+
+
+def generate_demo_sales(
+    day: date, sessions: list[list[str]], now: datetime, first: str = "09:10", stopped: bool = False
+) -> list[SaleEvent]:
+    """Version 3.1 demo sales, relative to now: first sale at 09:10 IST, then a sale batch
+    every 10 minutes (about 25 an hour, small deterministic variation by day) during open
+    sessions only, up to now. Each session after the first sale starts selling at its
+    opening minute, so a gap of 45 minutes never happens while open. ``stopped`` (tests
+    only) ends sales an hour before now."""
+    first_at = parse_time(first) or time(9, 10)
+    cutoff = now - timedelta(hours=1) if stopped else now
+    shift = day.toordinal() % len(DEMO_PATTERN)
+    events: list[SaleEvent] = []
+    i = 0
+    for start_s, end_s in sessions:
+        start, end = time.fromisoformat(start_s), time.fromisoformat(end_s)
+        if end <= first_at:
+            continue
+        t = datetime.combine(day, max(start, first_at))
+        end_dt = datetime.combine(day, end)
+        while t < end_dt:
+            when = ist_to_utc(day, t.time())
+            if when > cutoff:
+                return events
+            events.append(SaleEvent(when, DEMO_PATTERN[(i + shift) % len(DEMO_PATTERN)]))
+            t += timedelta(minutes=10)
+            i += 1
+    return events
+
+
 class MockPublicPds:
     """Fixture-backed: ``<dir>/<shop_code>.json`` with {"sales": [{"time": "09:10",
-    "count": 4}, ...]} as IST times today; only sales up to now are returned."""
+    "count": 4}, ...]} as IST times today; only sales up to now are returned.
+
+    In demo mode (``demo=True``) a fixture with a ``"demo"`` block is generated relative to
+    now instead (see ``generate_demo_sales``), so the demo never goes stale."""
 
     name = "mock"
 
-    def __init__(self, fixture_dir: str | Path, fail: bool = False) -> None:
+    def __init__(
+        self, fixture_dir: str | Path, fail: bool = False, demo: bool = False, stopped: bool = False
+    ) -> None:
         self.dir = Path(fixture_dir)
         self.fail = fail
+        self.demo = demo
+        self.stopped = stopped
+
+    def generated(self, shop_code: str) -> bool:
+        path = self.dir / f"{shop_code}.json"
+        if not self.demo or not path.exists():
+            return False
+        return "demo" in json.loads(path.read_text(encoding="utf-8"))
 
     def has(self, shop_code: str) -> bool:
         return (self.dir / f"{shop_code}.json").exists()
@@ -175,6 +220,15 @@ class MockPublicPds:
             return []
         data = json.loads(path.read_text(encoding="utf-8"))
         now = now_utc()
+        if self.demo and "demo" in data:
+            spec = data["demo"]
+            return generate_demo_sales(
+                day,
+                spec.get("sessions", [["08:00", "12:00"], ["16:00", "20:00"]]),
+                now,
+                spec.get("first_sale", "09:10"),
+                self.stopped,
+            )
         events = []
         for sale in data.get("sales", []):
             at = parse_time(str(sale["time"]))
@@ -225,6 +279,11 @@ class PublicSignals:
     possibly_stopped: bool = False
     stopped_minutes: int = 0
     error: str | None = None
+    total_today: int = 0
+    open_now: bool = False
+    not_started: bool = False  # open hours but no sale yet today
+    closed_now: bool = False  # outside open hours (between sessions or after closing)
+    opens_at: datetime | None = None  # next opening (naive UTC)
 
     @property
     def minutes_per_family(self) -> float | None:
@@ -233,9 +292,17 @@ class PublicSignals:
         return None
 
 
-def signals(events: list[SaleEvent], now: datetime, open_now: bool) -> PublicSignals:
+def signals(
+    events: list[SaleEvent], now: datetime, open_now: bool, opens_at: datetime | None = None
+) -> PublicSignals:
     if not events:
-        return PublicSignals(available=True)
+        return PublicSignals(
+            available=True,
+            open_now=open_now,
+            not_started=True,
+            closed_now=not open_now,
+            opens_at=opens_at,
+        )
     first, last = events[0].time, events[-1].time
     last_hour = sum(e.count for e in events if now - timedelta(hours=1) < e.time <= now)
     gap = int((now - last).total_seconds() // 60)
@@ -246,7 +313,22 @@ def signals(events: list[SaleEvent], now: datetime, open_now: bool) -> PublicSig
         sales_last_hour=last_hour,
         possibly_stopped=open_now and gap >= STOPPED_AFTER_MIN,
         stopped_minutes=gap,
+        total_today=sum(e.count for e in events),
+        open_now=open_now,
+        closed_now=not open_now,
+        opens_at=None if open_now else opens_at,
     )
+
+
+def next_opening(shop: Shop, now: datetime) -> datetime:
+    """The next session start after now (today or tomorrow), naive UTC."""
+    local = to_ist(now)
+    for day in (local.date(), local.date() + timedelta(days=1)):
+        for start, _end in sorted(shop.sessions):
+            at = ist_to_utc(day, time.fromisoformat(start))
+            if at > now:
+                return at
+    return ist_to_utc(local.date() + timedelta(days=1), time.fromisoformat(shop.sessions[0][0]))
 
 
 def is_open(shop: Shop, now: datetime) -> bool:
@@ -327,7 +409,10 @@ class PublicPdsService:
             return None
         if entry.error is not None:
             return PublicSignals(available=False, error=entry.error)
-        return signals(entry.events, now, is_open(shop, now))
+        result = signals(entry.events, now, is_open(shop, now), next_opening(shop, now))
+        if self.mode != "off" and self.mock.generated(shop.code) and not self.mock.stopped:
+            result.possibly_stopped = False  # demo sales never fake a stoppage
+        return result
 
     def store(self, db: Session, shop: Shop, now: datetime | None = None) -> int:
         """Save new sale events as snapshots (used by the polling job)."""

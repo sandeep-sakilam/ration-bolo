@@ -1,6 +1,20 @@
 {
  "shop_code": "112",
- "note": "Demo data: fictional public ePoS sales for Shop 112 (times are IST, today)",
+ "note": "Demo data: fictional public ePoS sales for Shop 112 (times are IST, today). In demo mode the 'demo' block is used instead: sales generated relative to now.",
+ "demo": {
+  "first_sale": "09:10",
+  "per_hour": 25,
+  "sessions": [
+   [
+    "08:00",
+    "12:00"
+   ],
+   [
+    "16:00",
+    "20:00"
+   ]
+  ]
+ },
  "sales": [
   {
    "time": "09:10",
