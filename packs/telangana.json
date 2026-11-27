@@ -1,0 +1,1175 @@
+{
+ "state": "telangana",
+ "name": "Telangana",
+ "status": "final",
+ "version": 1,
+ "languages": [
+  {
+   "code": "te",
+   "name": "Telugu",
+   "wispr": "te",
+   "sarvam": "te-IN",
+   "browser": "te-IN",
+   "reply_language": "te"
+  },
+  {
+   "code": "hi",
+   "name": "Hindi",
+   "wispr": "hi",
+   "sarvam": "hi-IN",
+   "browser": "hi-IN",
+   "reply_language": "hi"
+  },
+  {
+   "code": "ur",
+   "name": "Urdu",
+   "wispr": "ur",
+   "sarvam": "hi-IN",
+   "browser": "ur-IN",
+   "reply_language": "hi"
+  },
+  {
+   "code": "en",
+   "name": "English",
+   "wispr": "en",
+   "sarvam": "en-IN",
+   "browser": "en-IN",
+   "reply_language": "en"
+  }
+ ],
+ "reply_languages": [
+  "te",
+  "hi",
+  "en"
+ ],
+ "default_language": "te",
+ "kg_per_person": {
+  "rice": 6
+ },
+ "fuzzy_threshold": 82,
+ "intents": {
+  "stock": {
+   "te": [
+    "biyyam",
+    "బియ్యం",
+    "vachaya",
+    "vachayi",
+    "వచ్చాయా",
+    "sarukulu",
+    "rationu"
+   ],
+   "hi": [
+    "chawal",
+    "चावल",
+    "ration",
+    "राशन",
+    "aaya",
+    "आया",
+    "aaya kya",
+    "maal"
+   ],
+   "ur": [
+    "chawal",
+    "ration",
+    "aaya"
+   ],
+   "en": [
+    "rice",
+    "ration",
+    "stock",
+    "arrived"
+   ]
+  },
+  "queue": {
+   "te": [
+    "entha mandi",
+    "ఎంత మంది",
+    "line",
+    "janam",
+    "rush"
+   ],
+   "hi": [
+    "kitne log",
+    "कितने लोग",
+    "line",
+    "लाइन",
+    "bheed",
+    "भीड़"
+   ],
+   "ur": [
+    "kitne log",
+    "line"
+   ],
+   "en": [
+    "queue",
+    "line",
+    "how many people",
+    "how many"
+   ]
+  },
+  "book": {
+   "te": [
+    "book",
+    "slot",
+    "buk",
+    "బుక్",
+    "repu",
+    "రేపు",
+    "time ivvandi"
+   ],
+   "hi": [
+    "book",
+    "slot",
+    "बुक",
+    "kal",
+    "कल",
+    "booking"
+   ],
+   "ur": [
+    "book",
+    "kal"
+   ],
+   "en": [
+    "book",
+    "slot",
+    "booking",
+    "tomorrow"
+   ]
+  },
+  "complaint": {
+   "te": [
+    "takkuva",
+    "తక్కువ",
+    "complaint",
+    "takkuva ichharu"
+   ],
+   "hi": [
+    "kam",
+    "कम",
+    "kam mila",
+    "shikayat",
+    "शिकायत",
+    "complaint"
+   ],
+   "ur": [
+    "kam",
+    "shikayat"
+   ],
+   "en": [
+    "complaint",
+    "less",
+    "short",
+    "short ration"
+   ]
+  },
+  "end": {
+   "te": [
+    "chalu",
+    "చాలు",
+    "dhanyavaadalu",
+    "ధన్యవాదాలు",
+    "bye",
+    "inkem ledu"
+   ],
+   "hi": [
+    "bas",
+    "बस",
+    "dhanyavaad",
+    "धन्यवाद",
+    "shukriya",
+    "bye",
+    "aur kuch nahi"
+   ],
+   "ur": [
+    "shukriya",
+    "bas"
+   ],
+   "en": [
+    "bye",
+    "thank you",
+    "thanks",
+    "nothing else"
+   ]
+  },
+  "dealer_stock_out": {
+   "te": [
+    "biyyam aipoyindi",
+    "aipoyindi",
+    "అయిపోయింది",
+    "stock aipoyindi"
+   ],
+   "hi": [
+    "chawal khatam",
+    "khatam",
+    "ख़त्म",
+    "खत्म",
+    "stock khatam"
+   ],
+   "ur": [
+    "khatam"
+   ],
+   "en": [
+    "rice finished",
+    "stock out",
+    "out of stock",
+    "finished"
+   ]
+  },
+  "dealer_stock_in": {
+   "te": [
+    "biyyam vachindi",
+    "stock vachindi",
+    "వచ్చింది"
+   ],
+   "hi": [
+    "chawal aa gaya",
+    "stock aa gaya",
+    "aa gaya"
+   ],
+   "ur": [
+    "aa gaya"
+   ],
+   "en": [
+    "rice came",
+    "stock in",
+    "rice arrived",
+    "in stock"
+   ]
+  },
+  "dealer_machine_down": {
+   "te": [
+    "machine down",
+    "machine pani cheyyatledu",
+    "machine aagipoyindi"
+   ],
+   "hi": [
+    "machine down",
+    "machine kharab",
+    "machine band",
+    "machine nahi chal rahi"
+   ],
+   "ur": [
+    "machine kharab"
+   ],
+   "en": [
+    "machine down",
+    "machine not working",
+    "machine broken"
+   ]
+  },
+  "dealer_machine_up": {
+   "te": [
+    "machine working",
+    "machine pani chestundi",
+    "machine vachindi"
+   ],
+   "hi": [
+    "machine working",
+    "machine chalu",
+    "machine theek",
+    "machine chal rahi"
+   ],
+   "ur": [
+    "machine theek"
+   ],
+   "en": [
+    "machine working",
+    "machine up",
+    "machine fixed",
+    "machine ok"
+   ]
+  }
+ },
+ "intent_priority": [
+  "complaint",
+  "book",
+  "queue",
+  "stock",
+  "end"
+ ],
+ "units": {
+  "kg": [
+   "kilo",
+   "kilolu",
+   "kilos",
+   "kg",
+   "kgs",
+   "kilogram",
+   "కిలోలు",
+   "కిలో",
+   "किलो"
+  ]
+ },
+ "numbers": {
+  "te": {
+   "sunna": 0,
+   "okati": 1,
+   "rendu": 2,
+   "moodu": 3,
+   "naalugu": 4,
+   "aidu": 5,
+   "aaru": 6,
+   "edu": 7,
+   "enimidi": 8,
+   "tommidi": 9,
+   "padi": 10,
+   "padakondu": 11,
+   "pannendu": 12,
+   "padamoodu": 13,
+   "padnaalugu": 14,
+   "padihenu": 15,
+   "padahaaru": 16,
+   "padihedu": 17,
+   "paddenimidi": 18,
+   "pandommidi": 19,
+   "iravai": 20,
+   "iravai okati": 21,
+   "iravai rendu": 22,
+   "iravai moodu": 23,
+   "iravai naalugu": 24,
+   "iravai aidu": 25,
+   "iravai aaru": 26,
+   "iravai edu": 27,
+   "iravai enimidi": 28,
+   "iravai tommidi": 29,
+   "muppai": 30,
+   "muppai okati": 31,
+   "muppai rendu": 32,
+   "muppai moodu": 33,
+   "muppai naalugu": 34,
+   "muppai aidu": 35,
+   "muppai aaru": 36,
+   "muppai edu": 37,
+   "muppai enimidi": 38,
+   "muppai tommidi": 39,
+   "nalabhai": 40,
+   "nalabhai okati": 41,
+   "nalabhai rendu": 42,
+   "nalabhai moodu": 43,
+   "nalabhai naalugu": 44,
+   "nalabhai aidu": 45,
+   "nalabhai aaru": 46,
+   "nalabhai edu": 47,
+   "nalabhai enimidi": 48,
+   "nalabhai tommidi": 49,
+   "yabhai": 50,
+   "yabhai okati": 51,
+   "yabhai rendu": 52,
+   "yabhai moodu": 53,
+   "yabhai naalugu": 54,
+   "yabhai aidu": 55,
+   "yabhai aaru": 56,
+   "yabhai edu": 57,
+   "yabhai enimidi": 58,
+   "yabhai tommidi": 59,
+   "aravai": 60,
+   "aravai okati": 61,
+   "aravai rendu": 62,
+   "aravai moodu": 63,
+   "aravai naalugu": 64,
+   "aravai aidu": 65,
+   "aravai aaru": 66,
+   "aravai edu": 67,
+   "aravai enimidi": 68,
+   "aravai tommidi": 69,
+   "debbai": 70,
+   "debbai okati": 71,
+   "debbai rendu": 72,
+   "debbai moodu": 73,
+   "debbai naalugu": 74,
+   "debbai aidu": 75,
+   "debbai aaru": 76,
+   "debbai edu": 77,
+   "debbai enimidi": 78,
+   "debbai tommidi": 79,
+   "enabhai": 80,
+   "enabhai okati": 81,
+   "enabhai rendu": 82,
+   "enabhai moodu": 83,
+   "enabhai naalugu": 84,
+   "enabhai aidu": 85,
+   "enabhai aaru": 86,
+   "enabhai edu": 87,
+   "enabhai enimidi": 88,
+   "enabhai tommidi": 89,
+   "tombhai": 90,
+   "tombhai okati": 91,
+   "tombhai rendu": 92,
+   "tombhai moodu": 93,
+   "tombhai naalugu": 94,
+   "tombhai aidu": 95,
+   "tombhai aaru": 96,
+   "tombhai edu": 97,
+   "tombhai enimidi": 98,
+   "tombhai tommidi": 99,
+   "vanda": 100,
+   "oka": 1,
+   "nalugu": 4,
+   "padhihenu": 15,
+   "iruvai": 20,
+   "సున్నా": 0,
+   "ఒకటి": 1,
+   "రెండు": 2,
+   "మూడు": 3,
+   "నాలుగు": 4,
+   "ఐదు": 5,
+   "ఆరు": 6,
+   "ఏడు": 7,
+   "ఎనిమిది": 8,
+   "తొమ్మిది": 9,
+   "పది": 10,
+   "పదిహేను": 15,
+   "ఇరవై": 20,
+   "ఇరవై నాలుగు": 24,
+   "పద్దెనిమిది": 18,
+   "ముప్పై": 30
+  },
+  "hi": {
+   "shunya": 0,
+   "ek": 1,
+   "do": 2,
+   "teen": 3,
+   "chaar": 4,
+   "paanch": 5,
+   "chhah": 6,
+   "saat": 7,
+   "aath": 8,
+   "nau": 9,
+   "das": 10,
+   "gyarah": 11,
+   "barah": 12,
+   "terah": 13,
+   "chaudah": 14,
+   "pandrah": 15,
+   "solah": 16,
+   "satrah": 17,
+   "atharah": 18,
+   "unnis": 19,
+   "bees": 20,
+   "ikkis": 21,
+   "bais": 22,
+   "teis": 23,
+   "chaubis": 24,
+   "pachchis": 25,
+   "chhabbis": 26,
+   "sattais": 27,
+   "atthais": 28,
+   "untis": 29,
+   "tees": 30,
+   "ikatis": 31,
+   "battis": 32,
+   "taintis": 33,
+   "chautis": 34,
+   "paintis": 35,
+   "chhattis": 36,
+   "saintis": 37,
+   "adtis": 38,
+   "untalis": 39,
+   "chalis": 40,
+   "iktalis": 41,
+   "bayalis": 42,
+   "taintalis": 43,
+   "chavalis": 44,
+   "paintalis": 45,
+   "chhiyalis": 46,
+   "saintalis": 47,
+   "adtalis": 48,
+   "unchas": 49,
+   "pachas": 50,
+   "ikyavan": 51,
+   "bavan": 52,
+   "tirpan": 53,
+   "chauvan": 54,
+   "pachpan": 55,
+   "chhappan": 56,
+   "sattavan": 57,
+   "atthavan": 58,
+   "unsath": 59,
+   "saath": 60,
+   "iksath": 61,
+   "basath": 62,
+   "tirsath": 63,
+   "chausath": 64,
+   "painsath": 65,
+   "chhiyasath": 66,
+   "sadsath": 67,
+   "adsath": 68,
+   "unhattar": 69,
+   "sattar": 70,
+   "ikhattar": 71,
+   "bahattar": 72,
+   "tihattar": 73,
+   "chauhattar": 74,
+   "pachhattar": 75,
+   "chhihattar": 76,
+   "satattar": 77,
+   "athattar": 78,
+   "unasi": 79,
+   "assi": 80,
+   "ikyasi": 81,
+   "bayasi": 82,
+   "tirasi": 83,
+   "chaurasi": 84,
+   "pachasi": 85,
+   "chhiyasi": 86,
+   "sattasi": 87,
+   "atthasi": 88,
+   "navasi": 89,
+   "nabbe": 90,
+   "ikyanve": 91,
+   "banve": 92,
+   "tiranve": 93,
+   "chauranve": 94,
+   "pachanve": 95,
+   "chhiyanve": 96,
+   "sattanve": 97,
+   "atthanve": 98,
+   "ninyanve": 99,
+   "sau": 100,
+   "char": 4,
+   "panch": 5,
+   "chhe": 6,
+   "che": 6,
+   "pandra": 15,
+   "athara": 18,
+   "chobis": 24,
+   "chaubees": 24,
+   "शून्य": 0,
+   "एक": 1,
+   "दो": 2,
+   "तीन": 3,
+   "चार": 4,
+   "पांच": 5,
+   "पाँच": 5,
+   "छह": 6,
+   "सात": 7,
+   "आठ": 8,
+   "नौ": 9,
+   "दस": 10,
+   "पंद्रह": 15,
+   "अठारह": 18,
+   "बीस": 20,
+   "चौबीस": 24,
+   "तीस": 30
+  },
+  "ur": {
+   "shunya": 0,
+   "ek": 1,
+   "do": 2,
+   "teen": 3,
+   "chaar": 4,
+   "paanch": 5,
+   "chhah": 6,
+   "saat": 7,
+   "aath": 8,
+   "nau": 9,
+   "das": 10,
+   "gyarah": 11,
+   "barah": 12,
+   "terah": 13,
+   "chaudah": 14,
+   "pandrah": 15,
+   "solah": 16,
+   "satrah": 17,
+   "atharah": 18,
+   "unnis": 19,
+   "bees": 20,
+   "ikkis": 21,
+   "bais": 22,
+   "teis": 23,
+   "chaubis": 24,
+   "pachchis": 25,
+   "chhabbis": 26,
+   "sattais": 27,
+   "atthais": 28,
+   "untis": 29,
+   "tees": 30,
+   "ikatis": 31,
+   "battis": 32,
+   "taintis": 33,
+   "chautis": 34,
+   "paintis": 35,
+   "chhattis": 36,
+   "saintis": 37,
+   "adtis": 38,
+   "untalis": 39,
+   "chalis": 40,
+   "iktalis": 41,
+   "bayalis": 42,
+   "taintalis": 43,
+   "chavalis": 44,
+   "paintalis": 45,
+   "chhiyalis": 46,
+   "saintalis": 47,
+   "adtalis": 48,
+   "unchas": 49,
+   "pachas": 50,
+   "ikyavan": 51,
+   "bavan": 52,
+   "tirpan": 53,
+   "chauvan": 54,
+   "pachpan": 55,
+   "chhappan": 56,
+   "sattavan": 57,
+   "atthavan": 58,
+   "unsath": 59,
+   "saath": 60,
+   "iksath": 61,
+   "basath": 62,
+   "tirsath": 63,
+   "chausath": 64,
+   "painsath": 65,
+   "chhiyasath": 66,
+   "sadsath": 67,
+   "adsath": 68,
+   "unhattar": 69,
+   "sattar": 70,
+   "ikhattar": 71,
+   "bahattar": 72,
+   "tihattar": 73,
+   "chauhattar": 74,
+   "pachhattar": 75,
+   "chhihattar": 76,
+   "satattar": 77,
+   "athattar": 78,
+   "unasi": 79,
+   "assi": 80,
+   "ikyasi": 81,
+   "bayasi": 82,
+   "tirasi": 83,
+   "chaurasi": 84,
+   "pachasi": 85,
+   "chhiyasi": 86,
+   "sattasi": 87,
+   "atthasi": 88,
+   "navasi": 89,
+   "nabbe": 90,
+   "ikyanve": 91,
+   "banve": 92,
+   "tiranve": 93,
+   "chauranve": 94,
+   "pachanve": 95,
+   "chhiyanve": 96,
+   "sattanve": 97,
+   "atthanve": 98,
+   "ninyanve": 99,
+   "sau": 100,
+   "char": 4,
+   "panch": 5,
+   "chhe": 6,
+   "che": 6,
+   "pandra": 15,
+   "athara": 18,
+   "chobis": 24,
+   "chaubees": 24,
+   "शून्य": 0,
+   "एक": 1,
+   "दो": 2,
+   "तीन": 3,
+   "चार": 4,
+   "पांच": 5,
+   "पाँच": 5,
+   "छह": 6,
+   "सात": 7,
+   "आठ": 8,
+   "नौ": 9,
+   "दस": 10,
+   "पंद्रह": 15,
+   "अठारह": 18,
+   "बीस": 20,
+   "चौबीस": 24,
+   "तीस": 30
+  },
+  "en": {
+   "zero": 0,
+   "one": 1,
+   "two": 2,
+   "three": 3,
+   "four": 4,
+   "five": 5,
+   "six": 6,
+   "seven": 7,
+   "eight": 8,
+   "nine": 9,
+   "ten": 10,
+   "eleven": 11,
+   "twelve": 12,
+   "thirteen": 13,
+   "fourteen": 14,
+   "fifteen": 15,
+   "sixteen": 16,
+   "seventeen": 17,
+   "eighteen": 18,
+   "nineteen": 19,
+   "twenty": 20,
+   "twenty one": 21,
+   "twenty two": 22,
+   "twenty three": 23,
+   "twenty four": 24,
+   "twenty five": 25,
+   "twenty six": 26,
+   "twenty seven": 27,
+   "twenty eight": 28,
+   "twenty nine": 29,
+   "thirty": 30,
+   "thirty one": 31,
+   "thirty two": 32,
+   "thirty three": 33,
+   "thirty four": 34,
+   "thirty five": 35,
+   "thirty six": 36,
+   "thirty seven": 37,
+   "thirty eight": 38,
+   "thirty nine": 39,
+   "forty": 40,
+   "forty one": 41,
+   "forty two": 42,
+   "forty three": 43,
+   "forty four": 44,
+   "forty five": 45,
+   "forty six": 46,
+   "forty seven": 47,
+   "forty eight": 48,
+   "forty nine": 49,
+   "fifty": 50,
+   "fifty one": 51,
+   "fifty two": 52,
+   "fifty three": 53,
+   "fifty four": 54,
+   "fifty five": 55,
+   "fifty six": 56,
+   "fifty seven": 57,
+   "fifty eight": 58,
+   "fifty nine": 59,
+   "sixty": 60,
+   "sixty one": 61,
+   "sixty two": 62,
+   "sixty three": 63,
+   "sixty four": 64,
+   "sixty five": 65,
+   "sixty six": 66,
+   "sixty seven": 67,
+   "sixty eight": 68,
+   "sixty nine": 69,
+   "seventy": 70,
+   "seventy one": 71,
+   "seventy two": 72,
+   "seventy three": 73,
+   "seventy four": 74,
+   "seventy five": 75,
+   "seventy six": 76,
+   "seventy seven": 77,
+   "seventy eight": 78,
+   "seventy nine": 79,
+   "eighty": 80,
+   "eighty one": 81,
+   "eighty two": 82,
+   "eighty three": 83,
+   "eighty four": 84,
+   "eighty five": 85,
+   "eighty six": 86,
+   "eighty seven": 87,
+   "eighty eight": 88,
+   "eighty nine": 89,
+   "ninety": 90,
+   "ninety one": 91,
+   "ninety two": 92,
+   "ninety three": 93,
+   "ninety four": 94,
+   "ninety five": 95,
+   "ninety six": 96,
+   "ninety seven": 97,
+   "ninety eight": 98,
+   "ninety nine": 99,
+   "hundred": 100,
+   "oh": 0
+  }
+ },
+ "yes": {
+  "te": [
+   "avunu",
+   "అవును",
+   "sare",
+   "సరే",
+   "haa",
+   "aunu",
+   "ok"
+  ],
+  "hi": [
+   "haan",
+   "हाँ",
+   "हां",
+   "han",
+   "ha",
+   "theek hai",
+   "ji",
+   "hau"
+  ],
+  "ur": [
+   "haan",
+   "ji"
+  ],
+  "en": [
+   "yes",
+   "yeah",
+   "ok",
+   "okay",
+   "correct",
+   "right"
+  ]
+ },
+ "no": {
+  "te": [
+   "kaadu",
+   "కాదు",
+   "ledu",
+   "లేదు",
+   "vaddu",
+   "వద్దు"
+  ],
+  "hi": [
+   "nahi",
+   "नहीं",
+   "nahin",
+   "na",
+   "mat"
+  ],
+  "ur": [
+   "nahi",
+   "na"
+  ],
+  "en": [
+   "no",
+   "nope",
+   "wrong",
+   "not"
+  ]
+ },
+ "day_words": {
+  "today": {
+   "te": [
+    "ivala",
+    "ivvala",
+    "eeroju",
+    "ఈరోజు",
+    "ఇవాళ"
+   ],
+   "hi": [
+    "aaj",
+    "आज"
+   ],
+   "ur": [
+    "aaj"
+   ],
+   "en": [
+    "today"
+   ]
+  },
+  "tomorrow": {
+   "te": [
+    "repu",
+    "రేపు"
+   ],
+   "hi": [
+    "kal",
+    "कल"
+   ],
+   "ur": [
+    "kal"
+   ],
+   "en": [
+    "tomorrow"
+   ]
+  }
+ },
+ "session_words": {
+  "morning": {
+   "te": [
+    "poddhuna",
+    "poddunna",
+    "podduna",
+    "udayam",
+    "ఉదయం",
+    "పొద్దున"
+   ],
+   "hi": [
+    "subah",
+    "सुबह",
+    "savere"
+   ],
+   "ur": [
+    "subah"
+   ],
+   "en": [
+    "morning"
+   ]
+  },
+  "evening": {
+   "te": [
+    "saayantram",
+    "sayantram",
+    "సాయంత్రం",
+    "maapatela"
+   ],
+   "hi": [
+    "shaam",
+    "शाम"
+   ],
+   "ur": [
+    "shaam"
+   ],
+   "en": [
+    "evening"
+   ]
+  }
+ },
+ "switch_phrases": {
+  "te": [
+   "telugu lo cheppandi",
+   "telugu mein bolo",
+   "telugu lo",
+   "telugu mein",
+   "telugu",
+   "తెలుగు"
+  ],
+  "hi": [
+   "hindi lo cheppandi",
+   "hindi mein bolo",
+   "hindi lo",
+   "hindi mein",
+   "hindi",
+   "हिंदी",
+   "urdu mein bolo",
+   "urdu"
+  ],
+  "en": [
+   "english lo cheppandi",
+   "english mein bolo",
+   "speak english",
+   "english"
+  ]
+ },
+ "display": {
+  "today": {
+   "te": "Ivala",
+   "hi": "Aaj",
+   "en": "Today"
+  },
+  "tomorrow": {
+   "te": "Repu",
+   "hi": "Kal",
+   "en": "Tomorrow"
+  },
+  "morning": {
+   "te": "poddhuna",
+   "hi": "subah",
+   "en": "morning"
+  },
+  "evening": {
+   "te": "saayantram",
+   "hi": "shaam",
+   "en": "evening"
+  }
+ },
+ "twilio_voices": {
+  "te": {
+   "voice": "Google.te-IN-Standard-A",
+   "language": "te-IN"
+  },
+  "hi": {
+   "voice": "Google.hi-IN-Standard-A",
+   "language": "hi-IN"
+  },
+  "en": {
+   "voice": "Polly.Aditi",
+   "language": "en-IN"
+  }
+ },
+ "phrases": {
+  "greeting": {
+   "te": "Namaskaram, Ration Bolo.",
+   "hi": "Namaste, Ration Bolo.",
+   "en": "Hello, Ration Bolo."
+  },
+  "status_stock_out": {
+   "te": "Gamaninchandi: shop lo biyyam aipoyindi, booking aagipoyindi.",
+   "hi": "Dhyan dijiye: dukaan mein chawal khatam hai, booking ruki hai.",
+   "en": "Please note: the shop is out of rice and booking is paused."
+  },
+  "status_machine_down": {
+   "te": "Gamaninchandi: shop lo machine pani cheyyatledu, booking aagipoyindi.",
+   "hi": "Dhyan dijiye: dukaan ki machine band hai, booking ruki hai.",
+   "en": "Please note: the shop's machine is down and booking is paused."
+  },
+  "confirm_card": {
+   "te": "Card chivari ankelu {last4}, sare na?",
+   "hi": "Card ke aakhri ank {last4}, theek hai?",
+   "en": "Card ending {last4}, right?"
+  },
+  "which_card": {
+   "te": "Mee phone ki {count} cardlu unnayi: {options}. Ye card? Chivari ankelu cheppandi.",
+   "hi": "Aapke phone par {count} card hain: {options}. Kaun sa? Aakhri ank boliye.",
+   "en": "Your phone has {count} cards: {options}. Which one? Say the last digits."
+  },
+  "how_help": {
+   "te": "Meeku ela sahayam cheyali?",
+   "hi": "Main aapki kya madad karun?",
+   "en": "How can I help?"
+  },
+  "anything_else": {
+   "te": "Inka emaina kavala?",
+   "hi": "Aur kuch chahiye?",
+   "en": "Anything else?"
+  },
+  "ask_card_digits": {
+   "te": "Mee ration card number okko anke cheppandi.",
+   "hi": "Apna ration card number ek ek ank karke boliye.",
+   "en": "Please say your ration card number, digit by digit."
+  },
+  "read_back_digits": {
+   "te": "Card number {digits}, sare na?",
+   "hi": "Card number {digits}, theek hai?",
+   "en": "Card number {digits}, right?"
+  },
+  "card_not_found": {
+   "te": "Ee number tho card dorakaledu. Malli cheppandi.",
+   "hi": "Is number ka card nahi mila. Phir se boliye.",
+   "en": "No card found with that number. Please say it again."
+  },
+  "card_linked": {
+   "te": "Sare, card {last4} ee phone ki link chesamu.",
+   "hi": "Theek hai, card {last4} is phone se jod diya.",
+   "en": "Done, card {last4} is now linked to this phone."
+  },
+  "stock_yes": {
+   "te": "Avunu, biyyam vachindi. Mee kutumbaniki {kg} kilolu.",
+   "hi": "Haan, chawal aa gaya hai. Aapke parivaar ke liye {kg} kilo.",
+   "en": "Yes, rice has come. {kg} kg for your family."
+  },
+  "stock_no": {
+   "te": "Ledu, biyyam inka raaledu. Mee kutumbaniki {kg} kilolu raavali.",
+   "hi": "Nahi, chawal abhi nahi aaya. Aapke parivaar ke liye {kg} kilo milega.",
+   "en": "No, rice has not come yet. {kg} kg is due for your family."
+  },
+  "queue": {
+   "te": "{ahead} mandi mundu unnaru, sumaru {minutes} nimishalu.",
+   "hi": "{ahead} log aage hain, lagbhag {minutes} minute.",
+   "en": "{ahead} ahead, about {minutes} minutes."
+  },
+  "queue_empty": {
+   "te": "Ippudu line ledu, ventane randi.",
+   "hi": "Abhi line nahi hai, seedhe aa jaiye.",
+   "en": "There is no queue right now, come straight in."
+  },
+  "quietest": {
+   "te": "Repu {time} ki rush takkuva.",
+   "hi": "Kal {time} baje bheed kam hai.",
+   "en": "Tomorrow {time} is the quietest."
+  },
+  "ask_book_when": {
+   "te": "Ye roju, poddhuna leka saayantram?",
+   "hi": "Kis din, subah ya shaam?",
+   "en": "Which day, morning or evening?"
+  },
+  "book_offer": {
+   "te": "{day} {time} ki, sare na?",
+   "hi": "{day} {time} baje, theek hai?",
+   "en": "{day} at {time}, okay?"
+  },
+  "booked": {
+   "te": "Booking ayindi. Mee token {token}. {via} lo pampamu.",
+   "hi": "Booking ho gayi. Aapka token {token}. {via} par bheja hai.",
+   "en": "Booked. Your token is {token}. Sent by {via}."
+  },
+  "booking_refused_month": {
+   "te": "Ee nela mee card ki booking already undi: {day} {time}, token {token}.",
+   "hi": "Is mahine aapke card ki booking pehle se hai: {day} {time}, token {token}.",
+   "en": "Your card already has a booking this month: {day} {time}, token {token}."
+  },
+  "booking_paused": {
+   "te": "Ippudu booking aagipoyindi. Line lo vachi teesukovachu.",
+   "hi": "Abhi booking ruki hai. Aap line mein aa sakte hain.",
+   "en": "Booking is paused right now. You can still come and join the line."
+  },
+  "no_slots": {
+   "te": "{day} {session} lo khaali slot ledu. Vere roju leka vere samayam cheppandi.",
+   "hi": "{day} {session} koi khaali slot nahi hai. Doosra din ya samay boliye.",
+   "en": "No free slot {day} {session}. Please say another day or time."
+  },
+  "ask_other": {
+   "te": "Vere roju leka vere samayam cheppandi.",
+   "hi": "Doosra din ya samay boliye.",
+   "en": "Please say another day or time."
+  },
+  "ask_kg": {
+   "te": "Meeku entha kilolu ichharu?",
+   "hi": "Aapko kitne kilo mile?",
+   "en": "How many kilos did you get?"
+  },
+  "complaint_readback": {
+   "te": "{kg} kilolu, sare na?",
+   "hi": "{kg} kilo, theek hai?",
+   "en": "{kg} kg, right?"
+  },
+  "complaint_filed": {
+   "te": "Complaint namodu chesamu. Number {complaint_no}. Vaaram lopala chustamu.",
+   "hi": "Shikayat darj ho gayi. Number {complaint_no}. Ek hafte mein dekhenge.",
+   "en": "Complaint filed. Number {complaint_no}. It will be looked at within a week."
+  },
+  "complaint_none": {
+   "te": "Meeku {due} kilolu raavali, {kg} kilolu vachayi. Idi sarigaane undi.",
+   "hi": "Aapko {due} kilo milna tha, {kg} kilo mila. Yeh sahi hai.",
+   "en": "{due} kg was due and you got {kg} kg. That is the full amount."
+  },
+  "sorry": {
+   "te": "Kshaminchandi, ardham kaaledu. Dayachesi malli cheppandi.",
+   "hi": "Maaf kijiye, samajh nahi aaya. Kripya phir se boliye.",
+   "en": "Sorry, I didn't catch that. Please say it again."
+  },
+  "menu": {
+   "te": "Stock kosam 1, line kosam 2, booking kosam 3, takkuva ration kosam 4 nokkandi.",
+   "hi": "Stock ke liye 1, line ke liye 2, booking ke liye 3, kam ration ke liye 4 dabaiye.",
+   "en": "Press 1 for stock, 2 for queue, 3 to book, 4 to report short ration."
+  },
+  "menu_text": {
+   "te": "Number pampandi: 1 Stock, 2 Line, 3 Booking, 4 Takkuva ration.",
+   "hi": "Number bhejiye: 1 Stock, 2 Line, 3 Booking, 4 Kam ration.",
+   "en": "Reply with a number: 1 Stock, 2 Queue, 3 Book, 4 Short ration."
+  },
+  "silence": {
+   "te": "Meeru vintunnara? Dayachesi cheppandi.",
+   "hi": "Kya aap sun rahe hain? Kripya boliye.",
+   "en": "Are you there? Please say something."
+  },
+  "goodbye": {
+   "te": "Dhanyavaadalu. Malli call cheyyandi.",
+   "hi": "Dhanyavaad. Phir call kijiye.",
+   "en": "Thank you. Call again any time."
+  },
+  "language_switched": {
+   "te": "Sare, ippudu Telugu lo matladutanu.",
+   "hi": "Theek hai, ab main Hindi mein baat karungi.",
+   "en": "Okay, I will speak English now."
+  },
+  "reminder": {
+   "te": "Ration Bolo: bayaluderandi, mee slot {time} ki. Mundu {ahead} mandi unnaru.",
+   "hi": "Ration Bolo: nikal padiye, aapka slot {time} baje hai. Aage {ahead} log hain.",
+   "en": "Ration Bolo: leave now, your slot is at {time}. {ahead} are ahead."
+  },
+  "sms_booking": {
+   "te": "Ration Bolo: {date} {time}, token {token}, card ••{last4}, Shop {shop}.",
+   "hi": "Ration Bolo: {date} {time}, token {token}, card ••{last4}, Shop {shop}.",
+   "en": "Ration Bolo: {date} {time}, token {token}, card ••{last4}, Shop {shop}."
+  },
+  "summary": {
+   "te": "Ration Bolo saaramsham: {items}",
+   "hi": "Ration Bolo saaransh: {items}",
+   "en": "Ration Bolo summary: {items}"
+  },
+  "dealer_updated": {
+   "te": "Status maarchamu: {status}.",
+   "hi": "Status badal diya: {status}.",
+   "en": "Status updated: {status}."
+  }
+ }
+}
