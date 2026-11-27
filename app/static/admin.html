@@ -17,12 +17,12 @@
   </nav>
 </header>
 <main>
-  <section class="card" id="login" style="max-width:380px;margin:40px auto">
+  <section class="card" id="login" style="max-width:380px;margin:40px auto" hidden>
     <h2>Admin login</h2>
     <form id="login-form">
       <label for="pin">Admin PIN</label>
-      <input type="password" id="pin" inputmode="numeric" autocomplete="current-password" placeholder="Demo PIN is 1234">
-      <p class="small">Demo PIN: <strong>1234</strong> (set <code>ADMIN_PIN</code> to change it).</p>
+      <input type="password" id="pin" inputmode="numeric" autocomplete="current-password" placeholder="PIN">
+      <p class="small">This page asks for a PIN only because <code>ADMIN_PIN</code> is set on this server.</p>
       <button type="submit" class="primary">Open admin</button>
       <p class="small" id="login-error" role="alert"></p>
     </form>

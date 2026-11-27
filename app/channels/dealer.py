@@ -31,6 +31,7 @@ from app.models import (
     mask_phone,
 )
 from app.packs import get_pack
+from app.ratelimit import RateLimiter
 from app.seed import reset_demo
 from app.services import Services
 from app.speech import pipeline
@@ -46,7 +47,7 @@ STATUS_CHANGES = {
 
 def require_pin(request: Request, x_dealer_pin: str = Header(default="")) -> None:
     expected: str = request.app.state.settings.dealer_pin
-    if not secrets.compare_digest(x_dealer_pin.encode(), expected.encode()):
+    if expected and not secrets.compare_digest(x_dealer_pin.encode(), expected.encode()):
         raise HTTPException(401, "wrong dealer PIN")
 
 
@@ -369,8 +370,15 @@ def link_phone(body: LinkIn, db: Session = Depends(get_db)) -> dict[str, Any]:
     return {"message": f"{mask_phone(phone)} linked to card ••{card.last4}"}
 
 
+RESET_LIMIT = RateLimiter(limit=6, window_seconds=60)
+LOOPBACK = {"127.0.0.1", "::1"}
+
+
 @router.post("/reset")
-def reset(db: Session = Depends(get_db)) -> dict[str, str]:
+def reset(request: Request, db: Session = Depends(get_db)) -> dict[str, str]:
+    host = request.client.host if request.client else ""
+    if host not in LOOPBACK:  # local test runs on the same machine are not limited
+        RESET_LIMIT.check(f"reset:{host}")
     reset_demo(db, now_utc())
     return {"message": "Demo data restored"}
 

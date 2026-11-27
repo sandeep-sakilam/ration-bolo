@@ -22,8 +22,8 @@ def _post(client: TestClient, kind: str, text: str):  # type: ignore[no-untyped-
     )
 
 
-def test_admin_pin(client: TestClient) -> None:
-    assert client.get("/api/admin/shops").status_code == 401
+def test_admin_open_without_pin(client: TestClient) -> None:
+    assert client.get("/api/admin/shops").status_code == 200
     shops = client.get("/api/admin/shops", headers=ADMIN).json()
     assert [s["code"] for s in shops] == ["108", "201"]
     assert shops[0]["waiting"] == 18 and shops[0]["cards"] >= 74

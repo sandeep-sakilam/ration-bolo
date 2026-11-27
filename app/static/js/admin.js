@@ -65,5 +65,5 @@
   $("cards-form").addEventListener("submit", (e) => { e.preventDefault(); upload("cards", $("cards-file")); });
   $("tpl-shops").addEventListener("click", (e) => { e.preventDefault(); template("shops"); });
   $("tpl-cards").addEventListener("click", (e) => { e.preventDefault(); template("cards"); });
-  if (pin) login();
+  login();  // opens straight away when the server has no PIN set (no login wall)
 })();

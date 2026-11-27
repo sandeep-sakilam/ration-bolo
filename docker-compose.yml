@@ -10,7 +10,10 @@ services:
       - "8000:8000"
     environment:
       DATABASE_URL: ${DATABASE_URL:-sqlite:////srv/data/ration_bolo.db}
-      DEALER_PIN: ${DEALER_PIN:-1234}
+      # Unset by default: the dealer and admin pages open with no login (set them in production).
+      DEALER_PIN: ${DEALER_PIN:-}
+      ADMIN_PIN: ${ADMIN_PIN:-}
+      DEMO_MODE: ${DEMO_MODE:-auto}
       PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
       WISPR_API_KEY: ${WISPR_API_KEY:-}
       SARVAM_API_KEY: ${SARVAM_API_KEY:-}

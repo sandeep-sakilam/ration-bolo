@@ -83,3 +83,5 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Applying the 10-minute auto-restore · status timers are always recorded; restore is applied only in demo mode, on every dialogue turn, on dashboard refresh and on each scheduler tick · correct even if the scheduler is off, and clock-controlled in tests.
 - 2026-11-27 · Nightly reset time · cron 21:30 UTC (= 03:00 IST), only in demo mode · spec rule 3.
 - 2026-11-27 · Demo mode default · `DEMO_MODE=auto` → on whenever `SEED_DEMO` is on · judges get it with no settings; production turns both off.
+- 2026-11-27 · PIN defaults (F24) · `DEALER_PIN` and `ADMIN_PIN` default to empty = open pages; pages try to load first and only show the PIN form on a 401; the log-out button hides when no PIN is needed · the FAQ forbids a login wall on the live link; production sets the PINs.
+- 2026-11-27 · Rate limits on Reset demo and CSV import · 6 resets and 20 imports a minute per IP; loopback (local test runs) is exempt from the reset limit · open pages need abuse protection, but the e2e suite resets before every flow.
