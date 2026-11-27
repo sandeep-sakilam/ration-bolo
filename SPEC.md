@@ -1,7 +1,9 @@
 # Ration Bolo — Voice-First Ration Shop Assistant
 
-Nov 27, 2026 · @Sandeep · **Version 3.1**
+Nov 28, 2026 · @Sandeep · **Version 3.2**
 
+> **What changed in version 3.2.** F01–F45 are merged. Running the scripted calls at 01:30, 11:00 and 14:00 IST found one gap: when a suggested nearby shop is closed (night, or the midday break), the offer still says "akkada biyyam undi, sumaru 8 nimishala wait" and the next reply then gives reopening advice, so the two contradict each other; and in demo mode the cardholder reports look fresh ("in the last 30 minutes") even at night. Backlog item **F46** fixes both, as described in "Closed-shop honesty (version 3.2)". Nothing else changes.
+>
 > **What changed in version 3.1.** F01–F39 are merged. A review of the merged build by running the scripted calls found five voice-quality problems: advice times are spoken as "19:00"; Level 0 advice ignores the part of the day the caller asked for; the demo public sales data goes stale during the day ("selling since 09:10" but "0 sales in the last hour"); some replies repeat the status warning or stack two advice sentences; and after accepting a nearby shop the caller hears tomorrow's advice instead of today's wait. Backlog items **F40–F45** fix them, as described in "Voice polish (version 3.1)". Nothing else changes.
 >
 > **What changed in version 3.** F01–F28 are merged. Version 3 removes the assumption that the state department and the dealer will cooperate. A new section, "Works without a partner", defines three shop levels and backlog items **F29–F39**: cardholder reports, public PDS data, best-time advice, nearby-shop portability, official complaint routing and escalation, a public transparency page, dealer incentives, volunteer queue coordinators, and the deck and demo updates. Everything already built keeps working unchanged at Shop 108.
@@ -96,7 +98,7 @@ After that commit, everything follows the Git workflow.
 
 ### Functionality backlog
 
-Build in this order, one row per branch. IDs go in branch names and PR titles. **F01 to F28 are merged** (versions 1 and 2). **F29 to F39 are version 3** (merged). **F40 to F45 are version 3.1** and must be merged by **30 Nov 2026, 10:00 AM IST**, so the video can be recorded on the final build and the deck, live link and submission finished that afternoon. They are ordered so that `main` is shippable after every merge: if time runs out, stop after any item and submit.
+Build in this order, one row per branch. IDs go in branch names and PR titles. **F01 to F28 are merged** (versions 1 and 2). **F29 to F39 are version 3** (merged). **F40 to F45 are version 3.1** (merged). **F46 is version 3.2** and must be merged by **29 Nov 2026, 6:00 PM IST**, so the video can be recorded on the final build. Version 3.1 items were due by **30 Nov 2026, 10:00 AM IST**, so the video can be recorded on the final build and the deck, live link and submission finished that afternoon. They are ordered so that `main` is shippable after every merge: if time runs out, stop after any item and submit.
 
 | ID | Functionality | Branch |
 | --- | --- | --- |
@@ -145,6 +147,7 @@ Build in this order, one row per branch. IDs go in branch names and PR titles. *
 | F43 | Shorter replies: one status warning per call, at most one advice sentence per answer, length budget | feat/f43-shorter-replies |
 | F44 | Nearby shop gives today's wait: "go now" when it's open and in stock, else today's best time, else tomorrow | feat/f44-nearby-today |
 | F45 | Version 3.1 docs: demo script phrases, README, acceptance map, deck rebuilt only if quoted text changed | feat/f45-v31-docs |
+| F46 | Closed-shop honesty: nearby offers and status answers respect open hours; demo reports keep their real age outside open hours | feat/f46-closed-shop-honesty |
 
 ## Users and roles
 
@@ -430,6 +433,14 @@ After the caller accepts a nearby shop:
 3. Else: tomorrow's best time.
 4. At Level 1 or 2 shops, offer a booking there as before after this sentence.
 
+### Closed-shop honesty (version 3.2, F46)
+
+1. **Nearby offers respect open hours.** A candidate shop that is closed now is ranked after every open candidate. If it is still offered, the offer says it is closed and when it opens, and quotes the expected wait at that time, never a wait "now": "Shop 112, near Saidabad bus stop, 1.2 km; ippudu moosi undi, saayantram 4 gantalaku terustaru, appudu sadharananga 10 nimishala wait; akkadiki veltara?" (Hindi: "abhi band hai, shaam 4 baje khulegi, tab aam taur par 10 minute"). Times use the version 3.1 spoken forms, and the offer fits the length budget.
+2. **The offer and the reply after "yes" always agree.** Both come from one computed result per suggestion (open now with wait, or opens at time with wait), stored in the session, so the second reply never contradicts the first. Open now → "Ippude vellochu…" (F44). Closed → "Sare, Shop 112. {opens-at phrase}, appudu sadharananga {n} nimishala wait."
+3. **"Rice is there" is only said when it is known for today.** For a closed shop, stock is described as "ivala poddhuna biyyam undi" (there was rice this morning) when today's reports or sales confirm it, otherwise stock is not mentioned.
+4. **Demo reports keep their real age outside open hours.** In demo mode, cardholder reports at demo shops are shifted to stay fresh only while the shop is open. Outside open hours they keep the age they had at the end of the last open session, and status answers say so in natural words: "ivala poddhuna 4 mandi nirdharincharu" (4 people confirmed this morning), "ninna saayantram" (yesterday evening). The same applies on the transparency page ("confirmed this morning by fewer than 5 cardholders").
+5. **Unchanged during open hours.** At 11:00 IST every reply in the scripted flows, including "Ippude vellochu, akkada sumaru 10 nimishala wait", stays exactly as in version 3.1.
+
 ### Version 3.1 acceptance checks
 
 25. In demo mode at any time of day during open hours, `/shop/112` and Ramu's stock answer show sales in the last hour consistent with about 25 an hour, and no "possibly stopped" signal (clock-controlled tests at 09:30, 14:00 and 19:30 IST, plus before opening and after closing).
@@ -437,6 +448,12 @@ After the caller accepts a nearby shop:
 27. Ramu at Level 0 saying "Repu poddhuna book cheyyandi" hears tomorrow-morning advice (or "mornings are busy" plus the best other time), never evening-only advice without that explanation.
 28. With machine down at Shop 108, the warning is heard at the greeting and is not repeated in the stock answer; every scripted reply fits the length budget.
 29. After Lakshmi accepts Shop 112 during open hours, she hears "go now" with the quoted wait, not tomorrow's advice.
+
+### Version 3.2 acceptance checks
+
+30. With Shop 108 "Machine down" at 01:30, 14:00 and 21:00 IST (clock-controlled), the Shop 112 offer says it is closed and when it opens, never a current wait, and the reply after "Avunu" repeats the same opening time and wait; at 11:00 and 17:00 the offer and reply are unchanged from version 3.1.
+31. At 01:30 and 14:00 IST in demo mode, Ramu's stock answer and `/shop/112` describe the reports as from this morning or yesterday, never "in the last 30 minutes"; at 11:00 the answer is unchanged.
+32. Every reply produced by checks 30–31 fits the length budget and contains no "HH:MM" advice times; checks 1–29 still pass.
 
 ## System architecture
 
@@ -581,7 +598,7 @@ YouTube only (public or unlisted), at most 3:00, recorded at 1080p with system a
 
 ## Build phases for Claude Code
 
-Each phase is split into single functionalities, built strictly one at a time under the Git workflow below. The hackathon form closes on 30 Nov 2026 at 11:59 PM IST. F01 to F39 are merged; F40 to F45 must be merged by 30 Nov, 10:00 AM IST, in order, keeping `main` shippable after each.
+Each phase is split into single functionalities, built strictly one at a time under the Git workflow below. The hackathon form closes on 30 Nov 2026 at 11:59 PM IST. F01 to F45 are merged; F46 must be merged by 29 Nov, 6:00 PM IST, keeping `main` shippable.
 
 **Git workflow (mandatory for every functionality):**
 
@@ -607,7 +624,8 @@ Each phase is split into single functionalities, built strictly one at a time un
 6. **Phase 5: Finale groundwork (F18–F22).** Second state pack, link verification, Indian telephony, accessibility, multi-shop admin. *(F01–F22 merged in version 1.)*
 7. **Phase 6: Submission fixes (F23–F28, version 2).** Shared demo safety, no login wall, build identity and checklist, real-adapter smoke script, deck refresh, demo script version 2. *(Merged.)*
 8. **Phase 7: Works without a partner (F29–F39, version 3).** Deck slide first, then shop levels, cardholder reports, public PDS data, best-time advice, nearby shops, grievance routing, transparency page, dealer incentives, volunteer mode, and the version 3 docs. *(Merged.)*
-9. **Phase 8: Voice polish (F40–F45, version 3.1).** Fresh demo sales, natural spoken times, advice context, shorter replies, today's wait at a nearby shop, docs. *Submission cut: merge by 30 Nov, 10:00 AM IST; `main` must be shippable after every merge.*
+9. **Phase 8: Voice polish (F40–F45, version 3.1).** Fresh demo sales, natural spoken times, advice context, shorter replies, today's wait at a nearby shop, docs. *(Merged.)*
+10. **Phase 9: Closed-shop honesty (F46, version 3.2).** *Merge by 29 Nov, 6:00 PM IST.*
 
 ## Limits, open risks and what we will not claim
 
