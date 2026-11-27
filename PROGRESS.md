@@ -1,6 +1,6 @@
 # Progress
 
-Current: F29 merged; next is F30 on `feat/f30-shop-levels`
+Current: F30 merged; next is F31 on `feat/f31-crowd-reports`
 
 ## Functionality backlog
 
@@ -44,7 +44,7 @@ Version 2 submission fixes (F23–F28, merge by 30 Nov 2026, 12:00 noon IST):
 Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon IST; `main` shippable after each):
 
 - [x] F29 Deck slide "Works without a partner: three levels" + Risks text, rebuilt PDF — `feat/f29-deck-three-levels`
-- [ ] F30 Shop levels 0, 1, 2: capabilities, honest wording, level on dashboard/admin, v3 demo shops — `feat/f30-shop-levels`
+- [x] F30 Shop levels 0, 1, 2: capabilities, honest wording, level on dashboard/admin, v3 demo shops — `feat/f30-shop-levels`
 - [ ] F31 Cardholder reports and check-ins, agreement and decay model — `feat/f31-crowd-reports`
 - [ ] F32 Public PDS data adapter, polling and signals — `feat/f32-public-pds`
 - [ ] F33 Best-time advice from hourly crowd profiles — `feat/f33-best-time`

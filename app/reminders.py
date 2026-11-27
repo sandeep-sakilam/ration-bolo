@@ -12,7 +12,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import demo, queue
+from app import demo, levels, queue
 from app.clock import fmt_time, now_utc, to_ist
 from app.models import Outbox, PhoneLink, Reminder, Token
 from app.packs import get_pack
@@ -59,6 +59,10 @@ def reminder_text(db: Session, token: Token) -> tuple[str, str]:
         parts.append(pack.phrase("status_stock_out", lang))
     if card.shop.status_machine != "working":
         parts.append(pack.phrase("status_machine_down", lang))
+    if not levels.takes_bookings(db, card.shop):
+        # The shop dropped to Level 0: the booking is honoured as advice.
+        time_s = fmt_time(token.window.start_time)
+        return pack.phrase("level_dropped_booking", lang, time=time_s), lang
     ahead = queue.ahead_of_booking(db, token)
     parts.insert(
         0, pack.phrase("reminder", lang, time=fmt_time(token.window.start_time), ahead=ahead)

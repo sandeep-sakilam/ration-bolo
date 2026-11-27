@@ -200,7 +200,7 @@ def understand(text: str, pack: Pack) -> Understanding:
             break
 
     for intent in CUSTOMER_INTENTS:
-        score = _match_lists(tokens, pack.raw["intents"][intent], t, langs)
+        score = _match_lists(tokens, pack.raw["intents"].get(intent, {}), t, langs)
         if intent == "complaint" and result.kilos is not None:
             score += 2  # "any number of kilos" means a complaint
         if score:

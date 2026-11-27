@@ -76,6 +76,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def status() -> dict[str, object]:
         result: dict[str, object] = app.state.services.status()
         result["build"] = build_info(settings.repo_url)
+        result["packs"] = [
+            {"state": p.state, "draft": p.is_draft, "missing_v3": p.missing_v3}
+            for p in packs.values()
+        ]
         return result
 
     @app.get("/audio/{audio_id}", include_in_schema=False)

@@ -50,7 +50,8 @@
     const back = d.restore_in_minutes || {};
     if (back.stock) $("stock-badge").textContent += ` · back to normal in ${back.stock} min`;
     if (back.machine) $("machine-badge").textContent += ` · back to normal in ${back.machine} min`;
-    $("pause-badge").hidden = !d.shop.paused; $("pause-badge").className = "badge bad";
+    $("pause-badge").hidden = !d.shop.paused;
+    $("level-badge").textContent = d.level_label || ""; $("pause-badge").className = "badge bad";
     $("k-waiting").textContent = d.waiting;
     $("k-wait").textContent = d.wait_minutes;
     $("k-bookings").textContent = d.bookings.filter((b) => b.status !== "cancelled").length;

@@ -133,7 +133,7 @@ def test_check13_no_login_wall(page: Page, reset: None) -> None:
         page.goto(path)
         expect(page.locator("#dash")).to_be_visible()
         expect(page.locator("#login")).to_be_hidden()
-    expect(page.locator("#shops-body tr")).to_have_count(2)
+    expect(page.locator("#shops-body tr")).to_have_count(5)
 
 
 def test_check14_footer_shows_build(page: Page) -> None:

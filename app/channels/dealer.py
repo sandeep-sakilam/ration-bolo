@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import demo, queue, reminders
+from app import demo, levels, queue, reminders
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -147,6 +147,8 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
     return {
         "demo_data": True,
         "demo_mode": demo_on,
+        "level": levels.effective_level(db, shop),
+        "level_label": levels.label(db, shop),
         "restore_in_minutes": demo.restore_countdown(db, shop) if demo_on else {},
         "shops": [
             {"code": x.code, "name": x.name, "area": x.area}
