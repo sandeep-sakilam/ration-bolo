@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -48,6 +49,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app = FastAPI(title="Ration Bolo", version=__version__, lifespan=lifespan)
     app.state.settings = settings
+    app.add_middleware(GZipMiddleware, minimum_size=500)
+
+    @app.middleware("http")
+    async def cache_static(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        response = await call_next(request)
+        if request.url.path.startswith(("/static/", "/audio/")):
+            response.headers.setdefault("Cache-Control", "public, max-age=3600")
+        return response
+
     app.state.packs = packs
     app.state.services = services
     app.state.dealer_extras = dashboard_rows

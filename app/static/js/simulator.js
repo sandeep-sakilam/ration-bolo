@@ -66,7 +66,9 @@
       bubble("me", heard, { meta: `heard by ${reply.heard.engine}${reply.heard.error ? " · " + reply.heard.error : ""}` });
     }
     const replay = () => speak(reply);
-    bubble("app", reply.text, { gloss: reply.gloss, replay });
+    const said = bubble("app", reply.text, { gloss: reply.gloss, replay });
+    said.lang = reply.browser_lang;  // screen readers pronounce Telugu/Hindi correctly
+    const gloss = said.querySelector(".gloss"); if (gloss) gloss.lang = "en";
     for (const a of reply.actions || []) {
       const note = {
         booking_created: () => `✅ Booked token ${a.token} · ${a.date} ${a.time}`,
