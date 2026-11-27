@@ -431,6 +431,8 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             )
         if code == "112":
             _seed_112_reports(db, shop)
+        if code == "109":
+            _seed_109_complaints(db, shop)
         if code == "115":  # Level 1: 12 walk-ins waiting today (about 24 minutes)
             for n in range(1, 13):
                 db.add(
@@ -456,6 +458,44 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             db.flush()
             db.add(CardHolder(card_id=card.id, display_name=f"Demo family {code}-{i}"))
             db.add(DemoCard(card_id=card.id, language=card.language))
+
+
+def _seed_109_complaints(db: Session, shop: Shop) -> None:
+    """Six short-ration complaints at Shop 109 this month (4 upheld within 7 days, 1 later,
+    1 open), on fictional cards: shows the transparency page and the nearby-shop rule."""
+    now = now_utc()
+    day = ist_today().day
+    for i in range(6):
+        card = Card(
+            card_no=f"TS-109-{4000 + i}",
+            shop_id=shop.id,
+            members=4,
+            language="te",
+            state_pack="telangana",
+        )
+        db.add(card)
+        db.flush()
+        db.add(DemoCard(card_id=card.id, language="te"))
+        back = 10 if i == 4 else i + 1  # the fifth one was resolved late (after 8 days)
+        created = now - timedelta(days=min(back, max(day - 1, 0)), hours=6)
+        resolved = None
+        if i < 4:
+            resolved = min(now, created + timedelta(hours=30))
+        elif i == 4 and created + timedelta(days=8) <= now:
+            resolved = created + timedelta(days=8)
+        db.add(
+            Complaint(
+                complaint_no=f"C-109-{i + 1:04d}",
+                card_id=card.id,
+                shop_id=shop.id,
+                grams_due=24000,
+                grams_received=24000 - 3000 * (1 + i % 3),
+                status="resolved" if resolved else "open",
+                outcome="Missing rice given on recheck" if resolved else None,
+                created_at=created,
+                resolved_at=resolved,
+            )
+        )
 
 
 def _seed_112_reports(db: Session, shop: Shop) -> None:

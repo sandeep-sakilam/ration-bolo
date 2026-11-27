@@ -115,7 +115,7 @@ def test_complaint_filed_with_id_and_none_when_full(db: Session) -> None:
                             "kg_received": 15, "kg_due": 24}  # fmt: skip
     r = call.say("24 kilolu")
     assert "Meeku 24 kilolu raavali, 24 kilolu vachayi" in r.text
-    assert db.query(Complaint).count() == 3
+    assert db.query(Complaint).filter(Complaint.complaint_no.like("C-108-%")).count() == 3
 
 
 def test_complaint_wrong_amount_asks_again(db: Session) -> None:

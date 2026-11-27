@@ -140,3 +140,10 @@ def test_check14_footer_shows_build(page: Page) -> None:
     for path in ("/simulator", "/dealer", "/metrics", "/admin"):
         page.goto(path)
         expect(page.locator("footer #build")).to_contain_text("build ")
+
+
+def test_check21_public_shop_page(page: Page, reset: None) -> None:
+    page.goto("/shop/112")
+    expect(page.locator("h2").first).to_contain_text("Shop 112")
+    expect(page.locator("main")).to_contain_text("fewer than 5")
+    expect(page.locator("main")).not_to_contain_text("Ramu")
