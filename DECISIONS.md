@@ -13,3 +13,8 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Native-script speech · keyword, yes/no, day and number lists include Telugu and Devanagari script forms next to romanised ones · real speech engines return native script; the romanised forms serve the text box and browser speech.
 - 2026-11-27 · Intent ties · resolved by a pack-level `intent_priority` (complaint, book, queue, stock, end) · deterministic and per-state configurable.
 - 2026-11-27 · Pack completeness · besides the JSON schema, the loader checks every reply language has every required phrase with the same placeholders, and that `state` matches the file name · a broken pack must stop startup with a clear error.
+- 2026-11-27 · Late arrival bookkeeping · the booking is marked `late` and a new walk-in token (same card, waiting) is issued · keeps the history of the lost booking and puts the family in the walk-in line.
+- 2026-11-27 · Which arrived booked families can be served · only those whose window has started · "Serve next" alternates within the current window; early arrivals wait for their window.
+- 2026-11-27 · "One booking per month" month · the calendar month of the slot date; cancelled bookings don't count · a booking tomorrow on the 1st belongs to the new month.
+- 2026-11-27 · Live "people ahead" for a reminder · booked families before it (earlier windows, or same window with a lower token) plus, because lines alternate, up to one walk-in for each of them and one more · gives the small, honest numbers the reminder script expects ("three are ahead").
+- 2026-11-27 · Session words → hours · morning 08:00–12:00, evening 16:00–20:00 fixed IST ranges, as in the spec · shops with other hours still match by part of day.
