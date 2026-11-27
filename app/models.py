@@ -285,3 +285,15 @@ class PublicSale(Base):
     sale_time: Mapped[datetime] = mapped_column(DateTime, index=True)
     count: Mapped[int] = mapped_column(Integer)
     source_url: Mapped[str] = mapped_column(String(300), default="")
+
+
+class HourlyProfile(Base):
+    """Expected wait by shop, weekday (0 = Monday) and hour (IST), rebuilt from history (F33)."""
+
+    __tablename__ = "hourly_profiles"
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), primary_key=True)
+    weekday: Mapped[int] = mapped_column(Integer, primary_key=True)
+    hour: Mapped[int] = mapped_column(Integer, primary_key=True)
+    expected_wait_min: Mapped[float] = mapped_column()
+    samples: Mapped[int] = mapped_column(Integer)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)

@@ -510,6 +510,7 @@ class Dialogue:
             quiet = queue.quietest_tomorrow(self.db, shop)
             if quiet:
                 out.say("quietest", time=fmt_time(quiet))
+            self._best_time(shop, out)
             out.say("anything_else")
             self._goto(session, "main", out)
         elif intent == "book":

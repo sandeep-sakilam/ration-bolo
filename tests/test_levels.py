@@ -31,7 +31,7 @@ def test_check15_level0_book_gives_best_time_and_no_booking(db: Session) -> None
     call.say("Avunu")
     r = call.say("Repu poddhuna book cheyyandi")
     assert r.text.startswith("Ee shop lo inka booking ledu.")
-    assert "rush takkuva" in r.text and "Sadharananga" in r.text
+    assert "taruvata sadharananga" in r.text and "nimishala lopu" in r.text  # shop's own data
     assert {"type": "booking_refused", "reason": "level0"} in r.actions
     assert any(a["type"] == "best_time_advice" for a in r.actions)
     assert r.gloss.startswith("This shop doesn't take bookings yet.")

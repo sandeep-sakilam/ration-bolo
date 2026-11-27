@@ -190,6 +190,7 @@ def seed_demo(db: Session, now: datetime | None = None) -> None:
     _seed_history(db, shop, others, today, rng)
     _seed_tamil_nadu(db)
     _seed_v3_shops(db, shop)
+    _seed_hourly_history(db, rng)
     db.add(Event(at=now, actor="system", action="demo_seeded", object=f"shop:{shop.code}"))
     db.commit()
 
@@ -468,6 +469,40 @@ def _seed_112_reports(db: Session, shop: Shop) -> None:
                 created_at=now - timedelta(minutes=minutes),
             )
         )
+
+
+# Typical wait (minutes) by hour for the version 3 demo shops' four weeks of history.
+HISTORY_PATTERN = {
+    "112": {8: 30, 9: 35, 10: 25, 11: 15, 16: 12, 17: 10, 18: 18, 19: 8},
+    "115": {8: 40, 9: 45, 10: 35, 11: 25, 16: 20, 17: 18, 18: 25, 19: 15},
+    "109": {8: 50, 9: 55, 10: 45, 11: 30, 16: 25, 17: 20, 18: 30, 19: 20},
+}
+
+
+def _seed_hourly_history(db: Session, rng: random.Random) -> None:
+    """Four weeks of hourly queue reports (older than 3 hours, so never "live") for the
+    version 3 demo shops; enough for best-time advice with real numbers."""
+    today = ist_today()
+    for code, pattern in HISTORY_PATTERN.items():
+        shop = db.scalars(select(Shop).where(Shop.code == code)).one()
+        per_family = 60 / shop.families_per_hour
+        for back in range(28, 0, -1):
+            day = today - timedelta(days=back)
+            busy = 1.4 if day.day <= 7 else 1.0
+            for hour, wait in pattern.items():
+                people = max(1, round(wait * busy * rng.uniform(0.8, 1.2) / per_family))
+                db.add(
+                    Report(
+                        shop_id=shop.id,
+                        kind="queue_size",
+                        value=people,
+                        reporter_hash=f"hist-{code}-{back}-{hour}",
+                        source="caller",
+                        weight=1.0,
+                        scored=True,
+                        created_at=ist_to_utc(day, time(hour, 20)),
+                    )
+                )
 
 
 def reset_demo(db: Session, now: datetime | None = None) -> None:

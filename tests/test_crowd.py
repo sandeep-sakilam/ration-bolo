@@ -130,7 +130,11 @@ def test_ramu_scripted_report_with_queue(db: Session) -> None:
     assert r.gloss == "You are reporting: rice has arrived, 12 people are there. Right?"
     r = call.say("Avunu")
     assert {"type": "report_saved", "kinds": ["stock_in", "queue_size"]} in r.actions
-    rows = db.scalars(select(Report).where(Report.reporter_hash.not_like("demo-%"))).all()
+    rows = db.scalars(
+        select(Report).where(
+            Report.reporter_hash.not_like("demo-%"), Report.reporter_hash.not_like("hist-%")
+        )
+    ).all()
     assert {(x.kind, x.value) for x in rows} == {("stock_in", None), ("queue_size", 12)}
     assert all(RAMU not in x.reporter_hash and len(x.reporter_hash) == 64 for x in rows)
 
