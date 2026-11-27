@@ -59,6 +59,11 @@ def test_pdf_limits(tmp_path: Path) -> None:
 
 
 def test_v3_risks_present() -> None:
-    for risk in ("Level 0 is information, not enforcement", "can be wrong or gamed",
-                 "Public PDS data formats differ", "Portability", "depend on officials"):
+    for risk in (
+        "Level 0 is information, not enforcement",
+        "can be wrong or gamed",
+        "Public PDS data formats differ",
+        "Portability",
+        "depend on officials",
+    ):
         assert risk in HTML, risk
