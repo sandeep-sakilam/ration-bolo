@@ -26,6 +26,9 @@ class Signal:
     count: int = 1
     confirmed: bool = True
     detail: dict[str, float] = field(default_factory=dict)
+    # Demo reports at a closed shop: (today | yesterday, session start hour) of the
+    # session they belong to, spoken "ivala poddhuna" / "ninna saayantram" (F46).
+    earlier: tuple[str, int] | None = None
 
 
 @dataclass
@@ -71,9 +74,16 @@ def view(db: Session, shop: Shop, now: datetime | None = None) -> ShopView:
                     f"{crowd.rounded_minutes(v.oldest_age_min)} minutes"
                 )
     else:
+        closed = publicpds.last_session(shop, now)
         for sig, v in reported.items():
             if v is None:
                 continue
+            support = [
+                x for x in current if crowd.SIGNALS[x.kind] == (sig, v.value) and x.age_min <= 180
+            ]
+            demo_only = bool(support) and all(
+                x.reporter.startswith(crowd.DEMO_REPORTER_PREFIX) for x in support
+            )
             signal = Signal(
                 sig,
                 v.value,
@@ -82,6 +92,7 @@ def view(db: Session, shop: Shop, now: datetime | None = None) -> ShopView:
                 v.count,
                 v.confirmed,
                 {"oldest": v.oldest_age_min},
+                closed if demo_only else None,
             )
             setattr(result, sig, signal)
     public = publicpds.current().signals(shop, now)
@@ -95,6 +106,10 @@ def view(db: Session, shop: Shop, now: datetime | None = None) -> ShopView:
             )
         result.minutes_per_family = public.minutes_per_family
     ahead = crowd.queue_estimate(current)
+    if ahead is not None and level == 0 and publicpds.last_session(shop, now) is not None:
+        queue_votes = [x for x in current if x.kind in ("queue_size", "checkin")]
+        if all(x.reporter.startswith(crowd.DEMO_REPORTER_PREFIX) for x in queue_votes):
+            ahead = None  # a closed shop has no line now; demo reports are not "now" (F46)
     if ahead is not None and level == 0:
         result.queue_ahead, result.queue_source = ahead, "reports"
     return result

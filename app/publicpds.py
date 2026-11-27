@@ -331,6 +331,18 @@ def next_opening(shop: Shop, now: datetime) -> datetime:
     return ist_to_utc(local.date() + timedelta(days=1), time.fromisoformat(shop.sessions[0][0]))
 
 
+def last_session(shop: Shop, now: datetime) -> tuple[str, int] | None:
+    """The most recent session that has ended, as (today | yesterday, its start hour IST);
+    None while a session is running or the shop has no sessions (F46)."""
+    if is_open(shop, now) or not shop.sessions:
+        return None
+    local = to_ist(now)
+    ended = [s for s in sorted(shop.sessions) if time.fromisoformat(s[1]) <= local.time()]
+    if ended:
+        return "today", time.fromisoformat(ended[-1][0]).hour
+    return "yesterday", time.fromisoformat(sorted(shop.sessions)[-1][0]).hour
+
+
 def is_open(shop: Shop, now: datetime) -> bool:
     local = to_ist(now).time()
     for start, end in shop.sessions:

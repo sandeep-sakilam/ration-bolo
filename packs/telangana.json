@@ -1592,6 +1592,31 @@
    "te": "Biyyam aipoyindi kabatti ippudu booking aagipoyindi. Line lo vachi teesukovachu.",
    "hi": "Chawal khatam hai, isliye abhi booking ruki hai. Aap line mein aa sakte hain.",
    "en": "Rice has run out, so booking is paused. You can still come and join the line."
+  },
+  "status_from_reports_earlier": {
+   "te": "{what}, {when} {count} mandi nirdharincharu.",
+   "hi": "{what}, {when} {count} logon ne bataya.",
+   "en": "{what}, confirmed by {count} people {when}."
+  },
+  "status_one_report_earlier": {
+   "te": "{what}: {when} okka vyakti cheppaaru.",
+   "hi": "{what}: {when} ek vyakti ne bataya.",
+   "en": "{what}: one person reported it {when}."
+  },
+  "nearby_offer_closed": {
+   "te": "Shop {code}, {landmark}, {km} km; ippudu moosi undi, {opens} terustaru, appudu sadharananga {minutes} nimishala wait; akkadiki veltara?",
+   "hi": "Dukaan {code}, {landmark}, {km} km; abhi band hai, {opens} khulegi, tab aam taur par {minutes} minute; wahan jaayenge?",
+   "en": "Shop {code}, {landmark}, {km} km; closed now, opens {opens}, usually about {minutes} minutes' wait then; want to go there?"
+  },
+  "nearby_offer_closed_stock": {
+   "te": "Shop {code}, {landmark}, {km} km; {when} biyyam undi, ippudu moosi undi, {opens} terustaru, appudu sadharananga {minutes} nimishala wait; akkadiki veltara?",
+   "hi": "Dukaan {code}, {landmark}, {km} km; {when} chawal tha, abhi band hai, {opens} khulegi, tab aam taur par {minutes} minute; wahan jaayenge?",
+   "en": "Shop {code}, {landmark}, {km} km; it had rice {when}, closed now, opens {opens}, usually about {minutes} minutes' wait then; want to go there?"
+  },
+  "nearby_closed_when": {
+   "te": "{opens} terustaru, appudu sadharananga {minutes} nimishala wait.",
+   "hi": "{opens} khulegi, tab aam taur par {minutes} minute ka intezaar.",
+   "en": "It opens {opens}, usually about {minutes} minutes' wait then."
   }
  },
  "default_busy_pattern": {
@@ -1635,7 +1660,11 @@
    "after": "{part} {h} gantala taruvata",
    "between": "{part} {h1} nundi {h2} gantala madhya",
    "at": "{part} {h}:{mm} ki",
-   "at_hour": "{part} {h} gantalaku"
+   "at_hour": "{part} {h} gantalaku",
+   "earlier": {
+    "today": "ivala {part}",
+    "yesterday": "ninna {part}"
+   }
   },
   "hi": {
    "parts": {
@@ -1648,7 +1677,11 @@
    "after": "{part} {h} baje ke baad",
    "between": "{part} {h1} se {h2} baje ke beech",
    "at": "{part} {h}:{mm} baje",
-   "at_hour": "{part} {h} baje"
+   "at_hour": "{part} {h} baje",
+   "earlier": {
+    "today": "aaj {part}",
+    "yesterday": "kal {part}"
+   }
   },
   "en": {
    "parts": {
@@ -1661,7 +1694,17 @@
    "after": "after {h} {part}",
    "between": "between {h1} and {h2} {part}",
    "at": "at {h}:{mm} {part}",
-   "at_hour": "at {h} {part}"
+   "at_hour": "at {h} {part}",
+   "earlier": {
+    "today": "this {part}",
+    "yesterday": "yesterday {part}"
+   },
+   "part_names": {
+    "morning": "morning",
+    "afternoon": "afternoon",
+    "evening": "evening",
+    "night": "night"
+   }
   }
  }
 }

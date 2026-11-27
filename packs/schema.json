@@ -321,6 +321,19 @@
               "type": "string"
             }
           },
+          "earlier": {
+            "type": "object",
+            "description": "When reports were made, by day: {\"today\": \"ivala {part}\", \"yesterday\": \"ninna {part}\"} (F46)",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "part_names": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
           "hours": {
             "type": "object",
             "additionalProperties": {
