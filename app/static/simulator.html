@@ -4,9 +4,75 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ration Bolo · Call simulator</title>
+<meta name="description" content="Voice-first ration shop assistant: call simulator for testers and judges.">
+<link rel="stylesheet" href="/static/css/app.css">
 </head>
 <body>
-<h1>Ration Bolo call simulator</h1>
-<p>Demo data</p>
+<header class="top">
+  <h1>Ration Bolo <span class="badge demo">Demo data</span></h1>
+  <nav aria-label="Pages">
+    <a href="/simulator" aria-current="page">Call simulator</a>
+    <a href="/dealer">Dealer dashboard</a>
+    <a href="/metrics">Impact metrics</a>
+  </nav>
+</header>
+<main>
+  <details class="banner" id="status-banner">
+    <summary id="status-summary">Checking speech engines…</summary>
+    <ul id="status-list"></ul>
+  </details>
+  <div class="grid">
+    <section class="card" aria-labelledby="setup-h">
+      <h2 id="setup-h">Call simulator</h2>
+      <p class="small">Play a ration cardholder. Speak (or type) in Telugu, Hindi or English, exactly as a caller would on a phone call or WhatsApp voice note.</p>
+      <label for="caller">Caller</label>
+      <select id="caller"></select>
+      <label for="state">State</label>
+      <select id="state"></select>
+      <label id="mode-label">Channel</label>
+      <div class="seg" role="group" aria-labelledby="mode-label">
+        <button type="button" id="mode-call" aria-pressed="true">📞 Phone call</button>
+        <button type="button" id="mode-wa" aria-pressed="false">💬 WhatsApp voice note</button>
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button type="button" class="primary" id="start">Start call</button>
+        <button type="button" class="danger" id="hangup" disabled>Hang up</button>
+      </div>
+      <label class="row small" style="margin-top:12px;font-weight:400"><input type="checkbox" id="speak" checked> Speak replies aloud</label>
+      <p class="small">All callers, cards and phone numbers are fictional demo data. Names are never spoken.</p>
+    </section>
+
+    <section class="card phone" id="phone" aria-labelledby="who">
+      <div class="callbar">
+        <div>
+          <div class="who" id="who">No call</div>
+          <div class="meta" id="meta">Press "Start call"</div>
+        </div>
+        <span class="badge mock" id="engine-badge">engine: –</span>
+      </div>
+      <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversation"></div>
+      <div class="controls">
+        <div class="microw">
+          <button type="button" class="mic" id="mic" aria-label="Hold to speak" disabled>🎤</button>
+          <div class="mic-hint" id="mic-hint">Tap the mic and speak, or type below.</div>
+        </div>
+        <div id="menu" class="menu-buttons" hidden></div>
+        <form class="textrow" id="textform">
+          <label for="textbox" class="sr-only">Type what the caller says</label>
+          <input type="text" id="textbox" placeholder="Type what you would say…" autocomplete="off" disabled>
+          <button type="submit" class="primary" id="send" disabled>Send</button>
+        </form>
+        <div class="chips" id="chips" aria-label="Example phrases"></div>
+        <div class="row" style="justify-content:space-between">
+          <button type="button" id="toggle-keypad" disabled>⌨ Keypad</button>
+          <button type="button" id="silence" disabled title="Simulate 8 seconds of silence">🤐 Stay silent</button>
+        </div>
+        <div class="keypad" id="keypad" hidden></div>
+      </div>
+    </section>
+  </div>
+</main>
+<footer class="foot">Ration Bolo · voice-first ration shop assistant · Build for Bharat hackathon prototype · demo data only</footer>
+<script src="/static/js/simulator.js"></script>
 </body>
 </html>

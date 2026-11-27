@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app import __version__
+from app.channels import simulator as simulator_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
 from app.packs import all_packs
@@ -82,5 +83,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def simulator() -> FileResponse:
         return FileResponse(STATIC_DIR / "simulator.html")
 
+    app.include_router(simulator_channel.router)
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
     return app
