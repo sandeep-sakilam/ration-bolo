@@ -5,6 +5,8 @@ The text box stands in for speech (it is what the browser's speech recognition f
 
 from __future__ import annotations
 
+import re
+
 from playwright.sync_api import Page, expect
 
 
@@ -147,3 +149,15 @@ def test_check21_public_shop_page(page: Page, reset: None) -> None:
     expect(page.locator("h2").first).to_contain_text("Shop 112")
     expect(page.locator("main")).to_contain_text("fewer than 5")
     expect(page.locator("main")).not_to_contain_text("Ramu")
+
+
+def test_check22_dealer_line_in_simulator(page: Page, reset: None) -> None:
+    dealer(page)
+    page.click("#stock-out")
+    expect(page.locator("#stock-badge")).to_contain_text("Rice finished")
+    start(page, "dealer108")
+    expect(page.locator("#log .bubble.app").first).to_contain_text("Dealer menu")
+    page.click("#menu button:has-text('1')")
+    expect(page.locator("#log .bubble.app").last).to_contain_text("rice in stock")
+    dealer(page)
+    expect(page.locator("#outbox-body")).to_contain_text(re.compile(r"108 (lo|mein)"))

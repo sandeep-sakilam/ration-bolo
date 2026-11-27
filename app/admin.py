@@ -19,7 +19,7 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app import levels, queue
+from app import incentives, levels, queue
 from app.clock import ist_today
 from app.db import get_db
 from app.models import Card, Complaint, PhoneLink, Shop, Token
@@ -196,6 +196,27 @@ def update_profile(code: str, body: ProfileIn, db: Session = Depends(get_db)) ->
     )
     db.commit()
     return {"code": code, "level": levels.base_level(db, shop), "message": f"Shop {code} updated"}
+
+
+class DealerPhoneIn(BaseModel):
+    phone: str
+
+
+@router.post("/shops/{code}/dealer-phone")
+def dealer_phone(
+    code: str, body: DealerPhoneIn, request: Request, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    """Register the dealer's phone (stored only as a salted hash) for the dealer line."""
+    shop = db.scalars(select(Shop).where(Shop.code == code)).first()
+    if shop is None:
+        raise HTTPException(404, "no such shop")
+    phone = re.sub(r"[\s\-()]", "", body.phone)
+    if not PHONE_RE.match(phone):
+        raise HTTPException(400, "phone must be E.164, e.g. +919812345678")
+    incentives.register_dealer_phone(db, shop, phone, request.app.state.settings.reporter_salt)
+    queue.log_event(db, "admin", "dealer_phone_registered", f"shop:{code}")
+    db.commit()
+    return {"message": f"Dealer phone registered for shop {code}"}
 
 
 def import_cards(db: Session, rows: list[dict[str, str]]) -> ImportResult:

@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import crowd, demo, grievance, levels, queue, reminders, shopstate
+from app import crowd, demo, grievance, incentives, levels, queue, reminders, shopstate
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -165,6 +165,8 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
         "demo_mode": demo_on,
         "level": levels.effective_level(db, shop),
         "level_label": levels.label(db, shop),
+        "fair_shop": incentives.fair_shop(db, shop),
+        "broadcast_optins": incentives.optin_count(db, shop),
         "disagreements": shopstate.view(db, shop).disagreements,
         "reports_3h": _report_counts(db, shop),
         "restore_in_minutes": demo.restore_countdown(db, shop) if demo_on else {},
@@ -281,11 +283,15 @@ def _apply_status(
     stock: str | None = None,
     machine: str | None = None,
     actor: str = "dealer",
+    sender: Any = None,
 ) -> dict[str, Any]:
+    was_out = shop.status_stock != "in_stock"
     try:
         queue.set_status(db, shop, stock=stock, machine=machine, actor=actor)
     except ValueError as exc:
         raise HTTPException(400, f"bad status {exc}") from exc
+    if was_out and shop.status_stock == "in_stock" and sender is not None:
+        incentives.stock_arrived(db, shop, sender, "dealer")
     db.commit()
     return {
         "stock": shop.status_stock,
@@ -296,12 +302,18 @@ def _apply_status(
 
 @router.post("/status")
 def status(
-    body: StatusIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+    body: StatusIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    x_shop_code: str = Header(default=""),
 ) -> dict[str, Any]:
-    return _apply_status(db, shop_of(db, x_shop_code), body.stock, body.machine, "dealer")
+    sender = request.app.state.services.sender(db)
+    return _apply_status(db, shop_of(db, x_shop_code), body.stock, body.machine, "dealer", sender)
 
 
-def _voice_update(db: Session, text: str, code: str | None = None) -> dict[str, Any]:
+def _voice_update(
+    db: Session, text: str, code: str | None = None, sender: Any = None
+) -> dict[str, Any]:
     shop = shop_of(db, code)
     pack = get_pack(shop.state_pack)
     intent = dealer_intent(text, pack)
@@ -311,7 +323,7 @@ def _voice_update(db: Session, text: str, code: str | None = None) -> dict[str, 
             "heard": text,
             "message": "Not understood. Say e.g. 'Biyyam aipoyindi', 'Machine down'.",
         }
-    result = _apply_status(db, shop, actor="dealer_voice", **STATUS_CHANGES[intent])
+    result = _apply_status(db, shop, actor="dealer_voice", sender=sender, **STATUS_CHANGES[intent])
     label = {
         "dealer_stock_out": "rice finished",
         "dealer_stock_in": "rice in stock",
@@ -329,9 +341,13 @@ def _voice_update(db: Session, text: str, code: str | None = None) -> dict[str, 
 
 @router.post("/voice")
 def voice(
-    body: VoiceIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+    body: VoiceIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    x_shop_code: str = Header(default=""),
 ) -> dict[str, Any]:
-    return _voice_update(db, body.text[:200], x_shop_code)
+    sender = request.app.state.services.sender(db)
+    return _voice_update(db, body.text[:200], x_shop_code, sender)
 
 
 @router.post("/voice-audio")
@@ -349,7 +365,7 @@ def voice_audio(
     heard = pipeline.transcribe(services, probe, file.file.read())
     if not heard.ok:
         return {"understood": False, "heard": "", "message": heard.error or "nothing heard"}
-    return _voice_update(db, heard.text, request.headers.get("X-Shop-Code"))
+    return _voice_update(db, heard.text, request.headers.get("X-Shop-Code"), services.sender(db))
 
 
 @router.post("/complaints/{complaint_id}/resolve")
