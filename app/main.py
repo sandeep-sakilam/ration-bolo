@@ -16,6 +16,7 @@ from app.channels import simulator as simulator_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
 from app.packs import all_packs
+from app.reminders import dashboard_rows, start_scheduler
 from app.seed import seed_if_empty
 from app.services import build_services
 
@@ -32,15 +33,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         with factory() as db:
             seed_if_empty(db)
 
+    services = build_services(settings)
+
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        scheduler = start_scheduler(factory, services) if settings.scheduler_enabled else None
         yield
+        if scheduler:
+            scheduler.shutdown(wait=False)
         engine.dispose()
 
     app = FastAPI(title="Ration Bolo", version=__version__, lifespan=lifespan)
     app.state.settings = settings
     app.state.packs = packs
-    app.state.services = build_services(settings)
+    app.state.services = services
+    app.state.dealer_extras = dashboard_rows
     app.state.engine = engine
     app.state.sessionmaker = factory
 

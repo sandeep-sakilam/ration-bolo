@@ -15,7 +15,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import queue
+from app import queue, reminders
 from app.clock import fmt_time, ist_today, now_utc
 from app.models import (
     Card,
@@ -485,6 +485,7 @@ class Dialogue:
             else:
                 self._refused(session, refused, out)
             return
+        reminders.schedule(self.db, token)
         via = "WhatsApp" if session.channel == "whatsapp" else "SMS"
         out.say("booked", token=token.label, via=via)
         out.actions.append(

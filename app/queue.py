@@ -330,6 +330,8 @@ def ahead_of_booking(db: Session, token: Token, now: datetime | None = None) -> 
     ):
         if other.window is None:
             continue
+        if other.status == "booked" and window_end_utc(other.window) <= now:
+            continue  # its window is over: a no-show, not ahead of anyone
         same_window_before = other.window_id == token.window_id and other.token_no < token.token_no
         if other.window.start_time < start or same_window_before:
             booked_ahead += 1
