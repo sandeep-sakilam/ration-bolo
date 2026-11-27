@@ -82,7 +82,7 @@ def test_reliability_bounds() -> None:
 # --- in the dialogue ------------------------------------------------------------
 
 
-def test_check16_two_reports_confirm_one_is_one_person(db: Session) -> None:
+def test_check16_two_reports_confirm_one_is_one_person(db: Session, shop109_level0: None) -> None:
     shop = _shop(db, "109")
     a, b = _phone_at(db, "109", "+919000001091", 1), _phone_at(db, "109", "+919000001092", 2)
     call = Call(db, a)

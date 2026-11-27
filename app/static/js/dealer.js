@@ -5,11 +5,13 @@
   let pin = "";
   try { pin = sessionStorage.getItem("dealerPin") || ""; } catch (e) { /* storage blocked */ }
   let timer = null;
+  const volunteerId = new URLSearchParams(location.search).get("volunteer") || "";
   let shop = "";
   try { shop = sessionStorage.getItem("dealerShop") || ""; } catch (e) { /* storage blocked */ }
 
   async function api(path, body, isForm) {
     const opts = { method: body === undefined ? "GET" : "POST", headers: { "X-Dealer-Pin": pin, "X-Shop-Code": shop } };
+    if (volunteerId) opts.headers["X-Volunteer-Id"] = volunteerId;
     if (body !== undefined) {
       if (isForm) opts.body = body;
       else { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
@@ -33,6 +35,15 @@
   }
 
   function render(d) {
+    const v = d.volunteer;
+    if (volunteerId && v) {
+      shop = v.shop;
+      $("volunteer-bar").hidden = false;
+      $("volunteer-text").textContent = `Volunteer mode · ${v.label} · Shop ${v.shop} · ${v.on_duty ? "on duty: bookings are offered" : "off duty: the shop is Level 0"}`;
+      $("duty").textContent = v.on_duty ? "Go off duty" : "Go on duty";
+      $("duty").dataset.on = v.on_duty ? "1" : "";
+      for (const id of ["reset", "link-form", "serve-kg", "shop-select"]) { const el = $(id); if (el) el.hidden = true; }
+    }
     const ss = $("shop-select");
     if (ss.options.length !== d.shops.length) {
       ss.innerHTML = "";
@@ -90,7 +101,7 @@
       cell(tr, c.complaint_no); cell(tr, `••${c.last4}`); cell(tr, `${c.kg_due} / ${c.kg_received} kg`);
       cell(tr, c.status + (c.stage ? ` · ${c.stage}` : "") + (c.outcome ? ` · ${c.outcome}` : ""));
       const td = cell(tr, "");
-      if (c.status === "open") btn(td, "Resolve", () => {
+      if (c.status === "open" && !volunteerId) btn(td, "Resolve", () => {
         const outcome = prompt("Outcome (e.g. 'Gave the missing rice')", "Gave the missing rice");
         if (outcome) act(`/complaints/${c.id}/resolve`, { outcome });
       });
@@ -166,6 +177,7 @@
     act("/serve", kg === "" ? {} : { kg: Number(kg) });
   });
   $("walkin").addEventListener("click", () => act("/walkin", {}));
+  $("duty").addEventListener("click", () => act("/volunteer/duty", { on_duty: !$("duty").dataset.on }));
   $("stock-out").addEventListener("click", () => act("/status", { stock: "out" }).then(() => flash("Rice finished: booking paused on every channel")));
   $("stock-in").addEventListener("click", () => act("/status", { stock: "in_stock" }).then(() => flash("Rice in stock")));
   $("machine-down").addEventListener("click", () => act("/status", { machine: "down" }).then(() => flash("Machine down: booking paused on every channel")));

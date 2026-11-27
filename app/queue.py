@@ -177,7 +177,13 @@ def book(db: Session, card: Card, window: Window, channel: str) -> Token:
     return token
 
 
-def add_walkin(db: Session, shop: Shop, card: Card | None = None, channel: str = "dealer") -> Token:
+def add_walkin(
+    db: Session,
+    shop: Shop,
+    card: Card | None = None,
+    channel: str = "dealer",
+    actor: str = "dealer",
+) -> Token:
     today = ist_today()
     token = Token(
         shop_id=shop.id,
@@ -191,24 +197,26 @@ def add_walkin(db: Session, shop: Shop, card: Card | None = None, channel: str =
     )
     db.add(token)
     db.flush()
-    log_event(db, "dealer", "walkin_added", f"token:{token.id}")
+    log_event(db, actor, "walkin_added", f"token:{token.id}")
     return token
 
 
-def mark_arrived(db: Session, token: Token, at: datetime | None = None) -> Token:
+def mark_arrived(
+    db: Session, token: Token, at: datetime | None = None, actor: str = "dealer"
+) -> Token:
     """Mark a booked family arrived. More than 10 minutes late → joins the walk-in line."""
     at = at or now_utc()
     if token.kind != "booked" or token.status != "booked" or token.window is None:
         raise ValueError("only an open booking can be marked arrived")
     if slots.is_late(at, window_start_utc(token.window)):
         token.status = "late"
-        log_event(db, "dealer", "late", f"token:{token.id}")
-        walkin = add_walkin(db, db.get_one(Shop, token.shop_id), token.card)
+        log_event(db, actor, "late", f"token:{token.id}")
+        walkin = add_walkin(db, db.get_one(Shop, token.shop_id), token.card, actor=actor)
         walkin.arrived_at = at
         return walkin
     token.status = "arrived"
     token.arrived_at = at
-    log_event(db, "dealer", "arrived", f"token:{token.id}")
+    log_event(db, actor, "arrived", f"token:{token.id}")
     return token
 
 
@@ -277,9 +285,15 @@ def serving_order(db: Session, shop: Shop, now: datetime | None = None) -> list[
 
 
 def serve_next(
-    db: Session, shop: Shop, grams: int | None = None, now: datetime | None = None
+    db: Session,
+    shop: Shop,
+    grams: int | None = None,
+    now: datetime | None = None,
+    actor: str = "dealer",
+    record_sale: bool = True,
 ) -> Token | None:
-    """Serve the next family and record a simulated ePoS sale (full entitlement by default)."""
+    """Serve the next family and record a simulated ePoS sale (full entitlement by default).
+    Volunteers call the next token but never record sales (``record_sale=False``)."""
     now = now or now_utc()
     order = serving_order(db, shop, now)
     if not order:
@@ -289,22 +303,23 @@ def serve_next(
     token.served_at = now
     due = entitlement_grams(token.card) if token.card else 0
     given = due if grams is None else grams
-    db.add(
-        Distribution(
-            card_id=token.card_id,
-            shop_id=shop.id,
-            grams_given=given,
-            served_at=now,
-            token_id=token.id,
+    if record_sale:
+        db.add(
+            Distribution(
+                card_id=token.card_id,
+                shop_id=shop.id,
+                grams_given=given,
+                served_at=now,
+                token_id=token.id,
+            )
         )
-    )
     start = token.window and window_start_utc(token.window)
     waited = (
         now - (start if start and token.kind == "booked" else token.issued_at)
     ).total_seconds()
     log_event(
         db,
-        "dealer",
+        actor,
         "served",
         f"token:{token.id}",
         kind=token.kind,

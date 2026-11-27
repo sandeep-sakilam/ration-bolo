@@ -39,11 +39,20 @@ def base_level(db: Session, shop: Shop) -> int:
 
 def effective_level(db: Session, shop: Shop, now: datetime | None = None) -> int:
     """The level callers get right now (a volunteer on duty lifts Level 0 to Level 1)."""
-    return base_level(db, shop)
+    level = base_level(db, shop)
+    if level == 0:
+        from app import volunteers
+
+        if volunteers.active(db, shop, now) is not None:
+            return 1
+    return level
 
 
 def label(db: Session, shop: Shop, now: datetime | None = None) -> str:
-    return LEVELS[effective_level(db, shop, now)]
+    level = effective_level(db, shop, now)
+    if level == 1 and base_level(db, shop) == 0:
+        return "Level 1 · volunteer on duty"
+    return LEVELS[level]
 
 
 def takes_bookings(db: Session, shop: Shop, now: datetime | None = None) -> bool:

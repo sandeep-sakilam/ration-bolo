@@ -16,7 +16,17 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import crowd, demo, grievance, incentives, levels, queue, reminders, shopstate
+from app import (
+    crowd,
+    demo,
+    grievance,
+    incentives,
+    levels,
+    queue,
+    reminders,
+    shopstate,
+    volunteers,
+)
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -29,6 +39,7 @@ from app.models import (
     PhoneLink,
     Shop,
     Token,
+    Volunteer,
     mask_phone,
 )
 from app.packs import get_pack
@@ -52,7 +63,40 @@ def require_pin(request: Request, x_dealer_pin: str = Header(default="")) -> Non
         raise HTTPException(401, "wrong dealer PIN")
 
 
-router = APIRouter(prefix="/api/dealer", tags=["dealer"], dependencies=[Depends(require_pin)])
+VOLUNTEER_FORBIDDEN = ("/reset", "/link-phone", "/complaints/", "/reminders/")
+
+
+def volunteer_guard(
+    request: Request,
+    x_volunteer_id: str = Header(default=""),
+    x_shop_code: str = Header(default=""),
+    db: Session = Depends(get_db),
+) -> None:
+    """Volunteer mode (F38): the X-Volunteer-Id must name a volunteer of the shop being
+    viewed; sales corrections, resets, phone links, complaints and reminders are off."""
+    if not x_volunteer_id:
+        return
+    volunteer = db.get(Volunteer, int(x_volunteer_id)) if x_volunteer_id.isdigit() else None
+    if volunteer is None:
+        raise HTTPException(404, "no such volunteer")
+    shop = db.get_one(Shop, volunteer.shop_id)
+    if x_shop_code and x_shop_code != shop.code:
+        raise HTTPException(403, "a volunteer can only manage their own shop")
+    path = request.url.path.removeprefix("/api/dealer")
+    if path.startswith(VOLUNTEER_FORBIDDEN):
+        raise HTTPException(403, "not available in volunteer mode")
+
+
+def acting(db: Session, x_volunteer_id: str) -> tuple[Volunteer | None, str]:
+    volunteer = db.get(Volunteer, int(x_volunteer_id)) if x_volunteer_id.isdigit() else None
+    return volunteer, volunteers.actor(volunteer)
+
+
+router = APIRouter(
+    prefix="/api/dealer",
+    tags=["dealer"],
+    dependencies=[Depends(require_pin), Depends(volunteer_guard)],
+)
 
 
 class ServeIn(BaseModel):
@@ -117,6 +161,41 @@ def _stage(db: Session, complaint: Complaint) -> str:
     return g.stage.replace("_", " ") + (f" · ref {g.external_ref}" if g.external_ref else "")
 
 
+def _volunteer_row(db: Session, request: Request, shop: Shop) -> dict[str, Any] | None:
+    raw = request.headers.get("X-Volunteer-Id", "")
+    v = db.get(Volunteer, int(raw)) if raw.isdigit() else volunteers.active(db, shop)
+    if v is None:
+        return None
+    return {
+        "id": v.id,
+        "label": v.display_label,
+        "on_duty": v.on_duty,
+        "mode": bool(raw),
+        "shop": db.get_one(Shop, v.shop_id).code,
+    }
+
+
+class DutyIn(BaseModel):
+    on_duty: bool
+
+
+@router.post("/volunteer/duty")
+def volunteer_duty(
+    body: DutyIn, db: Session = Depends(get_db), x_volunteer_id: str = Header(default="")
+) -> dict[str, Any]:
+    volunteer, _ = acting(db, x_volunteer_id)
+    if volunteer is None:
+        raise HTTPException(400, "volunteer mode only")
+    volunteers.set_duty(db, volunteer, body.on_duty)
+    db.commit()
+    return {
+        "on_duty": volunteer.on_duty,
+        "message": "On duty: bookings are offered"
+        if body.on_duty
+        else "Off duty: the shop is back to Level 0",
+    }
+
+
 def _report_counts(db: Session, shop: Shop) -> dict[str, int]:
     """Cardholder reports in the last 3 hours, by kind (no identifiers)."""
     counts: dict[str, int] = {}
@@ -129,7 +208,12 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
     demo_on = request.app.state.settings.demo_active
     if demo_on and (demo.apply_auto_restore(db) + demo.refresh_demo_reports(db)):
         db.commit()
-    shop = shop_of(db, request.headers.get("X-Shop-Code"))
+    code = request.headers.get("X-Shop-Code")
+    raw_volunteer = request.headers.get("X-Volunteer-Id", "")
+    if not code and raw_volunteer.isdigit():
+        v = db.get(Volunteer, int(raw_volunteer))
+        code = db.get_one(Shop, v.shop_id).code if v else None
+    shop = shop_of(db, code)
     queue.sweep_no_shows(db, shop)
     db.commit()
     today = ist_today()
@@ -165,6 +249,7 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
         "demo_mode": demo_on,
         "level": levels.effective_level(db, shop),
         "level_label": levels.label(db, shop),
+        "volunteer": _volunteer_row(db, request, shop),
         "fair_shop": incentives.fair_shop(db, shop),
         "broadcast_optins": incentives.optin_count(db, shop),
         "disagreements": shopstate.view(db, shop).disagreements,
@@ -225,11 +310,17 @@ def overview(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
 
 @router.post("/serve")
 def serve(
-    body: ServeIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+    body: ServeIn,
+    db: Session = Depends(get_db),
+    x_shop_code: str = Header(default=""),
+    x_volunteer_id: str = Header(default=""),
 ) -> dict[str, Any]:
     shop = shop_of(db, x_shop_code)
+    volunteer, actor = acting(db, x_volunteer_id)
+    if volunteer is not None and body.kg is not None:
+        raise HTTPException(403, "volunteers can't record sale amounts")
     grams = None if body.kg is None else int(round(body.kg * 1000))
-    token = queue.serve_next(db, shop, grams)
+    token = queue.serve_next(db, shop, grams, actor=actor, record_sale=volunteer is None)
     db.commit()
     if token is None:
         return {"served": None, "message": "Nobody is waiting."}
@@ -237,7 +328,10 @@ def serve(
 
 
 @router.post("/arrive")
-def arrive(body: ArriveIn, db: Session = Depends(get_db)) -> dict[str, Any]:
+def arrive(
+    body: ArriveIn, db: Session = Depends(get_db), x_volunteer_id: str = Header(default="")
+) -> dict[str, Any]:
+    _, actor = acting(db, x_volunteer_id)
     token = db.get(Token, body.token_id)
     if token is None or token.window is None:
         raise HTTPException(404, "no such booking")
@@ -245,7 +339,7 @@ def arrive(body: ArriveIn, db: Session = Depends(get_db)) -> dict[str, Any]:
     if body.minutes_after_start is not None:
         at = queue.window_start_utc(token.window) + timedelta(minutes=body.minutes_after_start)
     try:
-        result = queue.mark_arrived(db, token, at)
+        result = queue.mark_arrived(db, token, at, actor=actor)
     except ValueError as exc:
         raise HTTPException(409, str(exc)) from exc
     db.commit()
@@ -261,9 +355,13 @@ def arrive(body: ArriveIn, db: Session = Depends(get_db)) -> dict[str, Any]:
 
 @router.post("/walkin")
 def walkin(
-    body: WalkinIn, db: Session = Depends(get_db), x_shop_code: str = Header(default="")
+    body: WalkinIn,
+    db: Session = Depends(get_db),
+    x_shop_code: str = Header(default=""),
+    x_volunteer_id: str = Header(default=""),
 ) -> dict[str, Any]:
     shop = shop_of(db, x_shop_code)
+    _, actor = acting(db, x_volunteer_id)
     card = None
     if body.last4:
         matches = [
@@ -272,7 +370,7 @@ def walkin(
             if c.last4 == body.last4
         ]
         card = matches[0] if len(matches) == 1 else None
-    token = queue.add_walkin(db, shop, card)
+    token = queue.add_walkin(db, shop, card, actor=actor)
     db.commit()
     return {"token": _token_row(token), "message": f"Walk-in token {token.label}"}
 
@@ -308,11 +406,16 @@ def status(
     x_shop_code: str = Header(default=""),
 ) -> dict[str, Any]:
     sender = request.app.state.services.sender(db)
-    return _apply_status(db, shop_of(db, x_shop_code), body.stock, body.machine, "dealer", sender)
+    _, actor = acting(db, request.headers.get("X-Volunteer-Id", ""))
+    return _apply_status(db, shop_of(db, x_shop_code), body.stock, body.machine, actor, sender)
 
 
 def _voice_update(
-    db: Session, text: str, code: str | None = None, sender: Any = None
+    db: Session,
+    text: str,
+    code: str | None = None,
+    sender: Any = None,
+    actor: str = "dealer_voice",
 ) -> dict[str, Any]:
     shop = shop_of(db, code)
     pack = get_pack(shop.state_pack)
@@ -323,7 +426,7 @@ def _voice_update(
             "heard": text,
             "message": "Not understood. Say e.g. 'Biyyam aipoyindi', 'Machine down'.",
         }
-    result = _apply_status(db, shop, actor="dealer_voice", sender=sender, **STATUS_CHANGES[intent])
+    result = _apply_status(db, shop, actor=actor, sender=sender, **STATUS_CHANGES[intent])
     label = {
         "dealer_stock_out": "rice finished",
         "dealer_stock_in": "rice in stock",
@@ -347,7 +450,10 @@ def voice(
     x_shop_code: str = Header(default=""),
 ) -> dict[str, Any]:
     sender = request.app.state.services.sender(db)
-    return _voice_update(db, body.text[:200], x_shop_code, sender)
+    _, actor = acting(db, request.headers.get("X-Volunteer-Id", ""))
+    return _voice_update(
+        db, body.text[:200], x_shop_code, sender, "dealer_voice" if actor == "dealer" else actor
+    )
 
 
 @router.post("/voice-audio")

@@ -63,7 +63,7 @@ def test_printable_report_and_json(client: TestClient) -> None:
     assert client.get("/shop/108/report/2026-13.csv").status_code == 400
 
 
-def test_best_times_and_status_on_page(db: Session) -> None:
+def test_best_times_and_status_on_page(db: Session, shop109_level0: None) -> None:
     shop = db.scalars(select(Shop).where(Shop.code == "109")).one()
     data = transparency.page_data(db, shop)
     assert data["status"] == ["No recent reports for this shop."]

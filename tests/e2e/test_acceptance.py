@@ -161,3 +161,17 @@ def test_check22_dealer_line_in_simulator(page: Page, reset: None) -> None:
     expect(page.locator("#log .bubble.app").last).to_contain_text("rice in stock")
     dealer(page)
     expect(page.locator("#outbox-body")).to_contain_text(re.compile(r"108 (lo|mein)"))
+
+
+def test_check23_volunteer_mode_dashboard(page: Page, reset: None) -> None:
+    page.goto("/admin")
+    link = page.locator("a", has_text="Volunteer SHG volunteer (demo)")
+    expect(link).to_be_visible()
+    link.click()
+    expect(page.locator("#volunteer-bar")).to_contain_text("Volunteer mode")
+    expect(page.locator("#k-waiting")).to_have_text("15")
+    expect(page.locator("#reset")).to_be_hidden()
+    page.click("#walkin")
+    expect(page.locator("#k-waiting")).to_have_text("16")
+    page.click("#duty")
+    expect(page.locator("#volunteer-bar")).to_contain_text("off duty")

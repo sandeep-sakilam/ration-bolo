@@ -49,7 +49,13 @@
       pub.innerHTML = "";
       const a1 = document.createElement("a"); a1.href = `/shop/${s.code}`; a1.textContent = "Page";
       const a2 = document.createElement("a"); a2.href = `/shop/${s.code}/report/${month}.csv`; a2.textContent = "Monthly CSV";
-      pub.append(a1, " · ", a2); tr.appendChild(pub);
+      pub.append(a1, " · ", a2);
+      for (const v of s.volunteers || []) {
+        const a3 = document.createElement("a"); a3.href = `/dealer?volunteer=${v.id}`;
+        a3.textContent = `Volunteer ${v.label}${v.on_duty ? " (on duty)" : ""}`;
+        pub.append(document.createElement("br"), a3);
+      }
+      tr.appendChild(pub);
       body.appendChild(tr);
     }
   }
