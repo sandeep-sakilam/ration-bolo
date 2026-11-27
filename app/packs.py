@@ -155,6 +155,8 @@ V3_PHRASES: dict[str, str] = {
     "fair_shop_note": ("It has the 'Fair shop' badge."),
     "public_not_started": ("Public sales data shows no sales yet today."),
     "public_closed": ("{total} sales today; the shop is closed now and opens {opens}."),
+    "best_time_part_busy": ("{day} {part} is busy; {when} is usually under {minutes} minutes."),
+    "best_time_part_busy_usual": ("{day} {part} is usually busy; {when} is usually quieter."),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [
