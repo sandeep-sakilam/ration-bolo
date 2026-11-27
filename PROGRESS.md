@@ -1,12 +1,12 @@
 # Progress
 
-Current: F01 on `feat/f01-foundation`
+Current: F01 merged; next is F02 on `feat/f02-data-model`
 
 ## Functionality backlog
 
 Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 
-- [ ] F01 Foundation: repo layout, FastAPI skeleton, Dockerfile, docker-compose, Makefile, CI, health — `feat/f01-foundation`
+- [x] F01 Foundation: repo layout, FastAPI skeleton, Dockerfile, docker-compose, Makefile, CI, health — `feat/f01-foundation`
 - [ ] F02 Data model, SQLite/PostgreSQL, demo seed, reset — `feat/f02-data-model`
 - [ ] F03 State packs: format, schema, loader, Telangana — `feat/f03-state-packs`
 - [ ] F04 Slot and queue engine — `feat/f04-slot-engine`
