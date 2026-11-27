@@ -28,6 +28,7 @@ from app import (
     queue,
     reminders,
     shopstate,
+    spoken,
 )
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.config import Settings
@@ -97,6 +98,16 @@ class Word:
 
 
 @dataclass(frozen=True)
+class SpokenTime:
+    """An advice time, rendered per reply language as a part-of-day phrase (F41)."""
+
+    kind: str  # advice | before | after | at | at_hour
+    hour: int
+    session_starts: tuple[int, ...] = ()
+    minute: int = 0
+
+
+@dataclass(frozen=True)
 class Part:
     """A phrase used inside another phrase ("{items}", "{what}"), rendered per language."""
 
@@ -121,6 +132,10 @@ class _Out:
         def value(v: object) -> object:
             if isinstance(v, Word):
                 return self.pack.display(v.key, language)
+            if isinstance(v, SpokenTime):
+                if v.kind == "advice":
+                    return spoken.advice_when(self.pack, language, v.hour, list(v.session_starts))
+                return spoken.say(self.pack, language, v.kind, v.hour, v.minute)
             if isinstance(v, Part):
                 return self.pack.phrase(v.key, language, **dict(v.values))
             if isinstance(v, list):
@@ -701,9 +716,15 @@ class Dialogue:
         if public.first_sale is None:
             out.say("public_not_started")
             return
-        out.say("public_started", time=to_ist(public.first_sale).strftime("%H:%M"))
+        first = to_ist(public.first_sale)
+        out.say("public_started", when=SpokenTime("at", first.hour, minute=first.minute))
         if public.closed_now and public.opens_at is not None:
-            out.say("public_closed", total=public.total_today, opens=opens_text(public.opens_at))
+            opens = to_ist(public.opens_at)
+            out.say(
+                "public_closed",
+                total=public.total_today,
+                opens=SpokenTime("at_hour", opens.hour, minute=opens.minute),
+            )
         elif public.possibly_stopped:
             out.say("public_stopped", minutes=public.stopped_minutes)
         out.actions.append(
@@ -941,10 +962,11 @@ class Dialogue:
         if advice is None:
             return
         day = self._day_label(advice.day)
+        when = SpokenTime("advice", advice.hour, besttime.session_starts(shop))
         if advice.known:
-            out.say("best_time_known", day=day, time=advice.time, minutes=advice.minutes)
+            out.say("best_time_known", day=day, when=when, minutes=advice.minutes)
         else:
-            out.say("best_time_usual", day=day, time=advice.time)
+            out.say("best_time_usual", day=day, when=when)
         out.actions.append(
             {
                 "type": "best_time_advice",
@@ -1232,12 +1254,6 @@ class Dialogue:
         if day == today + timedelta(days=1):
             return Word("tomorrow")
         return day.strftime("%d %b")
-
-
-def opens_text(at: datetime) -> str:
-    """When a closed shop opens again, as "8 am" / "4 pm" (spoken times come in F41)."""
-    hour = to_ist(at).hour
-    return f"{hour % 12 or 12} {'am' if hour < 12 else 'pm'}"
 
 
 def _code_hash(code: str, salt: int) -> str:

@@ -58,7 +58,7 @@ def test_check25_open_hours_show_about_25_an_hour(db: Session, hh: int, mm: int)
     call = Call(db, RAMU)
     call.say("Avunu")
     text = call.say("biyyam vachaya").text
-    assert "Public ammakala data prakaram shop 09:10 ki ammakalu modalupettindi." in text
+    assert "Public ammakala data prakaram shop poddhuna 9:10 ki ammakalu modalupettindi." in text
     assert "aagi undavachu" not in text
 
 
@@ -71,7 +71,7 @@ def test_check25_between_sessions_and_after_closing(db: Session) -> None:
     call = Call(db, RAMU)
     call.say("Avunu")
     text = call.say("biyyam vachaya").text
-    assert "shop ippudu moosi undi, 8 am terustaru." in text
+    assert "shop ippudu moosi undi, poddhuna 8 gantalaku terustaru." in text
 
 
 def test_check25_before_opening_not_started(db: Session) -> None:

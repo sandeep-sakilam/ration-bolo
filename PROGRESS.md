@@ -1,6 +1,6 @@
 # Progress
 
-Current: F40 merged; next is F41 on `feat/f41-spoken-times`
+Current: F41 merged; next is F42 on `feat/f42-advice-context`
 
 ## Functionality backlog
 
@@ -58,7 +58,7 @@ Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon
 Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main` shippable after each):
 
 - [x] F40 Demo public sales stay fresh relative to now and open hours; no false "possibly stopped" — `feat/f40-fresh-demo-sales`
-- [ ] F41 Natural spoken times in advice (part-of-day phrases from the state pack) — `feat/f41-spoken-times`
+- [x] F41 Natural spoken times in advice (part-of-day phrases from the state pack) — `feat/f41-spoken-times`
 - [ ] F42 Advice honours the day and part of day asked for; prefers today's remaining hours — `feat/f42-advice-context`
 - [ ] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
 - [ ] F44 Nearby shop gives today's wait ("go now" / today's best time / tomorrow) — `feat/f44-nearby-today`

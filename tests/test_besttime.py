@@ -63,7 +63,8 @@ def test_check18_few_data_points_use_default_and_say_usually(
     call = Call(db, "+919000001501")
     call.say("Avunu")
     r = call.say("repu book cheyyandi")
-    assert "Sadharananga Ivala 16:00 taruvata rush takkuva." in r.text
+    # v3.1 (F41): advice times are spoken as part-of-day phrases, not "16:00".
+    assert "Sadharananga Ivala saayantram 5 gantala lopu rush takkuva." in r.text
     assert "nimishala lopu" not in r.text
 
 
