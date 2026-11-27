@@ -28,7 +28,11 @@
 ## Product rules
 - The app must always start with `docker compose up` on a clean checkout with **no `.env` and no keys**, and show the call simulator. From F24, the dealer and admin pages must also open without any PIN when none is set. A change that breaks this is not done.
 - No login wall: the live link must be usable by judges without a PIN; PINs apply only when explicitly set.
-- Submission deadlines (version 2): F23–F28 merged by 30 Nov 2026, 12:00 noon IST; the hackathon form closes 30 Nov 11:59 PM IST and can be submitted once.
+- Submission deadlines: F23–F28 (version 2) and F29–F39 (version 3) merged by 30 Nov 2026, 12:00 noon IST, in order, with `main` shippable after every merge (if time runs short, stop after the last finished item); the hackathon form closes 30 Nov 11:59 PM IST and can be submitted once.
+- Works without a partner (version 3): Level 0 features (cardholder reports, public PDS data, best-time advice, nearby shops, grievance routing, transparency page) must work with no partner, no keys and mock adapters, and must never break the Shop 108 flows or acceptance checks 1–14.
+- Every new outside service (public PDS portal, grievance helpline, check-in number, broadcasts) gets an interface, a mock adapter and a real adapter; tests use mocks only and never fetch real government portals.
+- Never dial a helpline or any real phone number, in tests or by hand; never message real people.
+- Schema changes: new tables only, never new columns on existing tables (`create_all` must upgrade an existing database safely).
 - Deck PDF: at most 30 pages and 10 MB; numbers in it are computed at build time. Demo video: YouTube only, at most 3:00, with a live voice interaction.
 - Never run the real-adapter smoke script (`scripts/smoke_real.py`) against real services; it is for Sandeep only, never in CI or tests.
 - Every outside service has an interface, a mock adapter and a real adapter; real adapters only turn on when keys are present. Tests always use mocks.

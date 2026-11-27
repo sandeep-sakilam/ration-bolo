@@ -1,6 +1,6 @@
 # Progress
 
-Current: none — F01–F28 merged (version 2 complete); no unchecked backlog items
+Current: docs/spec-v3 (spec version 3); next is F29 on `feat/f29-deck-three-levels`
 
 ## Functionality backlog
 
@@ -40,3 +40,17 @@ Version 2 submission fixes (F23–F28, merge by 30 Nov 2026, 12:00 noon IST):
 - [x] F26 Real-adapter smoke script (run by hand, never in CI) — `feat/f26-real-smoke`
 - [x] F27 Deck refresh: FAQ headings, finale features, live numbers, PDF limit checks — `feat/f27-deck-refresh`
 - [x] F28 Demo video script v2 with a live voice interaction — `feat/f28-demo-script-v2`
+
+Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon IST; `main` shippable after each):
+
+- [ ] F29 Deck slide "Works without a partner: three levels" + Risks text, rebuilt PDF — `feat/f29-deck-three-levels`
+- [ ] F30 Shop levels 0, 1, 2: capabilities, honest wording, level on dashboard/admin, v3 demo shops — `feat/f30-shop-levels`
+- [ ] F31 Cardholder reports and check-ins, agreement and decay model — `feat/f31-crowd-reports`
+- [ ] F32 Public PDS data adapter, polling and signals — `feat/f32-public-pds`
+- [ ] F33 Best-time advice from hourly crowd profiles — `feat/f33-best-time`
+- [ ] F34 Nearby-shop portability (ONORC) — `feat/f34-nearby-shops`
+- [ ] F35 Official complaint routing and escalation — `feat/f35-grievance-routing`
+- [ ] F36 Public transparency page and monthly report — `feat/f36-transparency`
+- [ ] F37 Dealer incentives: dealer phone line, "Rice arrived" broadcast, "Fair shop" badge — `feat/f37-dealer-incentives`
+- [ ] F38 Volunteer queue coordinator mode — `feat/f38-volunteer-mode`
+- [ ] F39 Version 3 docs, metrics for reports and levels, rebuilt PDF — `feat/f39-v3-docs`

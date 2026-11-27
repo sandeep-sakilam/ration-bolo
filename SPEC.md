@@ -1,7 +1,9 @@
 # Ration Bolo — Voice-First Ration Shop Assistant
 
-Nov 27, 2026 · @Sandeep · **Version 2**
+Nov 27, 2026 · @Sandeep · **Version 3**
 
+> **What changed in version 3.** F01–F28 are merged. Version 3 removes the assumption that the state department and the dealer will cooperate. A new section, "Works without a partner", defines three shop levels and backlog items **F29–F39**: cardholder reports, public PDS data, best-time advice, nearby-shop portability, official complaint routing and escalation, a public transparency page, dealer incentives, volunteer queue coordinators, and the deck and demo updates. Everything already built keeps working unchanged at Shop 108.
+>
 > **What changed in version 2.** F01–F22 were built and merged under version 1. Version 2 adds the official Round 2 FAQ rules (no login wall on the live link, deck section names, PDF limits, YouTube-only video, submission checks) and backlog items **F23–F28**, which fix problems found in a review of the merged build: shared demo state breaks the scripted flow for the next judge on the live link, the dealer and admin pages sit behind a PIN, the deck uses old section names and stale numbers, and the real speech adapters have never been tested against the live APIs.
 
 ## Summary
@@ -86,11 +88,12 @@ After that commit, everything follows the Git workflow.
 - Checking the Telugu and Hindi phrases in the state pack with native speakers.
 - Running `scripts/smoke_real.py` (F26) with real keys and fixing any key or endpoint problem it reports.
 - Deleting the merged remote feature branches on GitHub.
+- Version 3: confirm the state's food grievance helpline number and the district grievance officer contact for the Telangana pack; find the public PDS portal page with shop-wise sales for Hyderabad and confirm its URL and format; decide whether to buy a second Twilio number for missed-call check-ins (optional); have native speakers check the new report, opt-in and nearby-shop phrases.
 - Recording and uploading the demo video, building the final deck PDF with the video and live links, and the hackathon submission itself.
 
 ### Functionality backlog
 
-Build in this order, one row per branch. IDs go in branch names and PR titles. **F01 to F22 are merged** (version 1). **F23 to F28 are the version 2 submission fixes** and must be merged by **30 Nov 2026, 12:00 noon IST**, so the video, deck and live link can be finished and submitted that afternoon.
+Build in this order, one row per branch. IDs go in branch names and PR titles. **F01 to F28 are merged** (versions 1 and 2). **F29 to F39 are version 3** and must be merged by **30 Nov 2026, 12:00 noon IST**, so the video, deck and live link can be finished and submitted that afternoon. They are ordered so that `main` is shippable after every merge: if time runs out, stop after any item and submit.
 
 | ID | Functionality | Branch |
 | --- | --- | --- |
@@ -122,6 +125,17 @@ Build in this order, one row per branch. IDs go in branch names and PR titles. *
 | F26 | Real-adapter smoke script for Wispr Flow, Sarvam and Twilio, run by hand with real keys, never in CI | feat/f26-real-smoke |
 | F27 | Deck refresh: FAQ section names, finale features, live numbers, PDF limit checks, rebuilt PDF | feat/f27-deck-refresh |
 | F28 | Demo video script version 2 with a real live voice interaction, and a recording checklist | feat/f28-demo-script-v2 |
+| F29 | Deck slide "Works without a partner: three levels" and the matching Risks text, rebuilt PDF (safe early win) | feat/f29-deck-three-levels |
+| F30 | Shop levels 0, 1 and 2: per-shop capabilities, honest wording in every flow, level shown on dashboard and admin, version 3 demo shops | feat/f30-shop-levels |
+| F31 | Cardholder reports: spoken stock, machine and queue reports, "I'm at the shop" check-in (keypad 9 and an optional missed-call number), agreement and decay model | feat/f31-crowd-reports |
+| F32 | Public PDS data adapter: interface, fixture-backed mock, configurable real adapter for a state portal's shop-wise sales report, polling and signals | feat/f32-public-pds |
+| F33 | Best-time advice: hourly crowd profile per shop and weekday, predicted wait by hour, spoken advice, used instead of booking at Level 0 | feat/f33-best-time |
+| F34 | Nearby-shop portability (One Nation One Ration Card): shop locations, ranking, spoken suggestion, booking there when allowed | feat/f34-nearby-shops |
+| F35 | Official complaint routing and escalation: grievance channel interface, helpline handoff, prepared complaint text, reference capture, 7-day escalation ladder | feat/f35-grievance-routing |
+| F36 | Public transparency page per shop and monthly report for vigilance committees and social audits, with minimum-count privacy | feat/f36-transparency |
+| F37 | Dealer incentives: dealer phone line (keypad or one sentence), "Rice arrived" broadcast to opted-in cardholders, "Fair shop" badge | feat/f37-dealer-incentives |
+| F38 | Volunteer queue coordinator mode: a self-help-group or ward volunteer runs tokens at a Level 0 shop, making it Level 1 (volunteer) | feat/f38-volunteer-mode |
+| F39 | Version 3 docs: deck, demo video script, README, metrics for reports and levels, submission checklist, rebuilt PDF | feat/f39-v3-docs |
 
 ## Users and roles
 
@@ -231,6 +245,8 @@ Times are stored in UTC and shown in IST. Weights are stored in grams as integer
 
 One JSON file per state in `packs/`, validated against a JSON schema at startup (a broken pack stops startup with a clear error, and tests cover it). Fields: `state`, `languages` (code, name, speech codes for Wispr, Sarvam and the browser), `default_language`, `kg_per_person` by commodity, `intents` (keyword lists per language), `numbers` (number words per language), `yes`/`no` words, `day_words`, `session_words`, `switch_phrases`, `fuzzy_threshold`, and `phrases` (every reply template per language, with placeholders like `{last4}`, `{kg}`, `{ahead}`, `{minutes}`, `{time}`, `{token}`, `{complaint_no}`).
 
+**Version 3 pack fields:** new intents (`report_stock_in`, `report_stock_out`, `report_machine_down`, `report_queue`, `checkin`, `broadcast_optin`, `broadcast_optout`, `nearby_yes`), their phrases in every reply language, `grievance` (helpline number, district officer contact, portal names, complaint template), `default_busy_pattern` (expected wait by hour and first-week factor), `public_pds` (enabled, url_template, format), and `portability` (true for NFSA cards). Missing version 3 fields in an older pack fall back to safe defaults and are listed on the status page, so the Tamil Nadu draft pack keeps loading.
+
 **Telangana pack:** Telugu, Hindi and Urdu understood; replies in Telugu or Hindi (Urdu speakers get Hindi replies unless Urdu phrases are added). 6 kg rice per person. Keywords:
 
 - Stock: biyyam, ration, chawal, rice, vachaya, aaya
@@ -259,6 +275,113 @@ On the live link many judges use the same demo data at once, possibly minutes ap
 3. **Nightly reset.** In demo mode the scheduler runs "Reset demo" every night at 03:00 IST, so each day of judging starts from the scripted state (18 walk-ins, 10:20 as the first free morning window).
 4. **Today's queue stays believable.** Serving and adding walk-ins changes the "people ahead" count; that is expected and the demo script says "about".
 5. Demo cards are never touched outside demo mode, and real cards (imported or self-registered outside demo mode) are never reset.
+
+## Works without a partner (version 3)
+
+No product with real-world dependencies is fail-proof. The goal is that Ration Bolo **delivers real value at a shop where neither the department nor the dealer cooperates**, and gets better as each one joins. Every feature in this section works with no partner, no keys and mock adapters, and must never break the Shop 108 flows above.
+
+### Shop levels (F30)
+
+Each shop has a `level`, set in admin (and by CSV import), shown on the dealer dashboard, the transparency page and in what callers hear.
+
+| Level | Who cooperates | Stock and machine status from | Queue information from | Booking |
+| --- | --- | --- | --- | --- |
+| 0 | Nobody | Cardholder reports and public PDS data | Check-ins, queue reports, public sales rate, best-time profile | **Not offered.** "Book" gives best-time advice instead, with the honest reason: "This shop doesn't take bookings yet. Today after 3 p.m. is usually under 15 minutes." |
+| 1 | The dealer, or a volunteer coordinator (F38) | Dealer (or volunteer) updates, cross-checked against reports | Tokens, plus everything at Level 0 | Offered, as built |
+| 2 | Dealer and department | ePoS feed (mock today) and dealer | Tokens and ePoS | Offered, as built; card lookups from department data |
+
+Rules:
+
+1. A level only adds sources; it never removes the Level 0 ones. When sources disagree, the caller hears the most trustworthy one with its age, and the disagreement is shown on the dealer dashboard and transparency page ("Dealer says machine down; 3 cardholders report sales in the last 20 minutes").
+2. Every spoken status says where it came from and how fresh it is: "Rice arrived, confirmed by 4 people in the last 30 minutes" or "Public sales data shows the shop started selling at 9:10."
+3. With no fresh information from any source, the app says so ("No recent reports for your shop") instead of guessing, and offers best-time advice.
+4. A shop can move between levels at any time; bookings already made at a shop that drops to Level 0 are honoured as advice ("Your 10:20 time is still a quiet time to go") and the caller is told the shop no longer confirms bookings.
+
+### Cardholder reports and check-ins (F31)
+
+- **Spoken reports**, matched by new intents in each state pack: stock arrived ("biyyam vachindi", "chawal aa gaya"), no stock ("biyyam ledu", "chawal nahi hai"), machine down, and queue size ("ikkada 20 mandi unnaru", "yahan 20 log hain"). The app reads the report back and saves it after a yes. Reports are accepted only from callers who say they are at the shop ("Meeru shop daggara unnara?" / "Kya aap dukaan par hain?").
+- **Check-in:** saying "I'm at the shop" (or keypad 9) records an arrival and the caller's place in a virtual count. An optional dedicated check-in number (`TWILIO_CHECKIN_NUMBER`) answers with Twilio `<Reject>`, so the caller pays nothing, and records the caller's number as an arrival at their linked shop. The simulator has an "I'm at the shop" button.
+- **Agreement and decay:** a status becomes "confirmed" when at least 2 different phones report it within 45 minutes, or 1 dealer or volunteer update arrives. Each report's weight halves every 30 minutes and is ignored after 3 hours. One vote per phone per signal per hour. Queue size is the weighted median of recent reports and check-ins; reports more than 3× the median are dropped as outliers.
+- **Reliability:** each reporter has a weight starting at 1.0, rising (to at most 2.0) when later evidence agrees with their report and falling (to at least 0.2) when it disagrees. Evidence is other reports, public sales data and dealer updates.
+- **Privacy:** reports store a salted hash of the phone number, never the number itself, and are never shown with any identifier.
+
+### Public PDS data (F32)
+
+The NFSA requires PDS records to be placed in the public domain (Section 27), and many states publish shop-wise ePoS sales reports on their public PDS portals.
+
+- **Interface `PublicPdsSource`:** `sales_today(shop_code) -> list[SaleEvent(time, count)]` and `last_updated`. Mock adapter reads `tests/fixtures/public_pds/*.json`. The real adapter reads a configurable URL template per state pack (`public_pds.url_template`, `public_pds.format`), parses an HTML table or CSV, and is off unless the pack enables it.
+- **Polling:** every 10 minutes per enabled shop, with a timeout, caching, a polite user agent, and backoff after errors. A failing source is marked "unavailable" on the status page; it never blocks a call.
+- **Signals:** first sale today means stock arrived and the machine works; no sale for 45 minutes during open hours means "possibly stopped"; sales per hour replace the configured service rate in wait estimates when at least 6 sales in the last hour are seen.
+- The builder can't verify any state portal's real format from the build session. The real adapter is written against a documented assumed format with a parser test on a sample file, and `DECISIONS.md` records that Sandeep must confirm the URL and format (listed in "What Sandeep must provide").
+
+### Best-time advice (F33)
+
+- A deterministic hourly profile per shop and weekday: expected wait for each open hour, built from served tokens, check-ins, queue reports and public sales over the last 4 weeks, with more recent weeks weighted higher, plus a "first week of the month" adjustment.
+- With fewer than 20 data points for a shop, a default pattern from the state pack is used (busy mornings, busier in the first week of the month), and advice says "usually" rather than a number.
+- Spoken: "Today after 3 p.m. is usually under 15 minutes" or "Tomorrow morning before 9 is quietest." Used instead of booking at Level 0, and added to the queue answer at every level.
+
+### Nearby-shop portability (F34)
+
+Under One Nation One Ration Card, NFSA cardholders can usually collect their entitlement from another ePoS-enabled shop.
+
+- Shops get `lat`, `lon`, `ward`, `landmark` (admin and CSV). Distance is straight-line (haversine), shown in km.
+- **Suggested when** the caller's shop is out of stock, machine down, has a predicted wait over 45 minutes, or has 3 or more upheld short-ration complaints in 30 days. Candidates are within 3 km, accept portability (`portability: true`), and are ranked by: confirmed in stock and working, then predicted wait, then distance. At most two are offered.
+- Spoken: "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait. Want to go there?" If yes and that shop is Level 1 or 2, booking there follows the normal booking flow; at Level 0 the caller gets its best time.
+- Entitlement and the one-booking-per-month rule follow the card, not the shop.
+
+### Official complaint routing and escalation (F35)
+
+Complaints must reach someone who can act, even without a department partnership.
+
+- **Interface `GrievanceChannel`** with adapters: `mock` (records only), `helpline` (offers to connect the caller to the state's food grievance helpline with Twilio `<Dial>`, number from the state pack, only after the caller says yes; never dialled in tests or by the builder), and `prepared` (writes a formal complaint in the caller's language and English: shop, date, kg due, kg received, and the NFSA grievance basis; sends it by SMS or WhatsApp with steps to file it on the state portal or the national public grievance portal).
+- **Reference capture:** after filing through the helpline or portal, the caller can say the reference number they were given; it is read back and stored.
+- **Escalation ladder:** if a complaint isn't marked resolved in 7 days, the caller is reminded and offered escalation to the district grievance officer (contact from the state pack or admin), then after 14 more days to the national public grievance portal with a prepared text. Every step is logged.
+- Our own complaint ID stays the single reference across all channels. Automatic filing into government portals is not attempted (no public API); the app prepares and guides instead.
+
+### Public transparency page (F36)
+
+- `/shop/{code}` (no login): level, live status with source and freshness, today's predicted best times, monthly counts of short-ration reports and complaints, share resolved within 7 days, number of cardholder reports, and the "Fair shop" badge if earned.
+- **Privacy:** no names, phones or card numbers; any count below 5 is shown as "fewer than 5".
+- **Monthly report** for shop-level vigilance committees (NFSA Section 29) and social audits (Section 28): `/shop/{code}/report/{yyyy-mm}.csv` and a printable HTML page. Linked from the admin page for every shop.
+
+### Dealer incentives (F37)
+
+- **Dealer phone line:** a registered dealer phone calling the main number hears the dealer menu: "Press 1 or say 'stock arrived', 2 'stock finished', 3 'machine down', 4 'machine working'." One call updates status at Level 1 and 2 shops (and counts as a strong report at Level 0).
+- **"Rice arrived" broadcast:** cardholders opt in by voice ("Stock vachinappudu cheppandi" / "Stock aane par batana"), opt out the same way. When stock is confirmed (dealer, public data, or cardholder agreement), opted-in cardholders of that shop get one voice call or WhatsApp message, at most once a day, between 8 a.m. and 8 p.m. Mock sends go to the outbox.
+- **"Fair shop" badge:** no upheld short-ration complaints in 90 days, at least 80% of status changes reported by the dealer within 30 minutes of cardholder reports, and open on scheduled days. Callers choosing between shops hear it.
+
+### Volunteer queue coordinators (F38)
+
+A self-help-group member or ward volunteer can run tokens at a Level 0 shop, turning it into "Level 1 (volunteer)":
+
+- Admin registers a volunteer for a shop and a date range. The volunteer uses the dealer dashboard in "volunteer mode": tokens, mark arrived, serve next, status updates; no access to sales or entitlement changes.
+- Bookings at a volunteer-run shop are honoured only while a volunteer is on duty; outside those hours the shop behaves as Level 0.
+- Every volunteer action is tagged with their ID in the events log.
+
+### Data model additions (version 3)
+
+| Table | Key fields | Notes |
+| --- | --- | --- |
+| shops (new columns via a new `shop_profiles` table) | shop_id, level, lat, lon, ward, landmark, portability, dealer_phone_hash | New table, so existing databases upgrade without migrations |
+| reports | id, shop_id, kind (stock_in, stock_out, machine_down, machine_ok, queue_size, checkin), value, reporter_hash, source (caller, dealer, volunteer, public_pds), weight, created_at | Agreement and decay are computed from these |
+| reporter_scores | reporter_hash, weight, updated_at | Reliability |
+| public_sales | id, shop_id, observed_at, sale_time, count, source_url | Snapshots from the public source |
+| hourly_profiles | shop_id, weekday, hour, expected_wait_min, samples, updated_at | Rebuilt nightly and on demand |
+| grievances | id, complaint_id, channel, external_ref, stage (filed, escalated_district, escalated_national, resolved), next_action_at | One per complaint |
+| broadcast_optins | card_id, shop_id, channel, opted_in_at, opted_out_at | Consent record |
+| volunteers | id, shop_id, display_label, starts_on, ends_on, on_duty | No phone stored in clear |
+
+New tables only (no new columns on existing tables), matching the version 1 decision that `create_all` must upgrade an existing database safely.
+
+### Demo data additions (version 3)
+
+Shop 108 (Level 2) and all its scripted flows stay exactly as they are. Add, near Malakpet:
+
+- **Shop 112, Saidabad (Level 0):** no dealer; rice confirmed by 4 cardholder reports in the last 30 minutes; public PDS mock shows sales since 9:10 at about 25 an hour; predicted wait about 10 minutes; 1.2 km from Shop 108.
+- **Shop 115, Moosarambagh (Level 1):** dealer updates only; 1.8 km away.
+- **Shop 109, Chanchalguda (Level 0, volunteer on duty today):** shows the volunteer path.
+- Four weeks of hourly history for each shop, enough short-ration reports at one shop to show the transparency page and the nearby-shop rule, and two opted-in demo cardholders for the broadcast.
+- **Scripted Level 0 flow (for the video):** set Shop 108 to "Machine down", call as Lakshmi: she hears the status, then "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait." Then call as the new demo caller **Ramu** (card TS-112-0207, Telugu, phone +91 90000 08804) whose own shop is 112: "Book" gives best-time advice, "biyyam vachindi, ikkada 12 mandi unnaru" files a report after a read-back.
 
 ## System architecture
 
@@ -363,6 +486,16 @@ The Playwright suite and `scripts/check_fresh_clone.sh` prove these before the s
 12. "Machine down" set in demo mode reports normal again after 10 minutes (clock-controlled test) (F23).
 13. With no `DEALER_PIN` or `ADMIN_PIN`, the dealer and admin pages load and work without a PIN prompt; with them set, a wrong PIN is refused (F24).
 14. `/health` and the page footer show the commit SHA the app was built from (F25).
+15. At a Level 0 shop, "book" gives best-time advice with the honest reason and creates no booking; at Level 1 and 2 booking works exactly as before (F30, F33).
+16. Two different demo phones reporting "rice arrived" within 45 minutes make the status confirmed and spoken with its source and age; one report alone is spoken as "one person reported"; reports older than 3 hours are ignored; a queue report 3× the median is dropped (F31).
+17. With the public PDS mock showing sales since 9:10, a Level 0 shop's status says stock arrived from public data; with the mock source failing, calls still work and the status page shows "unavailable" (F32).
+18. Best-time advice for a shop with fewer than 20 data points uses the state pack's default pattern and says "usually" (F33).
+19. With Shop 108 "Machine down", Lakshmi is offered Shop 112 with distance, landmark and wait; saying yes gives Shop 112's best time (Level 0) without a booking (F34).
+20. A complaint not resolved in 7 days (clock-controlled) triggers the reminder and the district escalation offer; the helpline handoff is never dialled in tests; a spoken reference number is read back and stored (F35).
+21. `/shop/112` loads without login, shows no names, phones or card numbers, and shows "fewer than 5" for small counts; the monthly CSV downloads (F36).
+22. A registered dealer phone pressing 1 marks stock arrived; opted-in cardholders get exactly one "rice arrived" message that day, in the outbox (F37).
+23. A volunteer on duty at Shop 109 can issue tokens and bookings are offered; with the volunteer off duty, Shop 109 behaves as Level 0 (F38).
+24. All Shop 108 acceptance checks 1–14 still pass unchanged.
 
 ## Pitch deck content
 
@@ -378,7 +511,8 @@ The Playwright suite and `scripts/check_fresh_clone.sh` prove these before the s
 8. Third-party dependencies: cost and availability risks (use this exact heading), and what happens if they fail or get costly: Wispr → Sarvam → keypad or menu (browser speech in the simulator); Sarvam voice → Twilio `<Say>` or fixed prompts; Twilio → an Indian telephony provider with a real toll-free number later; state data → dealer dashboard as manual fallback; cost control (one speech request per sentence, rules run on our own server, providers swappable by settings).
 9. Measuring impact: the pilot metrics from Round 1 (wait within 20 minutes of slot, 30% adoption by month 3, half as many wasted trips, 85% of calls by voice alone, every complaint resolved within 7 days), and the metrics page that tracks them.
 10. Go-to-market plan (use this exact heading): one-ward pilot with the Telangana Civil Supplies Department and 10 shops in Hyderabad; dealer onboarding; awareness at the shop (posters with the number, dealer word of mouth, SHG groups); Indian toll-free number; expand to more states by adding state packs.
-11. Risks and limits, stated honestly; demo video and live link (no PIN line, since no page needs one).
+11. **Works without a partner: three levels** (F29): what cardholders get at Level 0 with nobody's help (reports from each other, public PDS data, best time to go, a nearby shop, complaints into official channels and a public transparency page for vigilance committees), what a willing dealer or volunteer adds (Level 1), and what the department adds (Level 2).
+12. Risks and limits, stated honestly; demo video and live link (no PIN line, since no page needs one).
 
 Deck rules (F27): the "what we built" content includes the finale work already merged (Tamil Nadu draft pack proving a new state is one file, phone-link verification by one-time code, the Exotel stub for the Indian toll-free path, multi-shop admin with CSV import, the WCAG 2.2 AA audit). Numbers such as the test count are computed when the deck is built, never typed by hand. `scripts/build_deck.py` fails if the PDF is over 30 pages or 10 MB and takes `--video` and `--live` to fill the links.
 
@@ -392,7 +526,7 @@ YouTube only (public or unlisted), at most 3:00, recorded at 1080p with system a
 
 ## Build phases for Claude Code
 
-Each phase is split into single functionalities, built strictly one at a time under the Git workflow below. The hackathon form closes on 30 Nov 2026 at 11:59 PM IST. F01 to F22 are merged; F23 to F28 must be merged by 30 Nov, 12:00 noon IST.
+Each phase is split into single functionalities, built strictly one at a time under the Git workflow below. The hackathon form closes on 30 Nov 2026 at 11:59 PM IST. F01 to F28 are merged; F29 to F39 must be merged by 30 Nov, 12:00 noon IST, in order, keeping `main` shippable after each.
 
 **Git workflow (mandatory for every functionality):**
 
@@ -416,7 +550,8 @@ Each phase is split into single functionalities, built strictly one at a time un
 4. **Phase 3: Real channels (F12–F14).** Phone line, WhatsApp, metrics.
 5. **Phase 4: Ship (F15–F17).** Acceptance suite, deployment, submission pack.
 6. **Phase 5: Finale groundwork (F18–F22).** Second state pack, link verification, Indian telephony, accessibility, multi-shop admin. *(F01–F22 merged in version 1.)*
-7. **Phase 6: Submission fixes (F23–F28, version 2).** Shared demo safety, no login wall, build identity and checklist, real-adapter smoke script, deck refresh, demo script version 2. *Submission cut: merge by 30 Nov, 12:00 noon IST; then deploy, record, build the deck with links, submit by the afternoon.*
+7. **Phase 6: Submission fixes (F23–F28, version 2).** Shared demo safety, no login wall, build identity and checklist, real-adapter smoke script, deck refresh, demo script version 2. *(Merged.)*
+8. **Phase 7: Works without a partner (F29–F39, version 3).** Deck slide first, then shop levels, cardholder reports, public PDS data, best-time advice, nearby shops, grievance routing, transparency page, dealer incentives, volunteer mode, and the version 3 docs. *Submission cut: merge by 30 Nov, 12:00 noon IST; `main` must be shippable after every merge.*
 
 ## Limits, open risks and what we will not claim
 
@@ -426,3 +561,8 @@ Each phase is split into single functionalities, built strictly one at a time un
 - **Speech accuracy** for elderly callers, strong dialects and noisy shops is unproven until piloted. The fallback chain and the voice-success metric exist because of that.
 - **Dealer resistance.** Dealers who benefit from crowded, unrecorded queues may resist; department backing is needed.
 - **Wispr Flow API access and limits** are to be confirmed with the organisers; Sarvam covers speech if Wispr is unavailable.
+- **Level 0 is information, not enforcement.** Without a dealer or volunteer, nobody can guarantee a slot; the app gives the best time to go and a nearby shop instead, and says so.
+- **Cardholder reports can be wrong or gamed.** Agreement, decay, outlier rejection and reliability weights reduce this but can't remove it; every spoken status names its source and age.
+- **Public PDS data formats differ by state and can change or go offline.** The adapter is configurable and fails safely; its real format must be confirmed per state.
+- **Portability depends on the state's ePoS and the cardholder's eligibility;** suggestions say "usually" and never promise the other shop will serve them.
+- **Complaints still depend on officials acting.** The app makes them reach the right channel, tracks them and escalates, and makes patterns public for vigilance committees; it can't force a resolution.
