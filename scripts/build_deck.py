@@ -70,7 +70,9 @@ def stats() -> dict[str, str]:
         ).stdout.strip()
         or "unknown"
     )
+    checks = len(re.findall(r"^\| \d+ \|", (ROOT / "docs" / "ACCEPTANCE.md").read_text(), re.M))
     return {
+        "ACCEPTANCE_CHECKS": str(checks),
         "UNIT_TESTS": str(unit),
         "E2E_FLOWS": str(e2e),
         "APP_LINES": f"{lines:,}",

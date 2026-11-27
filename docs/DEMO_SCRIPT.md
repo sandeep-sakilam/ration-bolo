@@ -1,4 +1,4 @@
-# Demo video script — version 2 (at most 3:00, with a live voice interaction)
+# Demo video script — version 3 (at most 3:00, with a live voice interaction)
 
 **Rules (Round 2 FAQ):** YouTube only (public or **unlisted**; Vimeo and Google Drive links
 are rejected), **3:00 or less**, showing the product working **with a live voice
@@ -31,26 +31,32 @@ Choose the path before recording:
       Tester tools → Link my phone), the Twilio number is saved, and the dashboard is open
       on a second screen or a phone-screen mirror. Alternatively, WhatsApp sandbox joined.
 - [ ] Practise the Telugu phrases once; speak clearly, one sentence per tap of the mic.
+- [ ] Check the Level 0 path once before recording: Shop 108 Machine down → Lakshmi hears Shop 112; then Machine working, Reset demo.
 
 ## Shot list
 
+Version 3 adds the "works without a partner" path (Level 0) in the middle; the voice-over
+is tighter so the whole video stays under 3:00.
+
 | Time | Screen | Voice-over | Action (say these exact phrases) |
 | --- | --- | --- | --- |
-| 0:00–0:12 | Deck title slide | "80 crore Indians collect rations every month. Families wait hours and are told 'come tomorrow'. Ration Bolo fixes that with one phone call." | — |
-| 0:12–0:22 | Simulator, banner visible | "This simulator is exactly what a caller hears. Speech is heard by Wispr Flow" — *fallback:* "by the browser, because this is the keyless mode" — "and every decision is made by our own rules." | Point at the banner. Caller **Lakshmi** → **Start call**. Reply plays: "Card chivari ankelu 0421, sare na?" |
-| 0:22–0:32 | Simulator | "It confirms her card by the last digits, never her name." | Tap mic, **say**: "Avunu." |
-| 0:32–0:47 | Simulator | "Has rice come? Yes, 24 kilos for her family of four." | Tap mic, **say**: "Maa shop ki biyyam vachaya?" |
-| 0:47–1:02 | Simulator | "How many are waiting? About 18 ahead, around 36 minutes, and tomorrow's quietest slot." | Tap mic, **say**: "Ippudu entha mandi unnaru?" |
-| 1:02–1:22 | Simulator | "Book tomorrow morning: it offers 10:20, reads it back and books only after a yes. Token sent by SMS." | Tap mic, **say**: "Repu poddhuna book cheyyandi." Then **say**: "Avunu." |
-| 1:22–1:37 | Simulator | "Short ration? It compares with the 24 kilos due and files a complaint with an ID." | Tap mic, **say**: "Naaku padihenu kilolu ichharu." Then **say**: "Avunu." |
-| 1:37–1:57 | **Primary:** phone call clip (dashboard + call audio) · **Fallback:** simulator in WhatsApp voice-note mode as Salma | "The same engine answers a real phone call on any basic phone…" / "…and WhatsApp voice notes, here in Hindi." | **Primary:** call the Twilio number, say "Avunu", "Ippudu entha mandi unnaru?" while the dashboard shows the call in the outbox/queue (15–20 s). **Fallback:** Salma, WhatsApp mode, **say**: "Kitne log hain?" |
-| 1:57–2:17 | Dealer dashboard | "The dealer serves booked and walk-in families in turn — half of every slot stays for walk-ins — and updates status by voice." | Click **Serve next**. Tap the dealer mic, **say**: "Machine down." Badge shows "back to normal in 10 min". |
-| 2:17–2:27 | Simulator | "Every caller hears it first, and booking pauses." | Start a call as Salma: the status is the first thing said. |
-| 2:27–2:37 | Simulator | "If speech fails twice we switch engines; a third time, a keypad menu. Nobody is stranded." | Mumble twice and once more (or type "???" three times); show the big menu buttons. |
-| 2:37–2:47 | Metrics page | "We track the pilot targets: wait within 20 minutes of the slot, adoption, calls finished by voice alone, complaints closed within a week." | Show the metrics page. |
-| 2:47–2:55 | README / repo | "One `docker compose up`, no keys, no login. Ration Bolo." | — |
+| 0:00–0:10 | Deck title slide | "80 crore Indians collect rations every month, often after hours in a queue. Ration Bolo: one phone call, by voice." | — |
+| 0:10–0:18 | Simulator, banner visible | "Speech is heard by Wispr Flow" — *fallback:* "by the browser, in keyless mode" — "and our own rules decide." | Caller **Lakshmi** → **Start call**: "Card chivari ankelu 0421, sare na?" |
+| 0:18–0:26 | Simulator | "Her card is confirmed by its last digits, never her name." | Tap mic, **say**: "Avunu." |
+| 0:26–0:38 | Simulator | "Rice? Yes, 24 kilos for her family." | **Say**: "Maa shop ki biyyam vachaya?" |
+| 0:38–0:50 | Simulator | "About 18 ahead, around 36 minutes — and the quietest times." | **Say**: "Ippudu entha mandi unnaru?" |
+| 0:50–1:05 | Simulator | "She books 10:20 tomorrow; it reads it back and books only after a yes." | **Say**: "Repu poddhuna book cheyyandi." → "Avunu." |
+| 1:05–1:18 | Simulator | "Short ration? A complaint with an ID, and a formal complaint text sent to her for the officials." | **Say**: "Naaku padihenu kilolu ichharu." → "Avunu." |
+| 1:18–1:30 | Dealer dashboard | "When the dealer marks the machine down, every caller hears it first and booking pauses." | Click **Machine down** (badge: "back to normal in 10 min"). |
+| 1:30–1:48 | Simulator, Lakshmi again | "But we don't strand her: a nearby shop under One Nation One Ration Card, with distance and wait." | Start call as Lakshmi → "Avunu" → "Maa shop ki biyyam vachaya?" → hear "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait." → "Avunu" → best time at 112. |
+| 1:48–2:08 | Simulator, caller **Ramu** (Shop 112, Level 0) | "Shop 112 has no cooperating dealer at all. Its cardholders report to each other, and public sales data fills in." | "Avunu" → "Biyyam vachaya?" (confirmed by 4 people, public data since 9:10) → "Repu book cheyyandi" (no bookings yet → best time) → "Biyyam vachindi, ikkada 12 mandi unnaru" → "Avunu" → "Avunu". |
+| 2:08–2:22 | `/shop/112` page | "Every shop gets a public page for vigilance committees: status with its source, best times, complaints — no names, small counts hidden." | Open `/shop/112`, scroll once. |
+| 2:22–2:35 | **Primary:** real phone call clip · **Fallback:** WhatsApp mode as Salma | "The same engine answers any basic phone…" / "…and WhatsApp voice notes, in Hindi." | **Primary:** call the Twilio number, "Avunu", "Ippudu entha mandi unnaru?" (15 s). **Fallback:** Salma, WhatsApp mode, "Kitne log hain?" |
+| 2:35–2:47 | Metrics page | "We measure the pilot targets — and how much works without any partner." | Show the metrics page, both rows of tiles. |
+| 2:47–2:55 | README | "Wispr Flow hears, our rules decide. One `docker compose up`, no keys, no login. Ration Bolo." | — |
 
-The live queue moves as judges use the demo, so say "about 18" — the exact number may differ.
+The live queue moves as judges use the demo, so say "about 18". Shop 108's "Machine down"
+restores itself after 10 minutes; press **Machine working** after the take anyway.
 
 ## After recording
 

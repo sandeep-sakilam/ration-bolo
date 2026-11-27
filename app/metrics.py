@@ -27,6 +27,52 @@ def _pct(part: int, whole: int) -> float | None:
     return round(part / whole, 3) if whole else None
 
 
+def _without_partner(db: Session, since: datetime) -> dict[str, Any]:
+    """Version 3: how much works with nobody's help (reports, levels, nearby, escalation)."""
+    from app import levels
+    from app.models import Report, Shop
+
+    by_level = {0: 0, 1: 0, 2: 0}
+    for shop in db.scalars(select(Shop)):
+        by_level[levels.effective_level(db, shop)] += 1
+    reports = db.scalars(
+        select(Report).where(Report.created_at >= since, Report.source == "caller")
+    ).all()
+    live = [r for r in reports if not r.reporter_hash.startswith("hist-")]
+    events = Counter(
+        e.action
+        for e in db.scalars(
+            select(Event).where(
+                Event.at >= since,
+                Event.action.in_(
+                    (
+                        "nearby_offered",
+                        "nearby_accepted",
+                        "broadcast_sent",
+                        "grievance_filed",
+                        "grievance_escalated_district",
+                        "grievance_escalated_national",
+                        "grievance_reference",
+                    )
+                ),
+            )
+        )
+    )
+    return {
+        "shops_by_level": by_level,
+        "cardholder_reports": sum(1 for r in live if r.kind != "checkin"),
+        "check_ins": sum(1 for r in live if r.kind == "checkin"),
+        "reporters": len({r.reporter_hash for r in live}),
+        "nearby_offered": events["nearby_offered"],
+        "nearby_accepted": events["nearby_accepted"],
+        "rice_arrived_messages": events["broadcast_sent"],
+        "complaints_routed": events["grievance_filed"],
+        "complaints_escalated": events["grievance_escalated_district"]
+        + events["grievance_escalated_national"],
+        "references_recorded": events["grievance_reference"],
+    }
+
+
 def compute(db: Session, days: int = 7, now: datetime | None = None) -> dict[str, Any]:
     now = now or now_utc()
     first_day = ist_today(now) - timedelta(days=days)
@@ -96,6 +142,7 @@ def compute(db: Session, days: int = 7, now: datetime | None = None) -> dict[str
     trips_checked = sum(1 for e in checks if e.detail.get("intent") in ("stock", "queue"))
 
     within_20 = sum(1 for w in booked_waits if w <= 20)
+    partner = _without_partner(db, since)
     return {
         "demo_data": True,
         "days": days,
@@ -125,6 +172,7 @@ def compute(db: Session, days: int = 7, now: datetime | None = None) -> dict[str
             "overdue": overdue,
             "resolved_7_days": _pct(resolved_in_7, closed_or_due),
         },
+        "without_partner": partner,
         "daily": [
             {
                 "day": d,

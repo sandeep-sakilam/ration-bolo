@@ -20,4 +20,6 @@ draft by email, and an unsubmitted draft is submitted automatically at the deadl
 | 12 | Demo state is fresh for each judge | `DEMO_MODE` unset or `auto` on Railway (fresh callers, 10-minute status restore, nightly reset); press **Reset demo** after recording the video | ☐ |
 | 13 | Voice-first: end users give input by voice, one core flow end to end | Simulator mic (browser speech, or Wispr when keyed) → stock, queue, booking | ☐ |
 | 14 | Real speech keys work (if used on the live link) | `python scripts/smoke_real.py` prints PASS for each keyed service | ☐ |
-| 15 | Submit by the afternoon of 30 Nov; watch email for a "returned to draft" message | — | ☐ |
+| 15 | Version 3 deck slide "Works without a partner: three levels" present; demo video shows the Level 0 path | `docs/deck.html` slide 12; `docs/DEMO_SCRIPT.md` 1:30–2:22 | ☐ |
+| 16 | Optional real-world settings for version 3 (helpline number, district contact, public PDS URL/format, check-in number) filled in only once confirmed | `/api/status` lists the public PDS and check-in lines; with nothing set the app says so and falls back | ☐ |
+| 17 | Submit by the afternoon of 30 Nov; watch email for a "returned to draft" message | — | ☐ |

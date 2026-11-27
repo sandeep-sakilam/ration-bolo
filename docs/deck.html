@@ -176,12 +176,13 @@
   <div class="cols">
     <div>
       <h3>The core flow, end to end by voice</h3>
-      <ul class="small">
+      <ul class="tiny">
         <li>Call simulator (keyless, for judges), Twilio phone line and WhatsApp voice notes — one dialogue engine behind all three</li>
         <li>Card check by last digits, stock and entitlement, live queue and wait, slot booking with read-back, short-ration complaints with an ID, reminder calls 20 minutes before the slot</li>
         <li>Wispr Flow → Sarvam → keypad/menu fallback chain; browser speech when no keys are set</li>
         <li>Dealer dashboard: serve next (simulated ePoS sale), walk-ins, stock and machine status by voice; impact metrics page</li>
         <li>Shared live demo: each judge gets fresh demo callers; status toggles restore themselves; nightly reset</li>
+        <li><b>Works without a partner</b> (version 3): shop levels 0/1/2, cardholder reports and check-ins, public PDS sales data, best-time advice, nearby shops, complaints routed and escalated to officials, public transparency page, dealer phone line and "rice arrived" messages, volunteer coordinators</li>
       </ul>
     </div>
     <div class="box">
@@ -194,7 +195,7 @@
         <li><b>WCAG 2.2 AA audit</b>: 0 automated violations; every page under 80 KB</li>
       </ul>
       <h3>By the numbers (computed at build time)</h3>
-      <p class="small">{{UNIT_TESTS}} unit tests · {{E2E_FLOWS}} browser flows · {{APP_LINES}} lines of application code · {{PACK_COUNT}} state packs · commit {{COMMIT}}</p>
+      <p class="small">{{UNIT_TESTS}} unit tests · {{E2E_FLOWS}} browser flows · {{APP_LINES}} lines of application code · {{PACK_COUNT}} state packs · {{ACCEPTANCE_CHECKS}} acceptance checks · commit {{COMMIT}}</p>
     </div>
   </div>
   <span class="brand">Ration Bolo</span><span class="num">7</span>
