@@ -1,4 +1,4 @@
-# Demo video script — version 3 (at most 3:00, with a live voice interaction)
+# Demo video script — version 3.1 (at most 3:00, with a live voice interaction)
 
 **Rules (Round 2 FAQ):** YouTube only (public or **unlisted**; Vimeo and Google Drive links
 are rejected), **3:00 or less**, showing the product working **with a live voice
@@ -36,7 +36,10 @@ Choose the path before recording:
 ## Shot list
 
 Version 3 adds the "works without a partner" path (Level 0) in the middle; the voice-over
-is tighter so the whole video stays under 3:00.
+is tighter so the whole video stays under 3:00. Version 3.1 phrases (checked against a local
+build): advice times are spoken ("poddhuna 9:10 ki", "saayantram 7 gantala taruvata"), the
+machine warning is heard once at the greeting, and every reply is at most two sentences plus
+the closing question.
 
 | Time | Screen | Voice-over | Action (say these exact phrases) |
 | --- | --- | --- | --- |
@@ -44,12 +47,12 @@ is tighter so the whole video stays under 3:00.
 | 0:10–0:18 | Simulator, banner visible | "Speech is heard by Wispr Flow" — *fallback:* "by the browser, in keyless mode" — "and our own rules decide." | Caller **Lakshmi** → **Start call**: "Card chivari ankelu 0421, sare na?" |
 | 0:18–0:26 | Simulator | "Her card is confirmed by its last digits, never her name." | Tap mic, **say**: "Avunu." |
 | 0:26–0:38 | Simulator | "Rice? Yes, 24 kilos for her family." | **Say**: "Maa shop ki biyyam vachaya?" |
-| 0:38–0:50 | Simulator | "About 18 ahead, around 36 minutes — and the quietest times." | **Say**: "Ippudu entha mandi unnaru?" |
-| 0:50–1:05 | Simulator | "She books 10:20 tomorrow; it reads it back and books only after a yes." | **Say**: "Repu poddhuna book cheyyandi." → "Avunu." |
+| 0:38–0:50 | Simulator | "About 18 ahead, around 36 minutes — and the quietest window to book." | **Say**: "Ippudu entha mandi unnaru?" |
+| 0:50–1:05 | Simulator | "She books 10:20 tomorrow; it reads it back and books only after a yes." | **Say**: "Repu poddhuna book cheyyandi." → "Avunu." → hear "Booking ayindi. Mee token B-036, SMS lo pampamu." |
 | 1:05–1:18 | Simulator | "Short ration? A complaint with an ID, and a formal complaint text sent to her for the officials." | **Say**: "Naaku padihenu kilolu ichharu." → "Avunu." |
 | 1:18–1:30 | Dealer dashboard | "When the dealer marks the machine down, every caller hears it first and booking pauses." | Click **Machine down** (badge: "back to normal in 10 min"). |
-| 1:30–1:48 | Simulator, Lakshmi again | "But we don't strand her: a nearby shop under One Nation One Ration Card, with distance and wait." | Start call as Lakshmi → "Avunu" → "Maa shop ki biyyam vachaya?" → hear "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait." → "Avunu" → best time at 112. |
-| 1:48–2:08 | Simulator, caller **Ramu** (Shop 112, Level 0) | "Shop 112 has no cooperating dealer at all. Its cardholders report to each other, and public sales data fills in." | "Avunu" → "Biyyam vachaya?" (confirmed by 4 people, public data since 9:10) → "Repu book cheyyandi" (no bookings yet → best time) → "Biyyam vachindi, ikkada 12 mandi unnaru" → "Avunu" → "Avunu". |
+| 1:30–1:48 | Simulator, Lakshmi again | "But we don't strand her: a nearby shop under One Nation One Ration Card, with distance and wait." | Start call as Lakshmi → "Avunu" → "Maa shop ki biyyam vachaya?" (the machine warning is heard once, at the greeting) → hear "Shop 112, near Saidabad bus stop, 1.2 km dooram lo undi; akkada biyyam undi, sumaru 10 nimishala wait, …; akkadiki veltara?" → "Avunu" → "Ippude vellochu, akkada sumaru 10 nimishala wait" (go now). |
+| 1:48–2:08 | Simulator, caller **Ramu** (Shop 112, Level 0) | "Shop 112 has no cooperating dealer at all. Its cardholders report to each other, and public sales data fills in." | "Avunu" → "Biyyam vachaya?" (confirmed by 4 people; public data: selling since "poddhuna 9:10 ki") → "Repu book cheyyandi" (no bookings yet → tomorrow's best time, e.g. "Repu saayantram 7 gantala taruvata") → "Biyyam vachindi, ikkada 12 mandi unnaru" → "Avunu" → "Avunu". |
 | 2:08–2:22 | `/shop/112` page | "Every shop gets a public page for vigilance committees: status with its source, best times, complaints — no names, small counts hidden." | Open `/shop/112`, scroll once. |
 | 2:22–2:35 | **Primary:** real phone call clip · **Fallback:** WhatsApp mode as Salma | "The same engine answers any basic phone…" / "…and WhatsApp voice notes, in Hindi." | **Primary:** call the Twilio number, "Avunu", "Ippudu entha mandi unnaru?" (15 s). **Fallback:** Salma, WhatsApp mode, "Kitne log hain?" |
 | 2:35–2:47 | Metrics page | "We measure the pilot targets — and how much works without any partner." | Show the metrics page, both rows of tiles. |
