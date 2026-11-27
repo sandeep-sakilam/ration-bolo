@@ -46,11 +46,12 @@ def test_check19_machine_down_offers_112_then_best_time(db: Session) -> None:
     r = call.say("Maa shop ki biyyam vachaya?")
     assert (
         "Shop 112, near Saidabad bus stop, 1.2 km dooram lo undi; akkada biyyam undi, "
-        "sumaru 10 nimishala wait."
+        "sumaru 10 nimishala wait, mee card sadharananga akkada kuda panichestundi; "
+        "akkadiki veltara?"
     ) in r.text
-    assert r.text.endswith("Akkadiki veltara?") and r.state == "nearby_offer"
+    assert r.text.endswith("akkadiki veltara?") and r.state == "nearby_offer"
     assert (
-        "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait."
+        "Shop 112, near Saidabad bus stop, 1.2 km away, has rice and about 10 minutes' wait"
         in r.gloss
     )
     r = call.say("Avunu")
@@ -67,7 +68,7 @@ def test_no_then_second_shop_and_booking_there(db: Session) -> None:
     r = call.say("Kal subah book karo")
     assert "booking ruki hai" in r.text.lower() and "Dukaan 112" in r.text
     r = call.say("nahi")
-    assert r.text.startswith("Dukaan 115, near Moosarambagh bridge, 1.8 km door hai")
+    assert "Dukaan 115, near Moosarambagh bridge, 1.8 km door hai" in r.text
     r = call.say("haan")
     assert r.text == "Theek hai, dukaan 115. Kis din, subah ya shaam?"
     r = call.say("kal subah")

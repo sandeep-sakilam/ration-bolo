@@ -108,12 +108,12 @@ V3_PHRASES: dict[str, str] = {
         "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
     ),
     "nearby_offer": (
-        "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait."
+        "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait, "
+        "and your card usually works there too; want to go there?"
     ),
-    "nearby_offer_plain": ("Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait."),
-    "nearby_ask": (
-        "Under One Nation One Ration Card you can usually collect your ration there too. "
-        "Want to go there?"
+    "nearby_offer_plain": (
+        "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait, "
+        "and your card usually works there too; want to go there?"
     ),
     "nearby_accepted": "Okay, Shop {code}.",
     "grievance_sent": ("We sent the complaint text by {via} to file with the officials."),
@@ -157,6 +157,12 @@ V3_PHRASES: dict[str, str] = {
     "public_closed": ("{total} sales today; the shop is closed now and opens {opens}."),
     "best_time_part_busy": ("{day} {part} is busy; {when} is usually under {minutes} minutes."),
     "best_time_part_busy_usual": ("{day} {part} is usually busy; {when} is usually quieter."),
+    "booking_paused_machine": (
+        "The machine is down, so booking is paused. You can still come and join the line."
+    ),
+    "booking_paused_stock": (
+        "Rice has run out, so booking is paused. You can still come and join the line."
+    ),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [

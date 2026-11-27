@@ -1234,9 +1234,9 @@
    "en": "{day} at {time}, okay?"
   },
   "booked": {
-   "te": "Booking ayindi. Mee token {token}. {via} lo pampamu.",
-   "hi": "Booking ho gayi. Aapka token {token}. {via} par bheja hai.",
-   "en": "Booked. Your token is {token}. Sent by {via}."
+   "te": "Booking ayindi. Mee token {token}, {via} lo pampamu.",
+   "hi": "Booking ho gayi. Aapka token {token}, {via} par bheja hai.",
+   "en": "Booked. Your token is {token}, sent by {via}."
   },
   "booking_refused_month": {
    "te": "Ee nela mee card ki booking already undi: {day} {time}, token {token}.",
@@ -1269,9 +1269,9 @@
    "en": "{kg} kg, right?"
   },
   "complaint_filed": {
-   "te": "Complaint namodu chesamu. Number {complaint_no}. Vaaram lopala chustamu.",
-   "hi": "Shikayat darj ho gayi. Number {complaint_no}. Ek hafte mein dekhenge.",
-   "en": "Complaint filed. Number {complaint_no}. It will be looked at within a week."
+   "te": "Complaint namodu chesamu: Number {complaint_no}, vaaram lopala chustamu.",
+   "hi": "Shikayat darj ho gayi: Number {complaint_no}, ek hafte mein dekhenge.",
+   "en": "Complaint filed: Number {complaint_no}, to be looked at within a week."
   },
   "complaint_none": {
    "te": "Meeku {due} kilolu raavali, {kg} kilolu vachayi. Idi sarigaane undi.",
@@ -1449,14 +1449,14 @@
    "en": "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
   },
   "nearby_offer": {
-   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; akkada biyyam undi, sumaru {minutes} nimishala wait.",
-   "hi": "Dukaan {code}, {landmark}, {km} km door hai; wahan chawal hai, lagbhag {minutes} minute ka intezaar.",
-   "en": "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait."
+   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; akkada biyyam undi, sumaru {minutes} nimishala wait, mee card sadharananga akkada kuda panichestundi; akkadiki veltara?",
+   "hi": "Dukaan {code}, {landmark}, {km} km door hai; wahan chawal hai, lagbhag {minutes} minute ka intezaar, aur aam taur par aapka card wahan bhi chalta hai; wahan jaayenge?",
+   "en": "Shop {code}, {landmark}, {km} km away, has rice and about {minutes} minutes' wait, and your card usually works there too; want to go there?"
   },
   "nearby_offer_plain": {
-   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; sumaru {minutes} nimishala wait.",
-   "hi": "Dukaan {code}, {landmark}, {km} km door hai; lagbhag {minutes} minute ka intezaar.",
-   "en": "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait."
+   "te": "Shop {code}, {landmark}, {km} km dooram lo undi; sumaru {minutes} nimishala wait, mee card sadharananga akkada kuda panichestundi; akkadiki veltara?",
+   "hi": "Dukaan {code}, {landmark}, {km} km door hai; lagbhag {minutes} minute ka intezaar, aur aam taur par aapka card wahan bhi chalta hai; wahan jaayenge?",
+   "en": "Shop {code}, {landmark}, {km} km away, about {minutes} minutes' wait, and your card usually works there too; want to go there?"
   },
   "nearby_ask": {
    "te": "One Nation One Ration Card tho sadharananga akkada kuda mee ration teesukovachu. Akkadiki veltara?",
@@ -1577,6 +1577,16 @@
    "te": "{day} {part} sadharananga rush ekkuva; {when} rush takkuva.",
    "hi": "{day} {part} aam taur par bheed zyada hoti hai; {when} bheed kam hoti hai.",
    "en": "{day} {part} is usually busy; {when} is usually quieter."
+  },
+  "booking_paused_machine": {
+   "te": "Machine pani cheyyatledu kabatti ippudu booking aagipoyindi. Line lo vachi teesukovachu.",
+   "hi": "Machine band hai, isliye abhi booking ruki hai. Aap line mein aa sakte hain.",
+   "en": "The machine is down, so booking is paused. You can still come and join the line."
+  },
+  "booking_paused_stock": {
+   "te": "Biyyam aipoyindi kabatti ippudu booking aagipoyindi. Line lo vachi teesukovachu.",
+   "hi": "Chawal khatam hai, isliye abhi booking ruki hai. Aap line mein aa sakte hain.",
+   "en": "Rice has run out, so booking is paused. You can still come and join the line."
   }
  },
  "default_busy_pattern": {

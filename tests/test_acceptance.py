@@ -28,7 +28,7 @@ def test_check3_whatsapp_handler_books_with_mock_adapter(db: Session) -> None:
         == "Repu 10:20 ki, sare na?"
     )
     assert (
-        "Booking ayindi. Mee token B-036. WhatsApp lo pampamu."
+        "Booking ayindi. Mee token B-036, WhatsApp lo pampamu."
         in handle_message(db, services, sender, "Avunu", []).text
     )
 

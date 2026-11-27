@@ -1,6 +1,6 @@
 # Progress
 
-Current: F42 merged; next is F43 on `feat/f43-shorter-replies`
+Current: F44 next (`feat/f44-nearby-today`)
 
 ## Functionality backlog
 
@@ -60,6 +60,6 @@ Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main
 - [x] F40 Demo public sales stay fresh relative to now and open hours; no false "possibly stopped" — `feat/f40-fresh-demo-sales`
 - [x] F41 Natural spoken times in advice (part-of-day phrases from the state pack) — `feat/f41-spoken-times`
 - [x] F42 Advice honours the day and part of day asked for; prefers today's remaining hours — `feat/f42-advice-context`
-- [ ] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
+- [x] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
 - [ ] F44 Nearby shop gives today's wait ("go now" / today's best time / tomorrow) — `feat/f44-nearby-today`
 - [ ] F45 Version 3.1 docs: demo script phrases, README, acceptance map, deck only if quoted text changed — `feat/f45-v31-docs`

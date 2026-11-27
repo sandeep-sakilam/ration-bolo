@@ -50,7 +50,7 @@ def test_booking_by_voice_notes(db: Session, services: Services) -> None:
     assert "Haan, chawal aa gaya hai. Aapke parivaar ke liye 18 kilo." in r.text
     assert handle_message(db, services, SALMA, "", media[1]).text == "Kal 10:20 baje, theek hai?"
     r = handle_message(db, services, SALMA, "", media[2])
-    assert "Booking ho gayi. Aapka token B-036. WhatsApp par bheja hai." in r.text
+    assert "Booking ho gayi. Aapka token B-036, WhatsApp par bheja hai." in r.text
     token = db.scalars(
         select(Token).where(Token.channel == "whatsapp", Token.status == "booked")
     ).one()

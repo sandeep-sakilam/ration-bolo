@@ -83,10 +83,11 @@ def test_tomorrow_when_today_is_over(db: Session) -> None:
     assert advice is not None and advice.day == TODAY + timedelta(days=1)
 
 
-def test_queue_answer_adds_best_time_at_every_level(db: Session) -> None:
+def test_queue_answer_keeps_one_advice_sentence_at_level_2(db: Session) -> None:
     call = Call(db, "+919000004401")
     call.say("Avunu")
     r = call.say("Ippudu entha mandi unnaru?")
     assert r.text.startswith("18 mandi mundu unnaru, sumaru 36 nimishalu.")
     assert "Repu 10:20 ki rush takkuva." in r.text
-    assert any(a["type"] == "best_time_advice" for a in r.actions)
+    # F43: the quietest bookable window is the one advice sentence; no extra best time.
+    assert not any(a["type"] == "best_time_advice" for a in r.actions)
