@@ -20,6 +20,8 @@ from app.models import (
     Outbox,
     PhoneLink,
     Reminder,
+    Report,
+    ReporterScore,
     Shop,
     ShopProfile,
     StatusTimer,
@@ -44,6 +46,8 @@ DEMO_CALLERS = {
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
+    Report,
+    ReporterScore,
     StatusTimer,
     ShopProfile,
     Turn,
@@ -418,6 +422,8 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             db.add(
                 PhoneLink(phone_e164=DEMO_CALLERS["ramu"]["phone"], card_id=ramu.id, source="seed")
             )
+        if code == "112":
+            _seed_112_reports(db, shop)
         for i in range(1, 9):
             card = Card(
                 card_no=f"TS-{code}-{3000 + i}",
@@ -430,6 +436,38 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             db.flush()
             db.add(CardHolder(card_id=card.id, display_name=f"Demo family {code}-{i}"))
             db.add(DemoCard(card_id=card.id, language=card.language))
+
+
+def _seed_112_reports(db: Session, shop: Shop) -> None:
+    """Shop 112 (Level 0): rice confirmed by 4 cardholder reports in the last 30 minutes
+    and two queue reports of 4 people. Reporter hashes start with "demo-" so demo mode
+    keeps them fresh (see app.demo.refresh_demo_reports)."""
+    now = now_utc()
+    for n, minutes in enumerate((28, 19, 11, 4), start=1):
+        db.add(
+            Report(
+                shop_id=shop.id,
+                kind="stock_in",
+                reporter_hash=f"demo-112-r{n}",
+                source="caller",
+                weight=1.0,
+                scored=True,
+                created_at=now - timedelta(minutes=minutes),
+            )
+        )
+    for n, minutes in ((5, 12), (6, 6)):
+        db.add(
+            Report(
+                shop_id=shop.id,
+                kind="queue_size",
+                value=4,
+                reporter_hash=f"demo-112-r{n}",
+                source="caller",
+                weight=1.0,
+                scored=True,
+                created_at=now - timedelta(minutes=minutes),
+            )
+        )
 
 
 def reset_demo(db: Session, now: datetime | None = None) -> None:

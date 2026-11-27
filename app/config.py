@@ -56,6 +56,11 @@ class Settings(BaseSettings):
     exotel_dlt_entity_id: str = ""
     exotel_dlt_template_id: str = ""
 
+    # Salt for hashing reporters' phone numbers (cardholder reports store only the hash).
+    reporter_salt: str = "ration-bolo-reporter-salt"
+    # Optional second Twilio number for free missed-call check-ins (answered with <Reject>).
+    twilio_checkin_number: str = ""
+
     audio_cache_dir: str = "./data/audio_cache"
     scheduler_enabled: bool = True
     # After a caller registers a card by digits, send a one-time code by SMS to verify the

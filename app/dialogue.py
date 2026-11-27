@@ -17,7 +17,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import besttime, demo, levels, queue, reminders
+from app import besttime, crowd, demo, levels, queue, reminders, shopstate
 from app.clock import fmt_time, ist_today, now_utc
 from app.models import (
     Card,
@@ -31,12 +31,13 @@ from app.models import (
     mask_phone,
 )
 from app.packs import Pack, get_pack
-from app.understanding import Understanding, understand
+from app.understanding import REPORT_INTENTS, Understanding, understand
 
 MAX_OFFERS = 3  # the first offer plus up to two more
 CODE_TTL = timedelta(minutes=10)
 CODE_ATTEMPTS = 3
 MENU = {"1": "stock", "2": "queue", "3": "book", "4": "complaint"}
+CHECKIN_KEY = "9"  # "I'm at the shop"
 YES_KEY, NO_KEY = "1", "2"
 
 Sender = Callable[[str, str, str], None]  # (channel, phone_e164, body)
@@ -82,6 +83,14 @@ class Word:
     key: str
 
 
+@dataclass(frozen=True)
+class Part:
+    """A phrase used inside another phrase ("{items}", "{what}"), rendered per language."""
+
+    key: str
+    values: tuple[tuple[str, object], ...] = ()
+
+
 class _Out:
     """Collects reply parts as (phrase key, values) so text and gloss stay in step."""
 
@@ -97,10 +106,19 @@ class _Out:
 
     def render(self, language: str) -> str:
         def value(v: object) -> object:
-            return self.pack.display(v.key, language) if isinstance(v, Word) else v
+            if isinstance(v, Word):
+                return self.pack.display(v.key, language)
+            if isinstance(v, Part):
+                return self.pack.phrase(v.key, language, **dict(v.values))
+            if isinstance(v, list):
+                return ", ".join(str(value(x)) for x in v)
+            return v
+
+        def sentence(text: str) -> str:
+            return text[:1].upper() + text[1:]
 
         return " ".join(
-            self.pack.phrase(k, language, **{n: value(v) for n, v in vals.items()})
+            sentence(self.pack.phrase(k, language, **{n: value(v) for n, v in vals.items()}))
             for k, vals in self.parts
         )
 
@@ -112,11 +130,13 @@ class Dialogue:
         send: Sender | None = None,
         verify_links: bool = True,
         demo_mode: bool = False,
+        reporter_salt: str = "ration-bolo-reporter-salt",
     ) -> None:
         self.db = db
         self.send = send or outbox_sender(db)
         self.verify_links = verify_links
         self.demo_mode = demo_mode
+        self.reporter_salt = reporter_salt
 
     # --- sessions ---------------------------------------------------------
 
@@ -147,6 +167,7 @@ class Dialogue:
     def handle(self, session: DialogueSession, event: Event) -> Reply:
         if self.demo_mode:
             demo.apply_auto_restore(self.db)
+            demo.refresh_demo_reports(self.db)
         pack = get_pack(session.state_pack)
         session.last_activity_at = now_utc()
         out = _Out(pack, session.language)
@@ -206,7 +227,10 @@ class Dialogue:
 
     def _digit(self, session: DialogueSession, key: str, out: _Out) -> None:
         state = session.state
-        if state in ("main", "menu") and key in MENU:
+        if state in ("main", "menu") and key == CHECKIN_KEY:
+            session.failures = 0
+            self._checkin(session, out)
+        elif state in ("main", "menu") and key in MENU:
             session.failures = 0
             self._intent(session, MENU[key], None, out)
         elif state == "choose_card":
@@ -370,6 +394,12 @@ class Dialogue:
         return True
 
     def _in_main(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if u.intent == "checkin":
+            self._checkin(session, out)
+            return True
+        if u.intent in REPORT_INTENTS:
+            self._report(session, u, out)
+            return True
         if u.intent:
             self._intent(session, u.intent, u, out)
             return True
@@ -509,12 +539,135 @@ class Dialogue:
         """Level 0 shop: no dealer source and no bookings. Say what is known, with its
         source and age, or say that nothing recent is known; then the best time to go."""
         shop = self._card(session).shop
+        state = shopstate.view(self.db, shop)
         if intent == "book":
             out.say("no_booking_level0")
             out.actions.append({"type": "booking_refused", "reason": "level0"})
+        elif intent == "stock" and (state.stock or state.machine_down):
+            if state.machine_down and state.machine:
+                self._say_signal(state.machine, out)
+            if state.stock:
+                self._say_signal(state.stock, out)
+                if state.stock.value == "in_stock":
+                    kg = queue.entitlement_grams(self._card(session)) // 1000
+                    out.actions.append({"type": "entitlement", "kg": kg})
+        elif intent == "queue" and state.queue_ahead is not None:
+            out.say(
+                "queue_reported",
+                ahead=state.queue_ahead,
+                minutes=state.wait_minutes(shop.families_per_hour),
+            )
         else:
             out.say("no_recent_reports")
         self._best_time(shop, out)
+        out.say("anything_else")
+        self._goto(session, "main", out)
+
+    def _say_signal(self, signal: shopstate.Signal, out: _Out) -> None:
+        what = Part(f"report_part_{_PART[(signal.kind, signal.value)]}")
+        if signal.source == "reports":
+            if signal.count >= 2:
+                out.say(
+                    "status_from_reports",
+                    what=what,
+                    count=signal.count,
+                    minutes=crowd.rounded_minutes(float(signal.detail.get("oldest", 0))),
+                )
+            else:
+                out.say(
+                    "status_one_report",
+                    what=what,
+                    minutes=crowd.rounded_minutes(float(signal.age_minutes or 0)),
+                )
+        else:
+            out.say(
+                "status_from_reports",
+                what=what,
+                count=signal.count,
+                minutes=crowd.rounded_minutes(float(signal.age_minutes or 0)),
+            )
+
+    # --- cardholder reports and check-ins (F31) -------------------------------
+
+    def _reporter(self, session: DialogueSession) -> str:
+        return crowd.reporter_hash(
+            session.phone_e164 or f"session:{session.id}", self.reporter_salt
+        )
+
+    def _report(self, session: DialogueSession, u: Understanding, out: _Out) -> None:
+        items: list[list[object]] = []
+        for intent, kind in REPORT_INTENTS.items():
+            if intent not in u.scores:
+                continue
+            if kind == "queue_size":
+                if not u.numbers:
+                    continue
+                items.append([kind, int(u.numbers[-1])])
+            else:
+                items.append([kind, None])
+        if not items:
+            self._intent(session, "queue", u, out)
+            return
+        session.data = {**session.data, "pending_reports": items}
+        if session.data.get("at_shop"):
+            self._read_back_reports(session, out)
+        else:
+            out.say("ask_at_shop")
+            self._goto(session, "confirm_at_shop", out)
+
+    def _read_back_reports(self, session: DialogueSession, out: _Out) -> None:
+        parts: list[Part] = []
+        for kind, value in session.data.get("pending_reports", []):
+            if kind == "queue_size":
+                parts.append(Part("report_part_queue", (("count", value),)))
+            else:
+                parts.append(Part(f"report_part_{kind}"))
+        out.say("report_readback", items=parts)
+        self._goto(session, "confirm_report", out)
+
+    def _in_confirm_at_shop(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if u.yes:
+            session.data = {**session.data, "at_shop": True}
+            self._read_back_reports(session, out)
+            return True
+        if u.no:
+            out.say("report_only_at_shop")
+            session.data = {**session.data, "pending_reports": []}
+            self._goto(session, "main", out)
+            return True
+        return False
+
+    def _in_confirm_report(self, session: DialogueSession, u: Understanding, out: _Out) -> bool:
+        if u.yes:
+            shop = self._card(session).shop
+            reporter = self._reporter(session)
+            saved = []
+            for kind, value in session.data.get("pending_reports", []):
+                crowd.save(self.db, shop, kind, reporter, "caller", value)
+                saved.append(kind)
+            session.data = {**session.data, "pending_reports": []}
+            out.say("report_saved")
+            out.actions.append({"type": "report_saved", "kinds": saved})
+            out.say("anything_else")
+            self._goto(session, "main", out)
+            return True
+        if u.no:
+            session.data = {**session.data, "pending_reports": []}
+            out.say("how_help")
+            self._goto(session, "main", out)
+            return True
+        if u.intent in REPORT_INTENTS:
+            self._report(session, u, out)
+            return True
+        return False
+
+    def _checkin(self, session: DialogueSession, out: _Out) -> None:
+        shop = self._card(session).shop
+        before = crowd.checkins_recent(self.db, shop)
+        crowd.save(self.db, shop, "checkin", self._reporter(session), "caller")
+        session.data = {**session.data, "at_shop": True}
+        out.say("checkin_saved", count=before + 1)
+        out.actions.append({"type": "checkin", "count": before + 1})
         out.say("anything_else")
         self._goto(session, "main", out)
 
@@ -792,7 +945,13 @@ class Dialogue:
 
     def _status_alerts(self, shop: Shop, out: _Out) -> None:
         if not levels.takes_bookings(self.db, shop):
-            return  # Level 0: no dealer status; reported status comes from shopstate
+            # Level 0: no dealer status; say confirmed problems from reports, with source.
+            state = shopstate.view(self.db, shop)
+            if state.stock_out and state.stock:
+                self._say_signal(state.stock, out)
+            if state.machine_down and state.machine:
+                self._say_signal(state.machine, out)
+            return
         if shop.status_stock != "in_stock":
             out.say("status_stock_out")
         if shop.status_machine != "working":
@@ -811,7 +970,21 @@ def _code_hash(code: str, salt: int) -> str:
     return hashlib.sha256(f"{salt}:{code}".encode()).hexdigest()
 
 
-_YES_NO_STATES = {"confirm_card", "confirm_digits", "confirm_booking", "confirm_kg"}
+_PART = {
+    ("stock", "in_stock"): "stock_in",
+    ("stock", "out"): "stock_out",
+    ("machine", "down"): "machine_down",
+    ("machine", "working"): "machine_ok",
+}
+
+_YES_NO_STATES = {
+    "confirm_at_shop",
+    "confirm_report",
+    "confirm_card",
+    "confirm_digits",
+    "confirm_booking",
+    "confirm_kg",
+}
 
 
 def _card_labels(cards: list[Card]) -> list[str]:

@@ -44,14 +44,16 @@ def test_check15_level0_book_gives_best_time_and_no_booking(db: Session) -> None
 
 
 def test_level0_stock_and_queue_say_no_recent_reports(db: Session) -> None:
-    call = Call(db, RAMU)
+    from app.models import Card, PhoneLink
+
+    card = db.scalars(select(Card).where(Card.card_no == "TS-109-3001")).one()
+    db.add(PhoneLink(phone_e164="+919000001091", card_id=card.id, source="seed"))
+    db.commit()
+    call = Call(db, "+919000001091")
+    assert card.language == "te"
     call.say("Avunu")
-    assert call.say("biyyam vachaya").text.startswith(
-        "Mee shop gurinchi ippudu kotta samacharam ledu."
-    )
-    assert call.say("entha mandi unnaru").text.startswith(
-        "Mee shop gurinchi ippudu kotta samacharam ledu."
-    )
+    for question in ("biyyam vachaya", "entha mandi unnaru"):
+        assert call.say(question).text.startswith("Mee shop gurinchi ippudu kotta samacharam ledu.")
 
 
 def test_level1_and_2_book_as_before(db: Session) -> None:

@@ -77,6 +77,9 @@
         engine_switched: () => "🔁 Switched to the backup speech engine",
         menu_shown: () => "🔢 Fallback menu shown",
         phone_linked: () => `🔗 This phone is now linked to card ••${a.last4}`,
+        report_saved: () => `📣 Report saved (${a.kinds.join(", ")})`,
+        checkin: () => `📍 Checked in at the shop (${a.count} in the last hour)`,
+        best_time_advice: () => `🕒 Best time: ${a.day} ${a.time}${a.known ? "" : " (usual pattern)"}`,
         language_switched: () => `🌐 Language: ${a.language}`,
         summary_sent: () => "✉ Text summary sent (see dealer outbox)",
         call_ended: () => "Call ended",
@@ -120,7 +123,7 @@
 
   function setActive(on) {
     state.ended = !on;
-    for (const id of ["mic", "textbox", "send", "toggle-keypad", "silence", "hangup"]) $(id).disabled = !on;
+    for (const id of ["mic", "textbox", "send", "toggle-keypad", "silence", "checkin", "hangup"]) $(id).disabled = !on;
     $("start").disabled = on;
     $("caller").disabled = on; $("state").disabled = on;
     $("mode-call").disabled = on; $("mode-wa").disabled = on;
@@ -277,6 +280,7 @@
     $("hangup").addEventListener("click", hangUp);
     $("mic").addEventListener("click", startListening);
     $("silence").addEventListener("click", sendSilence);
+    $("checkin").addEventListener("click", () => sendDigit("9"));
     $("mode-call").addEventListener("click", () => setMode("call"));
     $("mode-wa").addEventListener("click", () => setMode("whatsapp"));
     $("toggle-keypad").addEventListener("click", () => { $("keypad").hidden = !$("keypad").hidden; });
