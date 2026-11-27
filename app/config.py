@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     dealer_pin: str = ""
     admin_pin: str = ""
     public_base_url: str = ""
+    repo_url: str = "https://github.com/sandeep-sakilam/ration-bolo"
     seed_demo: bool = True
     # Shared-demo safety (F23): "auto" = on whenever demo data is seeded, "on", or "off".
     demo_mode: str = "auto"

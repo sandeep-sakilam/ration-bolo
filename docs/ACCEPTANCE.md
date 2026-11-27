@@ -14,6 +14,7 @@
 | 11 | Two Lakshmi calls in a row: the second hears Telugu and is offered 10:20 again | `tests/test_shared_demo.py::test_check11_…`, `tests/e2e/test_acceptance.py::test_check11_…` |
 | 12 | "Machine down" in demo mode is normal again after 10 minutes | `tests/test_shared_demo.py::test_check12_…` |
 | 13 | No `DEALER_PIN`/`ADMIN_PIN`: dealer and admin pages work without a PIN; with them set, a wrong PIN is refused | `tests/test_dealer.py::test_check13_…`, `test_pin_required_when_set`, `tests/e2e/test_acceptance.py::test_check13_…`, `scripts/check_fresh_clone.sh` |
+| 14 | `/health` and every footer show the commit the app was built from | `tests/test_buildinfo.py::test_check14_…`, `tests/e2e/test_acceptance.py::test_check14_…`, `scripts/check_fresh_clone.sh` |
 | 10 | More than 300 lines of application code | `scripts/count_loc.py` (`make loc`), `tests/test_acceptance.py::test_check10_…` |
 
 Run everything locally:

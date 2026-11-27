@@ -23,16 +23,18 @@ if [ -d "$REPO/.git" ]; then
   echo "==> Exporting committed files of $REPO (HEAD) as a fresh checkout"
   mkdir -p "$WORK/repo"
   git -C "$REPO" archive HEAD | tar -x -C "$WORK/repo"
+  SHA="$(git -C "$REPO" rev-parse HEAD)"
 else
   echo "==> Cloning $REPO ($BRANCH)"
   git clone --quiet --depth 1 --branch "$BRANCH" "$REPO" "$WORK/repo"
+  SHA="$(git -C "$WORK/repo" rev-parse HEAD)"
 fi
 cd "$WORK/repo"
 if [ -f .env ]; then echo "FAIL: a .env file is committed"; exit 1; fi
 
 echo "==> Building the image"
 # shellcheck disable=SC2086
-DOCKER_BUILDKIT=1 docker build --quiet ${BUILD_ARGS:-} -t ration-bolo:local . >/dev/null
+DOCKER_BUILDKIT=1 docker build --quiet ${BUILD_ARGS:-} --build-arg GIT_SHA="$SHA" -t ration-bolo:local . >/dev/null
 
 echo "==> docker compose up (no .env, no keys)"
 docker compose -p "$PROJECT" up -d
@@ -44,6 +46,9 @@ for _ in $(seq 1 60); do
 done
 curl -fsS "http://localhost:$PORT/health" >/dev/null || { echo "FAIL: app did not start";
   docker compose -p "$PROJECT" logs app | tail -40; exit 1; }
+
+curl -fsS "http://localhost:$PORT/health" | grep -q "$SHA" \
+  || { echo "FAIL: /health does not show build $SHA"; exit 1; }
 
 page="$(curl -fsS "http://localhost:$PORT/simulator")"
 echo "$page" | grep -qi "call simulator" || { echo "FAIL: simulator page missing"; exit 1; }
@@ -62,4 +67,4 @@ curl -fsS "http://localhost:$PORT/api/dealer/overview" | grep -q '"waiting"' \
 curl -fsS "http://localhost:$PORT/api/admin/shops" | grep -q '"code"' \
   || { echo "FAIL: admin page needs a PIN (login wall)"; exit 1; }
 
-echo "PASS: fresh clone starts with no .env and no keys; simulator loads; missing keys shown as 'key not set'; dealer and admin open with no PIN."
+echo "PASS: fresh clone starts with no .env and no keys; simulator loads; missing keys shown as 'key not set'; dealer and admin open with no PIN; /health shows build ${SHA:0:7}."

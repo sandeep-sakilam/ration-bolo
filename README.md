@@ -91,6 +91,11 @@ Dealer ─────► Dashboard ──────────────�
 | Quality | ruff, mypy, pytest, Playwright; GitHub Actions | Lint, types, 147 unit tests, browser flows, PostgreSQL and fresh-clone CI |
 | Hosting | Docker, Railway | One command locally; always-on HTTPS for Twilio |
 
+## Submitting
+
+`docs/SUBMISSION_CHECKLIST.md` lists every Round 2 rule and how to verify it. The footer of
+every page and `/health` show the commit the app was built from.
+
 ## Configuration
 
 Copy `.env.example` to `.env` and fill in only what you have. All keys are optional.

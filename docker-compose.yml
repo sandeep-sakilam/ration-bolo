@@ -4,7 +4,11 @@
 #   (then set DATABASE_URL=postgresql+psycopg://ration:ration@postgres:5432/ration_bolo)
 services:
   app:
-    build: .
+    build:
+      context: .
+      args:
+        # Optional: GIT_SHA=$(git rev-parse HEAD) docker compose up --build
+        GIT_SHA: ${GIT_SHA:-}
     image: ration-bolo:local
     ports:
       - "8000:8000"
