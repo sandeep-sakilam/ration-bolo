@@ -32,6 +32,15 @@ class SpeechToText(Protocol):
 MOCK_PREFIX = b"MOCKTEXT:"
 
 
+def describe_error(exc: Exception) -> str:
+    """Error name plus HTTP status and the start of the provider's message (no secrets:
+    request headers are never included)."""
+    if isinstance(exc, httpx.HTTPStatusError):
+        body = exc.response.text.strip().replace("\n", " ")[:200]
+        return f"HTTP {exc.response.status_code} {body}".strip()
+    return type(exc).__name__
+
+
 class MockSTT:
     """Keyless stand-in. Tests send 'audio' that is just ``MOCKTEXT:<words>``;
     anything else is heard as silence, so the fallback chain is exercised."""
@@ -80,7 +89,7 @@ class WisprSTT:
             resp.raise_for_status()
             data = resp.json()
         except (httpx.HTTPError, ValueError) as exc:
-            return Transcript(text="", engine=self.name, error=f"wispr: {type(exc).__name__}")
+            return Transcript(text="", engine=self.name, error=f"wispr: {describe_error(exc)}")
         lang = data.get("detected_language")
         return Transcript(text=str(data.get("text") or ""), engine=self.name, language=lang)
 
@@ -120,7 +129,7 @@ class SarvamSTT:
             resp.raise_for_status()
             data = resp.json()
         except (httpx.HTTPError, ValueError) as exc:
-            return Transcript(text="", engine=self.name, error=f"sarvam: {type(exc).__name__}")
+            return Transcript(text="", engine=self.name, error=f"sarvam: {describe_error(exc)}")
         code = data.get("language_code") or ""
         return Transcript(
             text=str(data.get("transcript") or ""),

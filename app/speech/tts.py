@@ -11,6 +11,8 @@ from typing import Protocol
 
 import httpx
 
+from app.speech.stt import describe_error
+
 
 class TextToSpeech(Protocol):
     name: str
@@ -48,7 +50,10 @@ class SarvamTTS:
         self.model, self.speaker, self.timeout = model, speaker, timeout
         self.client = client or httpx.Client()
 
+    last_error: str | None = None
+
     def synthesize(self, text: str, language_code: str) -> bytes | None:
+        self.last_error = None
         body = {
             "text": text[:2500],
             "language_code": language_code,
@@ -66,7 +71,8 @@ class SarvamTTS:
             resp.raise_for_status()
             audios = resp.json().get("audios") or []
             return base64.b64decode(audios[0]) if audios else None
-        except (httpx.HTTPError, ValueError, IndexError):
+        except (httpx.HTTPError, ValueError, IndexError) as exc:
+            self.last_error = describe_error(exc)
             return None
 
 

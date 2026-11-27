@@ -141,4 +141,6 @@ shops is unproven until piloted. The Telugu and Hindi phrases need checking by n
 - Railway: account, project from the GitHub repo, PostgreSQL service, environment variables, public domain.
 - GitHub settings: keep the repo public, allow direct pushes to `main`, turn off the email-privacy push block, verify the email on the account.
 - Checking the Telugu and Hindi phrases in the state pack with native speakers.
+- Running `scripts/smoke_real.py` with real keys and fixing any key or endpoint problem it reports (see `docs/DEPLOY.md` §7).
+- Deleting the merged remote feature branches on GitHub.
 - Recording and uploading the demo video, exporting the final deck PDF, and the hackathon submission itself.

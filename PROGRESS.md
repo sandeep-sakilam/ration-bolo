@@ -1,6 +1,6 @@
 # Progress
 
-Current: F25 merged; next is F26 on `feat/f26-real-smoke`
+Current: F26 merged; next is F27 on `feat/f27-deck-refresh`
 
 ## Functionality backlog
 
@@ -37,6 +37,6 @@ Version 2 submission fixes (F23–F28, merge by 30 Nov 2026, 12:00 noon IST):
 - [x] F23 Shared live demo safety: fresh demo callers, auto-restoring status toggles, nightly reset — `feat/f23-shared-demo`
 - [x] F24 No login wall: dealer and admin pages open when no PIN is set — `feat/f24-no-login-wall`
 - [x] F25 Build identity (commit SHA) and submission checklist — `feat/f25-submission-checklist`
-- [ ] F26 Real-adapter smoke script (run by hand, never in CI) — `feat/f26-real-smoke`
+- [x] F26 Real-adapter smoke script (run by hand, never in CI) — `feat/f26-real-smoke`
 - [ ] F27 Deck refresh: FAQ headings, finale features, live numbers, PDF limit checks — `feat/f27-deck-refresh`
 - [ ] F28 Demo video script v2 with a live voice interaction — `feat/f28-demo-script-v2`
