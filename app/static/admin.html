@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ration Bolo · Admin</title>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<header class="top">
+  <h1>Ration Bolo <span class="badge demo">Demo data</span></h1>
+  <nav aria-label="Pages">
+    <a href="/simulator">Call simulator</a>
+    <a href="/dealer">Dealer dashboard</a>
+    <a href="/metrics">Impact metrics</a>
+    <a href="/admin" aria-current="page">Admin</a>
+  </nav>
+</header>
+<main>
+  <section class="card" id="login" style="max-width:380px;margin:40px auto">
+    <h2>Admin login</h2>
+    <form id="login-form">
+      <label for="pin">Admin PIN</label>
+      <input type="password" id="pin" inputmode="numeric" autocomplete="current-password" placeholder="Demo PIN is 1234">
+      <p class="small">Demo PIN: <strong>1234</strong> (set <code>ADMIN_PIN</code> to change it).</p>
+      <button type="submit" class="primary">Open admin</button>
+      <p class="small" id="login-error" role="alert"></p>
+    </form>
+  </section>
+  <div id="dash" hidden>
+    <p class="banner" id="flash" role="status" hidden></p>
+    <section class="card" aria-labelledby="shops-h" style="margin-bottom:16px">
+      <h2 id="shops-h">Shops</h2>
+      <div class="scroll" tabindex="0" role="region" aria-label="Shops table">
+        <table><thead><tr><th>Code</th><th>Shop</th><th>State</th><th>Hours</th><th>Status</th><th>Cards</th><th>Waiting</th><th>Bookings</th><th>Open complaints</th></tr></thead>
+          <tbody id="shops-body"></tbody></table>
+      </div>
+    </section>
+    <div class="grid two">
+      <section class="card" aria-labelledby="is-h">
+        <h2 id="is-h">Import shops (CSV)</h2>
+        <p class="small">Columns: code, name, area, state_pack, sessions (e.g. <code>08:00-12:00;16:00-20:00</code>), families_per_hour, booked_share. Existing codes are updated. <a href="#" id="tpl-shops">Download template</a></p>
+        <form id="shops-form">
+          <label for="shops-file">CSV file</label>
+          <input type="file" id="shops-file" accept=".csv,text/csv" required>
+          <div class="row" style="margin-top:8px"><button type="submit" class="primary">Import shops</button></div>
+        </form>
+      </section>
+      <section class="card" aria-labelledby="ic-h">
+        <h2 id="ic-h">Import ration cards (CSV)</h2>
+        <p class="small">Columns: card_no, shop_code, members, language, phone (optional, E.164 — linked as verified). Existing card numbers are updated. <a href="#" id="tpl-cards">Download template</a></p>
+        <form id="cards-form">
+          <label for="cards-file">CSV file</label>
+          <input type="file" id="cards-file" accept=".csv,text/csv" required>
+          <div class="row" style="margin-top:8px"><button type="submit" class="primary">Import cards</button></div>
+        </form>
+      </section>
+    </div>
+    <p class="small">Imports are all-or-nothing: if any row is wrong, nothing is saved and the rows with problems are listed.</p>
+    <ul id="errors" class="small"></ul>
+  </div>
+</main>
+<footer class="foot">Ration Bolo admin · names are never imported or shown.</footer>
+<script src="/static/js/admin.js"></script>
+</body>
+</html>

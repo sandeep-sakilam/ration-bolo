@@ -5,9 +5,11 @@
   let pin = "";
   try { pin = sessionStorage.getItem("dealerPin") || ""; } catch (e) { /* storage blocked */ }
   let timer = null;
+  let shop = "";
+  try { shop = sessionStorage.getItem("dealerShop") || ""; } catch (e) { /* storage blocked */ }
 
   async function api(path, body, isForm) {
-    const opts = { method: body === undefined ? "GET" : "POST", headers: { "X-Dealer-Pin": pin } };
+    const opts = { method: body === undefined ? "GET" : "POST", headers: { "X-Dealer-Pin": pin, "X-Shop-Code": shop } };
     if (body !== undefined) {
       if (isForm) opts.body = body;
       else { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
@@ -31,6 +33,12 @@
   }
 
   function render(d) {
+    const ss = $("shop-select");
+    if (ss.options.length !== d.shops.length) {
+      ss.innerHTML = "";
+      for (const s of d.shops) ss.add(new Option(`Shop ${s.code} · ${s.area}`, s.code));
+    }
+    ss.value = d.shop.code;
     $("shop-name").textContent = `${d.shop.name} (Shop ${d.shop.code})`;
     $("shop-area").textContent = d.shop.area;
     $("today").textContent = `Today ${d.today} · ${d.shop.families_per_hour} families an hour`;
@@ -98,6 +106,7 @@
     }
 
     const sel = $("link-card");
+    if (sel.dataset.shop !== d.shop.code) { sel.innerHTML = ""; sel.dataset.shop = d.shop.code; }
     if (!sel.options.length) for (const c of d.demo_cards) sel.add(new Option(`${c.label} · ••${c.last4}`, c.id));
   }
 
@@ -136,6 +145,11 @@
   }
   async function sendVoice(text) { const r = await act("/voice", { text }); if (r) flash(`Heard “${r.heard}”: ${r.message}`); }
 
+  $("shop-select").addEventListener("change", (e) => {
+    shop = e.target.value;
+    try { sessionStorage.setItem("dealerShop", shop); } catch (err) { /* ignore */ }
+    refresh();
+  });
   $("login-form").addEventListener("submit", (e) => { e.preventDefault(); pin = $("pin").value; login(); });
   $("serve").addEventListener("click", () => {
     const kg = $("serve-kg").value; $("serve-kg").value = "";

@@ -37,7 +37,8 @@ Open **http://localhost:8000** — the call simulator. Everything you see is lab
 4. Open **Dealer dashboard** (PIN **1234**): live queue, *Serve next*, walk-in tokens,
    *Machine down* (booking pauses on every channel), voice updates (*"Biyyam aipoyindi"*),
    complaints, the outbox of every SMS / WhatsApp / reminder call, *Send reminder now*, *Reset demo*.
-5. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
+5. Open **Admin** (PIN **1234**) to see every shop and import shops and ration cards from CSV.
+6. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
 
 A banner on the simulator lists which services are live and which keys are **not set**
 (the same data is at `/api/status`). Every outside service falls back: no speech keys →
