@@ -389,6 +389,7 @@ class Dialogue:
         card = self._card(session)
         shop = card.shop
         kg_due = queue.entitlement_grams(card) // 1000
+        queue.log_event(self.db, session.channel, "intent", f"session:{session.id}", intent=intent)
         if intent == "stock":
             if shop.status_machine != "working":
                 out.say("status_machine_down")

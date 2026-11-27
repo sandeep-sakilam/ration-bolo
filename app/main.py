@@ -17,6 +17,7 @@ from app.channels import voice as voice_channel
 from app.channels import whatsapp as whatsapp_channel
 from app.config import Settings, get_settings
 from app.db import init_db, make_engine, make_sessionmaker
+from app.metrics import compute as compute_metrics
 from app.packs import all_packs
 from app.reminders import dashboard_rows, start_scheduler
 from app.seed import seed_if_empty
@@ -71,6 +72,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if path is None or not path.exists():
             raise HTTPException(404)
         return FileResponse(path, media_type="audio/ogg" if fmt == "ogg" else "audio/wav")
+
+    @app.get("/api/metrics")
+    def metrics(days: int = 7) -> dict[str, object]:
+        with factory() as db:
+            return compute_metrics(db, max(1, min(days, 90)))
+
+    @app.get("/metrics", include_in_schema=False)
+    def metrics_page() -> FileResponse:
+        return FileResponse(STATIC_DIR / "metrics.html")
 
     @app.get("/api/packs")
     def packs_list() -> list[dict[str, object]]:
