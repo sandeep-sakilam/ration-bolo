@@ -1,6 +1,6 @@
 # Progress
 
-Current: F09 merged; next is F10 on `feat/f10-dealer-dashboard`
+Current: F10 merged; next is F11 on `feat/f11-reminders`
 
 ## Functionality backlog
 
@@ -15,7 +15,7 @@ Submission build (F01–F17, merge by 30 Nov 2026, 6:00 PM IST):
 - [x] F07 Adapter interfaces, mocks, service status — `feat/f07-adapters`
 - [x] F08 Speech pipeline — `feat/f08-speech-pipeline`
 - [x] F09 Call simulator — `feat/f09-simulator`
-- [ ] F10 Dealer dashboard — `feat/f10-dealer-dashboard`
+- [x] F10 Dealer dashboard — `feat/f10-dealer-dashboard`
 - [ ] F11 Reminders and outbox — `feat/f11-reminders`
 - [ ] F12 Twilio Voice channel — `feat/f12-voice-channel`
 - [ ] F13 Twilio WhatsApp channel — `feat/f13-whatsapp`

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import contextlib
 import os
 import socket
 import subprocess
@@ -93,5 +92,4 @@ def reset(server: str) -> None:
     req = urllib.request.Request(
         server + "/api/dealer/reset", method="POST", headers={"X-Dealer-Pin": "1234"}
     )
-    with contextlib.suppress(OSError):  # dashboard not built yet
-        urllib.request.urlopen(req, timeout=10)
+    urllib.request.urlopen(req, timeout=10)
