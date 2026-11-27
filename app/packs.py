@@ -89,6 +89,21 @@ V3_PHRASES: dict[str, str] = {
     "level_dropped_booking": (
         "The shop no longer confirms bookings; your {time} time is still a quiet time to go."
     ),
+    "ask_at_shop": "Are you at the shop?",
+    "report_only_at_shop": "Please report only when you are at the shop. Thank you.",
+    "report_readback": "You are reporting: {items}. Right?",
+    "report_saved": "Thank you, your report is saved.",
+    "report_part_stock_in": "rice has arrived",
+    "report_part_stock_out": "no rice",
+    "report_part_machine_down": "the machine is down",
+    "report_part_machine_ok": "the machine is working",
+    "report_part_queue": "{count} people are there",
+    "status_from_reports": "{what}, confirmed by {count} people in the last {minutes} minutes.",
+    "status_one_report": "{what}: one person reported it {minutes} minutes ago.",
+    "queue_reported": (
+        "By cardholders' reports about {ahead} people are there, about {minutes} minutes."
+    ),
+    "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [
     "report_stock_in",

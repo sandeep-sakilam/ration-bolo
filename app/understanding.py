@@ -16,7 +16,25 @@ from rapidfuzz import fuzz, process
 
 from app.packs import Pack
 
-CUSTOMER_INTENTS = ("stock", "queue", "book", "complaint", "end")
+CUSTOMER_INTENTS = (
+    "stock",
+    "queue",
+    "book",
+    "complaint",
+    "end",
+    # version 3: cardholder reports and check-ins
+    "report_stock_in",
+    "report_stock_out",
+    "report_machine_down",
+    "report_queue",
+    "checkin",
+)
+REPORT_INTENTS = {
+    "report_stock_in": "stock_in",
+    "report_stock_out": "stock_out",
+    "report_machine_down": "machine_down",
+    "report_queue": "queue_size",
+}
 DEALER_INTENTS = ("dealer_stock_out", "dealer_stock_in", "dealer_machine_down", "dealer_machine_up")
 EXACT_MAX_LEN = 4  # words this short must match exactly ("kal" is not "kam")
 
@@ -205,6 +223,8 @@ def understand(text: str, pack: Pack) -> Understanding:
             score += 2  # "any number of kilos" means a complaint
         if score:
             result.scores[intent] = score
+    if "report_queue" in result.scores and not result.numbers:
+        del result.scores["report_queue"]  # "ikkada" alone is not a queue report
     if result.scores:
         priority = pack.raw["intent_priority"]
         result.intent = max(

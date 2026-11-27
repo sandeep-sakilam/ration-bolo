@@ -12,10 +12,11 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from twilio.twiml.voice_response import VoiceResponse
 
+from app import crowd
 from app.channels.twilio_common import public_url, verified_form
 from app.db import get_db
 from app.dialogue import Dialogue, Event, Reply
-from app.models import DialogueSession
+from app.models import DialogueSession, PhoneLink
 from app.packs import get_pack
 from app.services import Services
 from app.speech import pipeline
@@ -184,6 +185,23 @@ async def silence(request: Request, db: Session = Depends(get_db)) -> Response:
     reply = dialogue.handle(session, Event("silence"))
     db.commit()
     return respond(request, services, session, reply)
+
+
+@router.post("/checkin")
+async def missed_call_checkin(request: Request, db: Session = Depends(get_db)) -> Response:
+    """Optional free check-in number (TWILIO_CHECKIN_NUMBER): the call is rejected, so the
+    caller pays nothing, and their linked shop records an arrival."""
+    form = await verified_form(request)
+    phone = form.get("From", "")
+    settings = request.app.state.settings
+    links = db.scalars(select(PhoneLink).where(PhoneLink.phone_e164 == phone)).all()
+    if links:
+        shop = links[0].card.shop
+        crowd.save(db, shop, "checkin", crowd.reporter_hash(phone, settings.reporter_salt))
+        db.commit()
+    xml = VoiceResponse()
+    xml.reject()
+    return twiml(xml)
 
 
 @router.post("/status")

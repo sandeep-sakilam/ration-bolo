@@ -52,6 +52,7 @@ class Services:
             self.sender(db),
             verify_links=self.settings.link_verification != "off",
             demo_mode=self.settings.demo_active,
+            reporter_salt=self.settings.reporter_salt,
         )
 
     def sender(self, db: Session) -> Callable[[str, str, str], None]:
@@ -129,6 +130,13 @@ class Services:
                 s.twilio_ready and bool(s.twilio_voice_number),
                 [*twilio_keys, "TWILIO_VOICE_NUMBER"],
                 "outbox (mock)",
+            ),
+            svc(
+                "missed_call_checkin",
+                "Twilio check-in number",
+                s.twilio_ready and bool(s.twilio_checkin_number),
+                ["TWILIO_CHECKIN_NUMBER"],
+                "keypad 9 or 'I am at the shop' on the main number",
             ),
             {
                 "service": "indian_telephony",

@@ -246,3 +246,30 @@ class ShopProfile(Base):
     landmark: Mapped[str] = mapped_column(String(120), default="")
     portability: Mapped[bool] = mapped_column(default=True)
     dealer_phone_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+
+
+class Report(Base):
+    """A cardholder (or dealer/volunteer/public-data) report about a shop (F31).
+
+    Only a salted hash of the reporter's phone is stored, never the number."""
+
+    __tablename__ = "reports"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), index=True)
+    # stock_in | stock_out | machine_down | machine_ok | queue_size | checkin
+    kind: Mapped[str] = mapped_column(String(16))
+    value: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    reporter_hash: Mapped[str] = mapped_column(String(64), index=True)
+    source: Mapped[str] = mapped_column(String(16))  # caller | dealer | volunteer | public_pds
+    weight: Mapped[float] = mapped_column(default=1.0)
+    scored: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc, index=True)
+
+
+class ReporterScore(Base):
+    """Reliability of a reporter (0.2–2.0), by phone hash (F31)."""
+
+    __tablename__ = "reporter_scores"
+    reporter_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    weight: Mapped[float] = mapped_column(default=1.0)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)

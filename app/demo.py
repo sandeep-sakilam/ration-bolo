@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from app import queue
 from app.clock import now_utc
-from app.models import Card, DemoCard, Reminder, Shop, StatusTimer, Token
+from app.models import Card, DemoCard, Reminder, Report, Shop, StatusTimer, Token
 
 RESTORE_AFTER = timedelta(minutes=10)
 NORMAL = {"stock": "in_stock", "machine": "working"}
@@ -80,6 +80,30 @@ def restore_countdown(db: Session, shop: Shop, now: datetime | None = None) -> d
         left = timer.set_at + RESTORE_AFTER - now
         out[timer.kind] = max(1, int(-(-left.total_seconds() // 60)))
     return out
+
+
+DEMO_REPORTER_PREFIX = "demo-"
+FRESH_AFTER = timedelta(minutes=20)
+
+
+def refresh_demo_reports(db: Session, now: datetime | None = None) -> int:
+    """Seeded demo reports (reporter hash "demo-…") are shifted forward so the newest is
+    5 minutes old whenever it gets older than 20 minutes; spacing between them is kept.
+    Judges hours after a reset still hear "confirmed by 4 people in the last 30 minutes"."""
+    now = now or now_utc()
+    rows = db.scalars(
+        select(Report).where(Report.reporter_hash.startswith(DEMO_REPORTER_PREFIX))
+    ).all()
+    if not rows:
+        return 0
+    newest = max(r.created_at for r in rows)
+    if now - newest <= FRESH_AFTER:
+        return 0
+    shift = (now - timedelta(minutes=5)) - newest
+    for row in rows:
+        row.created_at += shift
+    db.flush()
+    return len(rows)
 
 
 def clear_timers(db: Session) -> None:

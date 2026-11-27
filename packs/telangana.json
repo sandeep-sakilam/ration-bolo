@@ -278,10 +278,94 @@
     "machine fixed",
     "machine ok"
    ]
+  },
+  "report_stock_in": {
+   "te": [
+    "biyyam vachindi",
+    "stock vachindi",
+    "vachindi"
+   ],
+   "hi": [
+    "chawal aa gaya",
+    "ration aa gaya",
+    "aa gaya"
+   ],
+   "en": [
+    "rice has arrived",
+    "rice arrived",
+    "stock arrived"
+   ]
+  },
+  "report_stock_out": {
+   "te": [
+    "biyyam ledu",
+    "stock ledu",
+    "biyyam aipoyindi"
+   ],
+   "hi": [
+    "chawal nahi hai",
+    "chawal khatam",
+    "stock nahi hai"
+   ],
+   "en": [
+    "no rice",
+    "rice finished",
+    "out of stock"
+   ]
+  },
+  "report_machine_down": {
+   "te": [
+    "machine pani cheyyatledu",
+    "machine aagipoyindi",
+    "machine down"
+   ],
+   "hi": [
+    "machine kharab",
+    "machine band",
+    "machine down"
+   ],
+   "en": [
+    "machine down",
+    "machine not working",
+    "machine broken"
+   ]
+  },
+  "report_queue": {
+   "te": [
+    "ikkada"
+   ],
+   "hi": [
+    "yahan"
+   ],
+   "en": [
+    "here"
+   ]
+  },
+  "checkin": {
+   "te": [
+    "shop daggara unnanu",
+    "nenu shop daggara",
+    "ikkade unnanu"
+   ],
+   "hi": [
+    "dukaan par hoon",
+    "main dukaan par",
+    "yahan hoon"
+   ],
+   "en": [
+    "at the shop",
+    "i am at the shop",
+    "im at the shop"
+   ]
   }
  },
  "intent_priority": [
   "complaint",
+  "report_queue",
+  "report_stock_out",
+  "report_machine_down",
+  "report_stock_in",
+  "checkin",
   "book",
   "queue",
   "stock",
@@ -1215,6 +1299,71 @@
    "te": "Shop ippudu bookings nirdharinchadam ledu; mee {time} samayam ippatiki rush takkuva samayame.",
    "hi": "Dukaan ab booking pakki nahi karti; aapka {time} ka samay ab bhi kam bheed wala hai.",
    "en": "The shop no longer confirms bookings; your {time} time is still a quiet time to go."
+  },
+  "ask_at_shop": {
+   "te": "Meeru shop daggara unnara?",
+   "hi": "Kya aap dukaan par hain?",
+   "en": "Are you at the shop?"
+  },
+  "report_only_at_shop": {
+   "te": "Shop daggara unnappude report cheyyandi. Dhanyavaadalu.",
+   "hi": "Dukaan par hone par hi report kijiye. Dhanyavaad.",
+   "en": "Please report only when you are at the shop. Thank you."
+  },
+  "report_readback": {
+   "te": "{items} ani cheptunnaru, sare na?",
+   "hi": "Aap bata rahe hain: {items}, theek hai?",
+   "en": "You are reporting: {items}. Right?"
+  },
+  "report_saved": {
+   "te": "Dhanyavaadalu, mee report namodu chesamu.",
+   "hi": "Dhanyavaad, aapki report darj ho gayi.",
+   "en": "Thank you, your report is saved."
+  },
+  "report_part_stock_in": {
+   "te": "biyyam vachindi",
+   "hi": "chawal aa gaya",
+   "en": "rice has arrived"
+  },
+  "report_part_stock_out": {
+   "te": "biyyam ledu",
+   "hi": "chawal nahi hai",
+   "en": "no rice"
+  },
+  "report_part_machine_down": {
+   "te": "machine pani cheyyatledu",
+   "hi": "machine band hai",
+   "en": "the machine is down"
+  },
+  "report_part_machine_ok": {
+   "te": "machine pani chestondi",
+   "hi": "machine chal rahi hai",
+   "en": "the machine is working"
+  },
+  "report_part_queue": {
+   "te": "{count} mandi unnaru",
+   "hi": "{count} log hain",
+   "en": "{count} people are there"
+  },
+  "status_from_reports": {
+   "te": "{what}, gata {minutes} nimishallo {count} mandi nirdharincharu.",
+   "hi": "{what}, pichhle {minutes} minute mein {count} logon ne bataya.",
+   "en": "{what}, confirmed by {count} people in the last {minutes} minutes."
+  },
+  "status_one_report": {
+   "te": "{what}: {minutes} nimishala kritam okka vyakti cheppaaru.",
+   "hi": "{what}: {minutes} minute pehle ek vyakti ne bataya.",
+   "en": "{what}: one person reported it {minutes} minutes ago."
+  },
+  "queue_reported": {
+   "te": "Cardholders cheppina prakaram sumaru {ahead} mandi unnaru, sumaru {minutes} nimishalu.",
+   "hi": "Logon ki report ke hisaab se lagbhag {ahead} log hain, lagbhag {minutes} minute.",
+   "en": "By cardholders' reports about {ahead} people are there, about {minutes} minutes."
+  },
+  "checkin_saved": {
+   "te": "Meeru shop daggara unnaru ani namodu chesamu. Gata gantalo {count} mandi check-in chesaru.",
+   "hi": "Aap dukaan par hain, darj kar liya. Pichhle ghante mein {count} log check-in kar chuke hain.",
+   "en": "Noted that you are at the shop. {count} people checked in in the last hour."
   }
  },
  "default_busy_pattern": {

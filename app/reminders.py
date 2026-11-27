@@ -142,7 +142,7 @@ def start_scheduler(
     def tick() -> None:
         try:
             with factory() as db:
-                if demo_on and demo.apply_auto_restore(db):
+                if demo_on and (demo.apply_auto_restore(db) + demo.refresh_demo_reports(db)):
                     db.commit()
                 sent = run_due(db, services)
                 if sent:
