@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     twilio_sms_number: str = ""
 
     audio_cache_dir: str = "./data/audio_cache"
+    scheduler_enabled: bool = True
 
     @property
     def wispr_ready(self) -> bool:

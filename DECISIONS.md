@@ -43,3 +43,7 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Dealer PIN transport · sent as an `X-Dealer-Pin` header on every API call and kept in the tab's sessionStorage, compared in constant time · simple demo protection with no cookies or accounts.
 - 2026-11-27 · Demonstrating the late rule · the dashboard has "+11 min (late)" next to "Mark arrived" for today's bookings · judges can see the walk-in move without waiting 11 real minutes.
 - 2026-11-27 · Single-shop dashboard · the dashboard shows the first shop · the pilot has one shop; multi-shop admin is F22.
+- 2026-11-27 · Reminder channel · a call for bookings made by phone or simulator, a WhatsApp message for bookings made on WhatsApp; the number comes from the card's phone link · "the app calls back", but WhatsApp users expect WhatsApp; full numbers stay only in phone_links.
+- 2026-11-27 · Bookings made less than 20 minutes before the slot · reminder due immediately · the family still gets the live count.
+- 2026-11-27 · Live "people ahead" ignores bookings whose window is over · those are no-shows, not people in the line.
+- 2026-11-27 · Scheduler · APScheduler background job every 30 s reading pending reminders from the database (`SCHEDULER_ENABLED`, on by default, off in unit tests) · one process, no worker; restarts lose nothing.

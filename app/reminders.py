@@ -1,0 +1,155 @@
+"""Reminders: 20 minutes before a booked slot the app calls back ("Leave now, three
+are ahead"), with the number ahead computed live. Reminders live in the database,
+so they survive restarts; an in-process APScheduler job sends the due ones."""
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime, timedelta
+from typing import Any
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from sqlalchemy import select
+from sqlalchemy.orm import Session, sessionmaker
+
+from app import queue
+from app.clock import fmt_time, now_utc, to_ist
+from app.models import Outbox, PhoneLink, Reminder, Token
+from app.packs import get_pack
+from app.services import Services
+
+log = logging.getLogger("ration_bolo.reminders")
+REMINDER_MINUTES = 20
+
+
+def schedule(db: Session, token: Token, now: datetime | None = None) -> Reminder | None:
+    """Create the reminder for a new booking (sent at once if the slot is under 20 min away)."""
+    if token.window is None:
+        return None
+    now = now or now_utc()
+    start = queue.window_start_utc(token.window)
+    if start <= now:
+        return None
+    due = max(now, start - timedelta(minutes=REMINDER_MINUTES))
+    reminder = Reminder(token_id=token.id, due_at=due, status="pending")
+    db.add(reminder)
+    db.flush()
+    return reminder
+
+
+def phone_for(db: Session, token: Token) -> str | None:
+    if token.card_id is None:
+        return None
+    link = db.scalars(
+        select(PhoneLink).where(PhoneLink.card_id == token.card_id).order_by(PhoneLink.id)
+    ).first()
+    return link.phone_e164 if link else None
+
+
+def reminder_text(db: Session, token: Token) -> tuple[str, str]:
+    """(text, language). Existing bookings hear the shop status in their reminder."""
+    card = token.card
+    if card is None or token.window is None:
+        raise ValueError("reminder needs a booked card")
+    pack = get_pack(card.state_pack)
+    lang = pack.reply_language(card.language)
+    parts = []
+    if card.shop.status_stock != "in_stock":
+        parts.append(pack.phrase("status_stock_out", lang))
+    if card.shop.status_machine != "working":
+        parts.append(pack.phrase("status_machine_down", lang))
+    ahead = queue.ahead_of_booking(db, token)
+    parts.insert(
+        0, pack.phrase("reminder", lang, time=fmt_time(token.window.start_time), ahead=ahead)
+    )
+    return " ".join(parts), lang
+
+
+def send(db: Session, services: Services, reminder: Reminder) -> Outbox | None:
+    token = reminder.token
+    if token.status != "booked":
+        reminder.status = "cancelled"
+        return None
+    phone = phone_for(db, token)
+    if phone is None:
+        reminder.status = "failed"
+        return None
+    text, lang = reminder_text(db, token)
+    if token.channel == "whatsapp":
+        row = services.messenger.send_whatsapp(db, phone, text)
+    else:
+        row = services.messenger.place_call(db, phone, text, lang)
+    reminder.status = "sent" if row.status in ("mock", "sent") else "failed"
+    reminder.sent_at = now_utc()
+    queue.log_event(db, "system", "reminder_sent", f"token:{token.id}", status=reminder.status)
+    return row
+
+
+def run_due(db: Session, services: Services, now: datetime | None = None) -> int:
+    now = now or now_utc()
+    due = db.scalars(
+        select(Reminder)
+        .where(Reminder.status == "pending", Reminder.due_at <= now)
+        .order_by(Reminder.due_at)
+    ).all()
+    for reminder in due:
+        send(db, services, reminder)
+    db.commit()
+    return len(due)
+
+
+def send_now(db: Session, services: Services, reminder_id: int | None = None) -> Outbox | None:
+    """Dealer dashboard "Send reminder now" (for demos)."""
+    if reminder_id is not None:
+        reminder = db.get(Reminder, reminder_id)
+    else:
+        reminder = db.scalars(
+            select(Reminder).where(Reminder.status == "pending").order_by(Reminder.due_at)
+        ).first()
+    if reminder is None or reminder.status != "pending":
+        return None
+    row = send(db, services, reminder)
+    db.commit()
+    return row
+
+
+def dashboard_rows(db: Session) -> dict[str, Any]:
+    rows = db.scalars(select(Reminder).order_by(Reminder.due_at.desc()).limit(15)).all()
+    return {
+        "reminders": [
+            {
+                "id": r.id,
+                "token": r.token.label,
+                "status": r.status,
+                "due": to_ist(r.due_at).strftime("%d %b %H:%M"),
+            }
+            for r in rows
+        ]
+    }
+
+
+def start_scheduler(
+    factory: sessionmaker[Session], services: Services, interval_seconds: int = 30
+) -> BackgroundScheduler:
+    scheduler = BackgroundScheduler(daemon=True)
+
+    def tick() -> None:
+        try:
+            with factory() as db:
+                sent = run_due(db, services)
+                if sent:
+                    log.info("sent %d reminders", sent)
+        except Exception:  # keep the scheduler alive whatever happens
+            log.exception("reminder run failed")
+
+    scheduler.add_job(
+        tick,
+        "interval",
+        seconds=interval_seconds,
+        id="reminders",
+        next_run_time=now_utc() + timedelta(seconds=5),
+        max_instances=1,
+        coalesce=True,
+    )
+    scheduler.start()
+    return scheduler

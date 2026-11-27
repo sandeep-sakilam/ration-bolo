@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import queue
+from app import queue, reminders
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -347,3 +347,18 @@ def link_phone(body: LinkIn, db: Session = Depends(get_db)) -> dict[str, Any]:
 def reset(db: Session = Depends(get_db)) -> dict[str, str]:
     reset_demo(db, now_utc())
     return {"message": "Demo data restored"}
+
+
+class ReminderIn(BaseModel):
+    reminder_id: int | None = None
+
+
+@router.post("/reminders/send-now")
+def reminder_now(
+    body: ReminderIn, request: Request, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    services: Services = request.app.state.services
+    row = reminders.send_now(db, services, body.reminder_id)
+    if row is None:
+        return {"message": "No pending reminder to send."}
+    return {"message": f"Reminder sent ({row.channel}, {row.status}): {row.body}"}

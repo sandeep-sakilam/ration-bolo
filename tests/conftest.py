@@ -41,7 +41,7 @@ def db_url(tmp_path: Path) -> Iterator[str]:
 
 @pytest.fixture
 def settings(db_url: str) -> Settings:
-    return Settings(database_url=db_url, _env_file=None)  # type: ignore[call-arg]
+    return Settings(database_url=db_url, scheduler_enabled=False, _env_file=None)  # type: ignore[call-arg]
 
 
 @pytest.fixture
