@@ -7,8 +7,10 @@ from tests.e2e.test_accessibility import _violations
 
 def test_admin_imports_shop_csv(page: Page, reset: None, tmp_path: Path) -> None:
     csv = tmp_path / "shops.csv"
-    csv.write_text("code,name,area,state_pack,sessions,families_per_hour,booked_share\n"
-                   "150,Fair Price Shop 150,Amberpet,telangana,08:00-12:00,30,0.5\n")
+    csv.write_text(
+        "code,name,area,state_pack,sessions,families_per_hour,booked_share\n"
+        "150,Fair Price Shop 150,Amberpet,telangana,08:00-12:00,30,0.5\n"
+    )
     page.goto("/admin")
     page.fill("#pin", "1234")
     page.click("#login-form button[type=submit]")
