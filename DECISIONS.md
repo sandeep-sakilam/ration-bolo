@@ -21,3 +21,10 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Fuzzy matching of short words · words of 4 letters or fewer must match exactly; longer words use rapidfuzz ratio ≥ the pack threshold (82) · "kal" (tomorrow) must never be read as "kam" (less).
 - 2026-11-27 · "Any number of kilos" · a number next to a kilo word adds 2 to the complaint score · so "Naaku 15 kilolu ichharu" is a complaint even without a complaint keyword.
 - 2026-11-27 · Caller language detection · script (Telugu/Devanagari) first, else the language whose words matched most · used as a hint only; replies follow the card's saved language unless the caller asks to switch.
+- 2026-11-27 · Caller asks a question instead of answering the card check · treated as "yes" and the question is answered · fewer turns for callers; nothing is saved by a card check.
+- 2026-11-27 · Failure counting · consecutive failures (reset after an understood turn); the 2nd switches to the backup engine for the rest of the session, the 3rd shows the fallback menu in any state · matches "two failures → backup, one more → menu" and acceptance check 5.
+- 2026-11-27 · Booking request with no day · a session word alone means tomorrow; "book" alone asks "which day, morning or evening?"; keypad 3 offers the first free window tomorrow · keypad callers can't say a day.
+- 2026-11-27 · "No" at "anything else?" · ends the call politely with the summary · natural way to finish a call.
+- 2026-11-27 · Picking among several cards · caller says the last digits or presses/says 1, 2, ...; no extra read-back · choosing is not saving, and the next answer reads the card's own data.
+- 2026-11-27 · Text summary · sent at the end of a session only when something happened (booking, complaint) · avoids empty messages.
+- 2026-11-27 · Long number words misheard ("padihaaru") · single-word fuzzy match ≥ 85 for words of 6+ letters, only when no exact match · speech engines spell Telugu numbers inconsistently.
