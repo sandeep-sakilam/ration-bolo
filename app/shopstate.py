@@ -12,7 +12,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from app import crowd, levels
+from app import crowd, levels, publicpds
 from app.clock import now_utc
 from app.models import Shop
 
@@ -36,6 +36,7 @@ class ShopView:
     queue_ahead: int | None = None
     queue_source: str | None = None
     minutes_per_family: float | None = None
+    public: publicpds.PublicSignals | None = None
     disagreements: list[str] = field(default_factory=list)
 
     def wait_minutes(self, families_per_hour: int) -> int:
@@ -83,6 +84,16 @@ def view(db: Session, shop: Shop, now: datetime | None = None) -> ShopView:
                 {"oldest": v.oldest_age_min},
             )
             setattr(result, sig, signal)
+    public = publicpds.current().signals(shop, now)
+    result.public = public
+    if level == 0 and public is not None and public.available:
+        if result.stock is None and public.first_sale is not None:
+            result.stock = Signal("stock", "in_stock", "public_pds", count=0, confirmed=True)
+        if result.machine is None and public.possibly_stopped:
+            result.machine = Signal(
+                "machine", "down", "public_pds", public.stopped_minutes, count=0, confirmed=False
+            )
+        result.minutes_per_family = public.minutes_per_family
     ahead = crowd.queue_estimate(current)
     if ahead is not None and level == 0:
         result.queue_ahead, result.queue_source = ahead, "reports"

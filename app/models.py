@@ -273,3 +273,15 @@ class ReporterScore(Base):
     reporter_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
     weight: Mapped[float] = mapped_column(default=1.0)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+
+
+class PublicSale(Base):
+    """A snapshot of a shop's public ePoS sales (from the state's public PDS portal, F32)."""
+
+    __tablename__ = "public_sales"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), index=True)
+    observed_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+    sale_time: Mapped[datetime] = mapped_column(DateTime, index=True)
+    count: Mapped[int] = mapped_column(Integer)
+    source_url: Mapped[str] = mapped_column(String(300), default="")

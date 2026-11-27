@@ -150,7 +150,7 @@ def test_level0_stock_from_reports_and_queue(db: Session) -> None:
     text = call.say("biyyam vachaya").text
     assert text.startswith("Biyyam vachindi, gata 30 nimishallo 4 mandi nirdharincharu.")
     text = call.say("entha mandi unnaru").text
-    assert text.startswith("Cardholders cheppina prakaram sumaru 4 mandi unnaru, sumaru 8")
+    assert text.startswith("Cardholders cheppina prakaram sumaru 4 mandi unnaru, sumaru 10")
 
 
 def test_checkin_by_keypad_9_and_phrase(db: Session) -> None:

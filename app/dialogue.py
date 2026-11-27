@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import besttime, crowd, demo, levels, queue, reminders, shopstate
-from app.clock import fmt_time, ist_today, now_utc
+from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.models import (
     Card,
     DialogueSession,
@@ -543,14 +543,12 @@ class Dialogue:
         if intent == "book":
             out.say("no_booking_level0")
             out.actions.append({"type": "booking_refused", "reason": "level0"})
-        elif intent == "stock" and (state.stock or state.machine_down):
-            if state.machine_down and state.machine:
+        elif intent == "stock" and (state.stock or state.machine):
+            if state.machine and state.machine.source == "reports" and state.machine_down:
                 self._say_signal(state.machine, out)
-            if state.stock:
+            if state.stock and state.stock.source == "reports":
                 self._say_signal(state.stock, out)
-                if state.stock.value == "in_stock":
-                    kg = queue.entitlement_grams(self._card(session)) // 1000
-                    out.actions.append({"type": "entitlement", "kg": kg})
+            self._say_public(state, out)
         elif intent == "queue" and state.queue_ahead is not None:
             out.say(
                 "queue_reported",
@@ -562,6 +560,21 @@ class Dialogue:
         self._best_time(shop, out)
         out.say("anything_else")
         self._goto(session, "main", out)
+
+    def _say_public(self, state: shopstate.ShopView, out: _Out) -> None:
+        public = state.public
+        if public is None or not public.available or public.first_sale is None:
+            return
+        out.say("public_started", time=to_ist(public.first_sale).strftime("%H:%M"))
+        if public.possibly_stopped:
+            out.say("public_stopped", minutes=public.stopped_minutes)
+        out.actions.append(
+            {
+                "type": "public_pds",
+                "first_sale": to_ist(public.first_sale).strftime("%H:%M"),
+                "sales_last_hour": public.sales_last_hour,
+            }
+        )
 
     def _say_signal(self, signal: shopstate.Signal, out: _Out) -> None:
         what = Part(f"report_part_{_PART[(signal.kind, signal.value)]}")
