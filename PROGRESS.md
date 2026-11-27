@@ -1,6 +1,6 @@
 # Progress
 
-Current: F34 merged; next is F35 on `feat/f35-grievance-routing`
+Current: F35 merged; next is F36 on `feat/f36-transparency`
 
 ## Functionality backlog
 
@@ -49,7 +49,7 @@ Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon
 - [x] F32 Public PDS data adapter, polling and signals — `feat/f32-public-pds`
 - [x] F33 Best-time advice from hourly crowd profiles — `feat/f33-best-time`
 - [x] F34 Nearby-shop portability (ONORC) — `feat/f34-nearby-shops`
-- [ ] F35 Official complaint routing and escalation — `feat/f35-grievance-routing`
+- [x] F35 Official complaint routing and escalation — `feat/f35-grievance-routing`
 - [ ] F36 Public transparency page and monthly report — `feat/f36-transparency`
 - [ ] F37 Dealer incentives: dealer phone line, "Rice arrived" broadcast, "Fair shop" badge — `feat/f37-dealer-incentives`
 - [ ] F38 Volunteer queue coordinator mode — `feat/f38-volunteer-mode`

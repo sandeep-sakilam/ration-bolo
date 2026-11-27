@@ -56,6 +56,7 @@ class Services:
             verify_links=self.settings.link_verification != "off",
             demo_mode=self.settings.demo_active,
             reporter_salt=self.settings.reporter_salt,
+            settings=self.settings,
         )
 
     def sender(self, db: Session) -> Callable[[str, str, str], None]:

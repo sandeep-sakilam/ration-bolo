@@ -52,6 +52,12 @@ def respond(
     request: Request, services: Services, session: DialogueSession, reply: Reply
 ) -> Response:
     xml = VoiceResponse()
+    dial = next((a for a in reply.actions if a.get("type") == "dial" and a.get("number")), None)
+    if dial is not None:
+        # Helpline handoff: only after the caller said yes (never dialled in tests).
+        speak(request, services, session, reply, xml)
+        xml.dial(str(dial["number"]))
+        return twiml(xml)
     if reply.expect == "menu":
         gather = xml.gather(
             input="dtmf",

@@ -88,7 +88,7 @@
     for (const c of d.complaints) {
       const tr = document.createElement("tr");
       cell(tr, c.complaint_no); cell(tr, `••${c.last4}`); cell(tr, `${c.kg_due} / ${c.kg_received} kg`);
-      cell(tr, c.status + (c.outcome ? ` · ${c.outcome}` : ""));
+      cell(tr, c.status + (c.stage ? ` · ${c.stage}` : "") + (c.outcome ? ` · ${c.outcome}` : ""));
       const td = cell(tr, "");
       if (c.status === "open") btn(td, "Resolve", () => {
         const outcome = prompt("Outcome (e.g. 'Gave the missing rice')", "Gave the missing rice");

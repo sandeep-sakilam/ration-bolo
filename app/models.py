@@ -297,3 +297,19 @@ class HourlyProfile(Base):
     expected_wait_min: Mapped[float] = mapped_column()
     samples: Mapped[int] = mapped_column(Integer)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+
+
+class Grievance(Base):
+    """Where a complaint has been routed and its escalation stage (F35). One per complaint."""
+
+    __tablename__ = "grievances"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    complaint_id: Mapped[int] = mapped_column(ForeignKey("complaints.id"), unique=True)
+    channel: Mapped[str] = mapped_column(String(16))  # mock | prepared | helpline
+    external_ref: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    # filed | escalated_district | escalated_national | resolved
+    stage: Mapped[str] = mapped_column(String(24), default="filed")
+    next_action_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+    updated_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
+    complaint: Mapped[Complaint] = relationship()

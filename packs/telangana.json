@@ -372,6 +372,22 @@
     "go there",
     "i will go there"
    ]
+  },
+  "grievance_ref": {
+   "te": [
+    "reference number",
+    "reference",
+    "refrence"
+   ],
+   "hi": [
+    "reference number",
+    "reference",
+    "sandarbh sankhya"
+   ],
+   "en": [
+    "reference number",
+    "reference"
+   ]
   }
  },
  "intent_priority": [
@@ -1409,6 +1425,66 @@
    "te": "Sare, Shop {code}.",
    "hi": "Theek hai, dukaan {code}.",
    "en": "Okay, Shop {code}."
+  },
+  "grievance_sent": {
+   "te": "Adhikarulaku file cheyyadaniki complaint text {via} lo pampamu.",
+   "hi": "Adhikariyon ke paas darj karne ke liye shikayat ka text {via} par bheja hai.",
+   "en": "We sent the complaint text by {via} to file with the officials."
+  },
+  "helpline_offer": {
+   "te": "Ippude state food helpline ki connect cheyyamantara?",
+   "hi": "Kya abhi state food helpline se jod doon?",
+   "en": "Shall I connect you to the state food helpline now?"
+  },
+  "helpline_connecting": {
+   "te": "Helpline ki connect chestunnamu. Mee complaint number {complaint_no}.",
+   "hi": "Helpline se jod rahe hain. Aapka shikayat number {complaint_no}.",
+   "en": "Connecting you to the helpline. Your complaint number is {complaint_no}."
+  },
+  "ask_reference": {
+   "te": "Meeku ichhina reference number cheppandi.",
+   "hi": "Aapko mila reference number boliye.",
+   "en": "Please say the reference number you were given."
+  },
+  "reference_readback": {
+   "te": "Reference number {ref}, sare na?",
+   "hi": "Reference number {ref}, theek hai?",
+   "en": "Reference number {ref}, right?"
+  },
+  "reference_saved": {
+   "te": "Reference number ni complaint {complaint_no} tho namodu chesamu.",
+   "hi": "Reference number shikayat {complaint_no} ke saath darj kar liya.",
+   "en": "Saved the reference number with complaint {complaint_no}."
+  },
+  "no_open_complaint": {
+   "te": "Mee card ki open complaint ledu.",
+   "hi": "Aapke card par koi khuli shikayat nahi hai.",
+   "en": "Your card has no open complaint."
+  },
+  "grievance_formal": {
+   "te": "Complaint {complaint_no}: Fair Price Shop {shop} ({area}) lo {date} na card chivari ankelu {last4} ki {due} kilolu raavalsindi, {kg} kilolu matrame ichharu. Jaateeya Aahaara Bhadrata Chattam 2013 (Sections 14, 15) prakaram vicharinchi poorti ration ivvagalaru.",
+   "hi": "Shikayat {complaint_no}: Fair Price Shop {shop} ({area}) par {date} ko card ke aakhri ank {last4} ko {due} kilo ke badle sirf {kg} kilo mila. Rashtriya Khadya Suraksha Adhiniyam 2013 (dhara 14, 15) ke tahat jaanch kar poora ration dilaayein.",
+   "en": "Complaint {complaint_no}: at Fair Price Shop {shop} ({area}) on {date}, card ending {last4} received {kg} kg against {due} kg due. Under the National Food Security Act, 2013 (Sections 14 and 15: grievance redressal), please inquire and ensure the full entitlement."
+  },
+  "grievance_steps": {
+   "te": "File cheyyadaniki: {state_portal} leka {national_portal}. Complaint {complaint_no} ani cheppandi.",
+   "hi": "Darj karne ke liye: {state_portal} ya {national_portal}. Shikayat {complaint_no} bataiye.",
+   "en": "To file it: {state_portal} or {national_portal}. Quote complaint {complaint_no}."
+  },
+  "escalate_district": {
+   "te": "Ration Bolo: complaint {complaint_no} 7 rojulaina parishkarinchaledu. District grievance officer ki escalate cheyyandi: {district}. Vaallu ichhina reference number maaku call chesi cheppandi.",
+   "hi": "Ration Bolo: shikayat {complaint_no} 7 din mein hal nahi hui. District grievance officer ke paas le jaiye: {district}. Unka reference number humein call karke bataiye.",
+   "en": "Ration Bolo: complaint {complaint_no} is not resolved after 7 days. Escalate it to the District Grievance Redressal Officer: {district}. Call us and say the reference number they give you."
+  },
+  "escalate_national": {
+   "te": "Ration Bolo: complaint {complaint_no} 21 rojulaina open lo undi. Jaateeya public grievance portal {national_portal} lo kinda text tho file cheyyandi.",
+   "hi": "Ration Bolo: shikayat {complaint_no} 21 din baad bhi khuli hai. Rashtriya public grievance portal {national_portal} par neeche diye text ke saath darj kijiye.",
+   "en": "Ration Bolo: complaint {complaint_no} is still open after 21 days. File it on the national public grievance portal {national_portal} with the text below."
+  },
+  "district_unknown": {
+   "te": "mee District Supply Officer office",
+   "hi": "aapke District Supply Officer ka daftar",
+   "en": "your District Supply Officer's office"
   }
  },
  "default_busy_pattern": {
@@ -1435,6 +1511,9 @@
   "helpline_number": "",
   "district_officer": "",
   "state_portal": "",
-  "national_portal": "https://pgportal.gov.in"
+  "national_portal": "https://pgportal.gov.in",
+  "basis": {
+   "en": "National Food Security Act, 2013, Sections 14 and 15"
+  }
  }
 }

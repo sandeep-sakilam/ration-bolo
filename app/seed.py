@@ -17,6 +17,7 @@ from app.models import (
     DialogueSession,
     Distribution,
     Event,
+    Grievance,
     HourlyProfile,
     Outbox,
     PhoneLink,
@@ -48,6 +49,7 @@ DEMO_CALLERS = {
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
+    Grievance,
     HourlyProfile,
     PublicSale,
     Report,
