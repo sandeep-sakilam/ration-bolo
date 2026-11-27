@@ -295,6 +295,55 @@
           }
         }
       }
+    },
+    "time_phrases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "parts",
+          "before",
+          "after",
+          "between",
+          "at",
+          "at_hour"
+        ],
+        "properties": {
+          "parts": {
+            "type": "object",
+            "required": [
+              "morning",
+              "afternoon",
+              "evening",
+              "night"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "hours": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "before": {
+            "type": "string"
+          },
+          "after": {
+            "type": "string"
+          },
+          "between": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string"
+          },
+          "at_hour": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

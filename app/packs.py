@@ -83,8 +83,8 @@ V3_DEFAULTS: dict[str, Any] = {
 # Version 3 phrases: English fallback when a pack has no text for them yet.
 V3_PHRASES: dict[str, str] = {
     "no_booking_level0": "This shop doesn't take bookings yet.",
-    "best_time_usual": "{day} after {time} is usually quietest.",
-    "best_time_known": "{day} after {time} is usually under {minutes} minutes.",
+    "best_time_usual": "{day} {when} is usually quietest.",
+    "best_time_known": "{day} {when} is usually under {minutes} minutes.",
     "no_recent_reports": "No recent reports for your shop.",
     "level_dropped_booking": (
         "The shop no longer confirms bookings; your {time} time is still a quiet time to go."
@@ -103,7 +103,7 @@ V3_PHRASES: dict[str, str] = {
     "queue_reported": (
         "By cardholders' reports about {ahead} people are there, about {minutes} minutes."
     ),
-    "public_started": "Public sales data shows the shop started selling at {time}.",
+    "public_started": "Public sales data shows the shop started selling {when}.",
     "public_stopped": (
         "Public sales data shows no sales for {minutes} minutes; the shop may have stopped."
     ),
@@ -190,6 +190,8 @@ class Pack:
         for key in V3_PHRASES:
             if key not in self.raw["phrases"]:
                 self.missing_v3.append(f"phrases.{key}")
+        if "time_phrases" not in self.raw:
+            self.missing_v3.append("time_phrases")
         for intent in V3_INTENTS:
             if intent not in self.raw["intents"]:
                 self.raw["intents"][intent] = {}

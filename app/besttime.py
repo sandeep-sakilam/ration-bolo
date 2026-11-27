@@ -46,6 +46,10 @@ class Sample:
     wait: float
 
 
+def session_starts(shop: Shop) -> tuple[int, ...]:
+    return tuple(int(start[:2]) for start, _ in shop.sessions)
+
+
 def open_hours(shop: Shop) -> list[int]:
     hours: list[int] = []
     for start, end in shop.sessions:

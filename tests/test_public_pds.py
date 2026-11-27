@@ -90,7 +90,7 @@ def test_check17_level0_status_from_public_data(db: Session) -> None:
     call = Call(db, RAMU)
     call.say("Avunu")
     text = call.say("biyyam vachaya").text
-    assert "Public ammakala data prakaram shop 09:10 ki ammakalu modalupettindi." in text
+    assert "Public ammakala data prakaram shop poddhuna 9:10 ki ammakalu modalupettindi." in text
     view = shopstate.view(db, _shop(db, "112"))
     assert view.public is not None and view.public.sales_last_hour >= 20
     assert view.minutes_per_family is not None and view.minutes_per_family < 3
@@ -103,7 +103,7 @@ def test_public_alone_says_stock_arrived(db: Session) -> None:
         db.delete(row)
     db.commit()
     text = Call(db, RAMU).say("biyyam vachaya").text  # question during the card check
-    assert text.startswith("Public ammakala data prakaram shop 09:10 ki ammakalu")
+    assert text.startswith("Public ammakala data prakaram shop poddhuna 9:10 ki ammakalu")
 
 
 def test_check17_failing_source_never_breaks_a_call(client: TestClient, db: Session) -> None:

@@ -1344,14 +1344,14 @@
    "en": "This shop doesn't take bookings yet."
   },
   "best_time_usual": {
-   "te": "Sadharananga {day} {time} taruvata rush takkuva.",
-   "hi": "Aam taur par {day} {time} ke baad bheed kam hoti hai.",
-   "en": "{day} after {time} is usually quietest."
+   "te": "Sadharananga {day} {when} rush takkuva.",
+   "hi": "Aam taur par {day} {when} bheed kam hoti hai.",
+   "en": "{day} {when} is usually quietest."
   },
   "best_time_known": {
-   "te": "{day} {time} taruvata sadharananga {minutes} nimishala lopu.",
-   "hi": "{day} {time} ke baad aam taur par {minutes} minute se kam.",
-   "en": "{day} after {time} is usually under {minutes} minutes."
+   "te": "{day} {when} sadharananga {minutes} nimishala lopu.",
+   "hi": "{day} {when} aam taur par {minutes} minute se kam.",
+   "en": "{day} {when} is usually under {minutes} minutes."
   },
   "no_recent_reports": {
    "te": "Mee shop gurinchi ippudu kotta samacharam ledu.",
@@ -1429,9 +1429,9 @@
    "en": "Noted that you are at the shop. {count} people checked in in the last hour."
   },
   "public_started": {
-   "te": "Public ammakala data prakaram shop {time} ki ammakalu modalupettindi.",
-   "hi": "Sarkari bikri data ke anusaar dukaan ne {time} baje bikri shuru ki.",
-   "en": "Public sales data shows the shop started selling at {time}."
+   "te": "Public ammakala data prakaram shop {when} ammakalu modalupettindi.",
+   "hi": "Sarkari bikri data ke anusaar dukaan ne {when} bikri shuru ki.",
+   "en": "Public sales data shows the shop started selling {when}."
   },
   "public_stopped": {
    "te": "Public ammakala data lo {minutes} nimishaluga ammakalu levu; shop aagi undavachu.",
@@ -1586,6 +1586,47 @@
   "national_portal": "https://pgportal.gov.in",
   "basis": {
    "en": "National Food Security Act, 2013, Sections 14 and 15"
+  }
+ },
+ "time_phrases": {
+  "te": {
+   "parts": {
+    "morning": "poddhuna",
+    "afternoon": "madhyahnam",
+    "evening": "saayantram",
+    "night": "raatri"
+   },
+   "before": "{part} {h} gantala lopu",
+   "after": "{part} {h} gantala taruvata",
+   "between": "{part} {h1} nundi {h2} gantala madhya",
+   "at": "{part} {h}:{mm} ki",
+   "at_hour": "{part} {h} gantalaku"
+  },
+  "hi": {
+   "parts": {
+    "morning": "subah",
+    "afternoon": "dopahar",
+    "evening": "shaam",
+    "night": "raat"
+   },
+   "before": "{part} {h} baje se pehle",
+   "after": "{part} {h} baje ke baad",
+   "between": "{part} {h1} se {h2} baje ke beech",
+   "at": "{part} {h}:{mm} baje",
+   "at_hour": "{part} {h} baje"
+  },
+  "en": {
+   "parts": {
+    "morning": "in the morning",
+    "afternoon": "in the afternoon",
+    "evening": "in the evening",
+    "night": "at night"
+   },
+   "before": "before {h} {part}",
+   "after": "after {h} {part}",
+   "between": "between {h1} and {h2} {part}",
+   "at": "at {h}:{mm} {part}",
+   "at_hour": "at {h} {part}"
   }
  }
 }
