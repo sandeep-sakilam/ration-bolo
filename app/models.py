@@ -214,3 +214,20 @@ def mask_phone(phone: str | None) -> str:
     if digits.startswith("+91") and len(digits) == 13:
         return f"+91 •••• ••{digits[-4:]}"
     return f"•••• {digits[-4:]}" if len(digits) >= 4 else "••••"
+
+
+class DemoCard(Base):
+    """Marks a card as seeded demo data and remembers its seeded language (F23)."""
+
+    __tablename__ = "demo_cards"
+    card_id: Mapped[int] = mapped_column(ForeignKey("cards.id"), primary_key=True)
+    language: Mapped[str] = mapped_column(String(8))
+
+
+class StatusTimer(Base):
+    """When a shop's stock or machine status went abnormal (for demo auto-restore)."""
+
+    __tablename__ = "status_timers"
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(10), primary_key=True)  # stock|machine
+    set_at: Mapped[datetime] = mapped_column(DateTime)

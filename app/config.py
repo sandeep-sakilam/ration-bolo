@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     admin_pin: str = "1234"
     public_base_url: str = ""
     seed_demo: bool = True
+    # Shared-demo safety (F23): "auto" = on whenever demo data is seeded, "on", or "off".
+    demo_mode: str = "auto"
     default_state_pack: str = "telangana"
 
     # Adapter selection: "auto" uses a real adapter when its keys are set, "mock" forces mocks.
@@ -56,6 +58,10 @@ class Settings(BaseSettings):
     # After a caller registers a card by digits, send a one-time code by SMS to verify the
     # phone ("optional": caller may skip; "off": never ask).
     link_verification: str = "optional"
+
+    @property
+    def demo_active(self) -> bool:
+        return self.demo_mode == "on" or (self.demo_mode == "auto" and self.seed_demo)
 
     @property
     def wispr_ready(self) -> bool:

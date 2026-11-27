@@ -40,6 +40,10 @@ Open **http://localhost:8000** — the call simulator. Everything you see is lab
 5. Open **Admin** (PIN **1234**) to see every shop and import shops and ration cards from CSV.
 6. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
 
+**Shared live demo.** In demo mode (on by default with demo data) every new call as a demo
+caller starts fresh, "out of stock"/"machine down" switch back after 10 minutes, and the demo
+resets nightly at 03:00 IST, so each judge hears the scripted flow.
+
 A banner on the simulator lists which services are live and which keys are **not set**
 (the same data is at `/api/status`). Every outside service falls back: no speech keys →
 browser speech; no Twilio keys → messages go to the dashboard's outbox.

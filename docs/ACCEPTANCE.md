@@ -11,6 +11,8 @@
 | 7 | "Naaku 15 kilolu ichharu" files a complaint with an ID; "24 kilolu" files nothing | `tests/e2e/test_acceptance.py::test_check7_…`, `tests/test_dialogue.py` |
 | 8 | Unknown number registers by digits and is recognised next call; two-card phone is asked which | `tests/e2e/test_acceptance.py::test_check8_…`, `tests/test_dialogue.py` |
 | 9 | Full suite passes on SQLite and PostgreSQL | `make check`, `make test-pg`, `make e2e-pg` (CI job `postgres`) |
+| 11 | Two Lakshmi calls in a row: the second hears Telugu and is offered 10:20 again | `tests/test_shared_demo.py::test_check11_…`, `tests/e2e/test_acceptance.py::test_check11_…` |
+| 12 | "Machine down" in demo mode is normal again after 10 minutes | `tests/test_shared_demo.py::test_check12_…` |
 | 10 | More than 300 lines of application code | `scripts/count_loc.py` (`make loc`), `tests/test_acceptance.py::test_check10_…` |
 
 Run everything locally:

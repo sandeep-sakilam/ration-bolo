@@ -369,6 +369,7 @@ def set_status(
         if machine not in ("working", "down"):
             raise ValueError(machine)
         shop.status_machine = machine
+    _record_timer(db, shop)
     log_event(
         db,
         actor,
@@ -416,3 +417,9 @@ def resolve_complaint(db: Session, complaint: Complaint, outcome: str) -> None:
     complaint.outcome = outcome
     complaint.resolved_at = now_utc()
     log_event(db, "dealer", "complaint_resolved", f"complaint:{complaint.id}")
+
+
+def _record_timer(db: Session, shop: Shop) -> None:
+    from app.demo import record_status  # demo timers live next to the status change
+
+    record_status(db, shop)

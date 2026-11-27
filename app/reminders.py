@@ -12,10 +12,11 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 from sqlalchemy.orm import Session, sessionmaker
 
-from app import queue
+from app import demo, queue
 from app.clock import fmt_time, now_utc, to_ist
 from app.models import Outbox, PhoneLink, Reminder, Token
 from app.packs import get_pack
+from app.seed import reset_demo
 from app.services import Services
 
 log = logging.getLogger("ration_bolo.reminders")
@@ -132,10 +133,13 @@ def start_scheduler(
     factory: sessionmaker[Session], services: Services, interval_seconds: int = 30
 ) -> BackgroundScheduler:
     scheduler = BackgroundScheduler(daemon=True)
+    demo_on = services.settings.demo_active
 
     def tick() -> None:
         try:
             with factory() as db:
+                if demo_on and demo.apply_auto_restore(db):
+                    db.commit()
                 sent = run_due(db, services)
                 if sent:
                     log.info("sent %d reminders", sent)
@@ -151,5 +155,26 @@ def start_scheduler(
         max_instances=1,
         coalesce=True,
     )
+    if demo_on:
+
+        def nightly_reset() -> None:
+            try:
+                with factory() as db:
+                    reset_demo(db)
+                log.info("nightly demo reset done")
+            except Exception:
+                log.exception("nightly demo reset failed")
+
+        # 03:00 IST = 21:30 UTC the evening before.
+        scheduler.add_job(
+            nightly_reset,
+            "cron",
+            hour=21,
+            minute=30,
+            timezone="UTC",
+            id="nightly_demo_reset",
+            coalesce=True,
+            max_instances=1,
+        )
     scheduler.start()
     return scheduler

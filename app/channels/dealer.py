@@ -16,7 +16,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app import queue, reminders
+from app import demo, queue, reminders
 from app.clock import fmt_time, ist_today, now_utc, to_ist
 from app.db import get_db
 from app.models import (
@@ -109,6 +109,9 @@ def _token_row(t: Token) -> dict[str, Any]:
 
 
 def overview_data(db: Session, request: Request) -> dict[str, Any]:
+    demo_on = request.app.state.settings.demo_active
+    if demo_on and demo.apply_auto_restore(db):
+        db.commit()
     shop = shop_of(db, request.headers.get("X-Shop-Code"))
     queue.sweep_no_shows(db, shop)
     db.commit()
@@ -142,6 +145,8 @@ def overview_data(db: Session, request: Request) -> dict[str, Any]:
     extra = getattr(request.app.state, "dealer_extras", None)
     return {
         "demo_data": True,
+        "demo_mode": demo_on,
+        "restore_in_minutes": demo.restore_countdown(db, shop) if demo_on else {},
         "shops": [
             {"code": x.code, "name": x.name, "area": x.area}
             for x in db.scalars(select(Shop).order_by(Shop.id))

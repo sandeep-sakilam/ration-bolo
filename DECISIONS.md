@@ -78,3 +78,8 @@ One line per decision: date · question · choice · reason.
 - 2026-11-27 · Admin access · separate `ADMIN_PIN` (demo default 1234) for the multi-shop admin page · department staff and dealers are different roles.
 - 2026-11-27 · CSV import rules · UTF-8 CSV, all-or-nothing validation with row numbers, upsert by shop code / card number, at most 20,000 rows and 5 MB per file; no names are imported · a half-imported file must never reach callers; no flow needs names.
 - 2026-11-27 · Imported phone numbers · linked with source `verified` · they come from the department's own records, not from a caller.
+- 2026-11-27 · Marking demo cards and their seeded language (F23) · new `demo_cards` table (card_id, language) filled by the seed; status timers in a new `status_timers` table · new tables are created by `create_all` even on an existing database, unlike new columns; imported and self-registered cards are never in it.
+- 2026-11-27 · When a demo card is refreshed · the first time the card is attached to a session (greeting for a linked phone, or after registering/choosing a card), once per session · "fresh on every new call", while bookings made in the same session still trigger the "already booked" rule.
+- 2026-11-27 · Applying the 10-minute auto-restore · status timers are always recorded; restore is applied only in demo mode, on every dialogue turn, on dashboard refresh and on each scheduler tick · correct even if the scheduler is off, and clock-controlled in tests.
+- 2026-11-27 · Nightly reset time · cron 21:30 UTC (= 03:00 IST), only in demo mode · spec rule 3.
+- 2026-11-27 · Demo mode default · `DEMO_MODE=auto` → on whenever `SEED_DEMO` is on · judges get it with no settings; production turns both off.
