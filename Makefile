@@ -1,6 +1,6 @@
 PY ?= $(shell [ -x .venv/bin/python ] && echo .venv/bin/python || echo python3)
 
-.PHONY: install lint format-check format typecheck test check e2e test-pg run docker-up fresh-clone-check test-pg
+.PHONY: install lint format-check format typecheck test check e2e test-pg run docker-up fresh-clone-check test-pg acceptance loc
 
 install:
 	$(PY) -m pip install -r requirements-dev.txt
@@ -36,3 +36,12 @@ docker-up:
 TEST_DATABASE_URL ?= postgresql://rb:rb@localhost:5432/rb_test
 test-pg:
 	TEST_DATABASE_URL=$(TEST_DATABASE_URL) $(PY) -m pytest
+
+# Acceptance: browser flows (SPEC "Done when"), PostgreSQL run, fresh-clone Docker check.
+acceptance: e2e test-pg
+
+fresh-clone-check:
+	scripts/check_fresh_clone.sh
+
+loc:
+	$(PY) scripts/count_loc.py | tail -1

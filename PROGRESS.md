@@ -1,6 +1,6 @@
 # Progress
 
-Current: F14 merged; next is F15 on `feat/f15-acceptance`
+Current: F15 on `feat/f15-acceptance`
 
 ## Functionality backlog
 

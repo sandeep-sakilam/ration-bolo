@@ -9,6 +9,7 @@ import sys
 import time
 import urllib.request
 from collections.abc import Iterator
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -34,6 +35,10 @@ def server(tmp_path_factory: pytest.TempPathFactory) -> Iterator[str]:
         "AUDIO_CACHE_DIR": str(data / "audio"),
         "SPEECH_MODE": "auto",
         "MESSAGING_MODE": "mock",
+        # Freeze the server clock at 11:00 IST today so time-of-day never changes the flows.
+        "RATION_BOLO_NOW": datetime.now(UTC)
+        .replace(hour=5, minute=30, second=0, microsecond=0)
+        .isoformat(),
     }
     for key in ("WISPR_API_KEY", "SARVAM_API_KEY", "TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"):
         env.pop(key, None)
