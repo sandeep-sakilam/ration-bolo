@@ -1,6 +1,6 @@
 # Progress
 
-Current: F27 merged; next is F28 on `feat/f28-demo-script-v2`
+Current: none — F01–F28 merged (version 2 complete); no unchecked backlog items
 
 ## Functionality backlog
 
@@ -39,4 +39,4 @@ Version 2 submission fixes (F23–F28, merge by 30 Nov 2026, 12:00 noon IST):
 - [x] F25 Build identity (commit SHA) and submission checklist — `feat/f25-submission-checklist`
 - [x] F26 Real-adapter smoke script (run by hand, never in CI) — `feat/f26-real-smoke`
 - [x] F27 Deck refresh: FAQ headings, finale features, live numbers, PDF limit checks — `feat/f27-deck-refresh`
-- [ ] F28 Demo video script v2 with a live voice interaction — `feat/f28-demo-script-v2`
+- [x] F28 Demo video script v2 with a live voice interaction — `feat/f28-demo-script-v2`

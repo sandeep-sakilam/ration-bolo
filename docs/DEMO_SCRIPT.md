@@ -1,26 +1,62 @@
-# Demo video script (under 3 minutes)
+# Demo video script — version 2 (at most 3:00, with a live voice interaction)
 
-Record the screen at 1080p with system audio on (so the spoken replies are heard).
-Use Chrome. Before recording: `docker compose up` (or the live link), open the dealer
-dashboard, log in with 1234, press **Reset demo**. Keep three tabs open: simulator,
-dealer dashboard, metrics. Times are targets; total ≈ 2:50.
+**Rules (Round 2 FAQ):** YouTube only (public or **unlisted**; Vimeo and Google Drive links
+are rejected), **3:00 or less**, showing the product working **with a live voice
+interaction** — speaking into the mic, not only typing. Record at 1080p with system
+audio so the spoken replies are heard. Total below ≈ 2:50.
 
-| Time | Screen | Say (voice-over) | Do |
+Choose the path before recording:
+
+- **Primary path (keys set on the live link):** `WISPR_API_KEY` and `SARVAM_API_KEY` are set
+  on Railway and `scripts/smoke_real.py` passed. The simulator banner reads
+  "Speech-to-text: Wispr Flow · reply voice: Sarvam AI Bulbul", the browser records your
+  voice and sends it to the server, and replies are Sarvam audio.
+- **Fallback path (keys not ready):** run locally (`docker compose up`) or on the live link
+  without speech keys. The banner reads "Keyless mode: …". Speak into the mic in Chrome
+  (it uses the browser's own speech recognition) and say on screen and in the voice-over
+  that this is the keyless mode.
+
+## Pre-recording checklist
+
+- [ ] Use **Chrome** (best Telugu/Hindi recognition); close other tabs and notifications.
+- [ ] Open the live link (or http://localhost:8000). The footer shows the build commit;
+      it matches the latest commit on `main`.
+- [ ] Dealer dashboard → **Reset demo** (no login needed). Check "18 waiting" and
+      "Rice in stock", "Machine working".
+- [ ] Simulator → press the mic once and **allow microphone access**; check "Speak replies
+      aloud" is ticked and the system volume is up.
+- [ ] Screen recorder set to 1080p **with system audio and microphone**.
+- [ ] Primary path: the banner names **Wispr Flow**. Fallback path: it says **Keyless mode**.
+- [ ] Phone clip (primary path only): your phone is linked to Lakshmi's card (Dealer →
+      Tester tools → Link my phone), the Twilio number is saved, and the dashboard is open
+      on a second screen or a phone-screen mirror. Alternatively, WhatsApp sandbox joined.
+- [ ] Practise the Telugu phrases once; speak clearly, one sentence per tap of the mic.
+
+## Shot list
+
+| Time | Screen | Voice-over | Action (say these exact phrases) |
 | --- | --- | --- | --- |
-| 0:00–0:15 | Title slide or simulator | "80 crore Indians collect rations every month. Families wait hours and are told 'come tomorrow'. Ration Bolo fixes that with one phone call — no app, no reading, no typing." | — |
-| 0:15–0:25 | Simulator | "This simulator is exactly what a caller hears on a phone call. Lakshmi calls from a basic phone." | Caller Lakshmi → Start call. Reply plays: "Card chivari ankelu 0421, sare na?" |
-| 0:25–0:35 | Simulator | "It confirms her card by the last four digits. It never says her name." | Mic → say "Avunu". |
-| 0:35–0:50 | Simulator | "Has rice come? Yes — 24 kilos for her family of four." | Mic → "Maa shop ki biyyam vachaya?" |
-| 0:50–1:05 | Simulator | "How many people are there? 18 ahead, about 36 minutes — and the quietest slot tomorrow." | Mic → "Ippudu entha mandi unnaru?" |
-| 1:05–1:25 | Simulator | "Book tomorrow morning. It offers 10:20, reads it back, and books only after a yes. Token B-036, sent by SMS." | Mic → "Repu poddhuna book cheyyandi" → "Avunu". |
-| 1:25–1:40 | Simulator | "Short ration? 'I got 15 kilos.' It compares with the 24 due, reads back, files complaint C-108-0003." | Mic → "Naaku 15 kilolu ichharu" → "Avunu". |
-| 1:40–1:55 | Simulator, Salma, WhatsApp mode | "The same works in Hindi, and on WhatsApp voice notes." | Caller Salma, WhatsApp mode → "Kitne log hain?" |
-| 1:55–2:15 | Dealer dashboard | "The dealer sees the live queue with only the last four digits, serves booked and walk-in families in turn — half of every slot stays for walk-ins — and can say 'Machine down'." | Click Serve next. Type/say "Machine down". Show the pause badge. |
-| 2:15–2:25 | Simulator | "Every channel hears it first, and booking pauses." | Start a call as Salma: status is the first thing said. |
-| 2:25–2:35 | Simulator | "If speech fails twice we switch engines; a third time, a keypad menu. Nobody is stranded." | Say nonsense three times; show the menu buttons. |
-| 2:35–2:45 | Metrics | "We measure what matters: wait within 20 minutes of the slot, adoption, calls finished by voice alone, complaints closed within a week." | Show metrics page. |
-| 2:45–2:55 | Title / README | "Wispr Flow hears, our rules decide. One `docker compose up`, no keys needed. Ration Bolo." | — |
+| 0:00–0:12 | Deck title slide | "80 crore Indians collect rations every month. Families wait hours and are told 'come tomorrow'. Ration Bolo fixes that with one phone call." | — |
+| 0:12–0:22 | Simulator, banner visible | "This simulator is exactly what a caller hears. Speech is heard by Wispr Flow" — *fallback:* "by the browser, because this is the keyless mode" — "and every decision is made by our own rules." | Point at the banner. Caller **Lakshmi** → **Start call**. Reply plays: "Card chivari ankelu 0421, sare na?" |
+| 0:22–0:32 | Simulator | "It confirms her card by the last digits, never her name." | Tap mic, **say**: "Avunu." |
+| 0:32–0:47 | Simulator | "Has rice come? Yes, 24 kilos for her family of four." | Tap mic, **say**: "Maa shop ki biyyam vachaya?" |
+| 0:47–1:02 | Simulator | "How many are waiting? About 18 ahead, around 36 minutes, and tomorrow's quietest slot." | Tap mic, **say**: "Ippudu entha mandi unnaru?" |
+| 1:02–1:22 | Simulator | "Book tomorrow morning: it offers 10:20, reads it back and books only after a yes. Token sent by SMS." | Tap mic, **say**: "Repu poddhuna book cheyyandi." Then **say**: "Avunu." |
+| 1:22–1:37 | Simulator | "Short ration? It compares with the 24 kilos due and files a complaint with an ID." | Tap mic, **say**: "Naaku padihenu kilolu ichharu." Then **say**: "Avunu." |
+| 1:37–1:57 | **Primary:** phone call clip (dashboard + call audio) · **Fallback:** simulator in WhatsApp voice-note mode as Salma | "The same engine answers a real phone call on any basic phone…" / "…and WhatsApp voice notes, here in Hindi." | **Primary:** call the Twilio number, say "Avunu", "Ippudu entha mandi unnaru?" while the dashboard shows the call in the outbox/queue (15–20 s). **Fallback:** Salma, WhatsApp mode, **say**: "Kitne log hain?" |
+| 1:57–2:17 | Dealer dashboard | "The dealer serves booked and walk-in families in turn — half of every slot stays for walk-ins — and updates status by voice." | Click **Serve next**. Tap the dealer mic, **say**: "Machine down." Badge shows "back to normal in 10 min". |
+| 2:17–2:27 | Simulator | "Every caller hears it first, and booking pauses." | Start a call as Salma: the status is the first thing said. |
+| 2:27–2:37 | Simulator | "If speech fails twice we switch engines; a third time, a keypad menu. Nobody is stranded." | Mumble twice and once more (or type "???" three times); show the big menu buttons. |
+| 2:37–2:47 | Metrics page | "We track the pilot targets: wait within 20 minutes of the slot, adoption, calls finished by voice alone, complaints closed within a week." | Show the metrics page. |
+| 2:47–2:55 | README / repo | "One `docker compose up`, no keys, no login. Ration Bolo." | — |
 
-Tips: speak replies aloud stays on. If the browser can't recognise Telugu speech, tap
-the example-phrase chips — they send exactly what a caller would say. Upload to YouTube
-as **Unlisted**, under 3:00, and paste the link into the deck (slide 11) and the form.
+The live queue moves as judges use the demo, so say "about 18" — the exact number may differ.
+
+## After recording
+
+1. Check the length is **≤ 3:00**; trim if needed.
+2. Upload to **YouTube** as **Unlisted**; open the link in a private window to confirm it plays.
+3. Dealer dashboard → **Reset demo** so judges start from the scripted state.
+4. Rebuild the deck with the links (fails if not a YouTube link or over the PDF limits):
+   `python scripts/build_deck.py --video <youtube-url> --live <live-url>`
+5. Go through `docs/SUBMISSION_CHECKLIST.md` and submit early on 30 Nov.

@@ -27,3 +27,8 @@ def test_salma_hindi_queue_by_text(page: Page, reset: None) -> None:
     expect(log).to_contain_text("log aage hain")
     page.click("#hangup")
     expect(log).to_contain_text("Call ended")
+
+
+def test_banner_says_keyless_mode(page: Page) -> None:
+    page.goto("/simulator")
+    expect(page.locator("#status-summary")).to_contain_text("Keyless mode")
