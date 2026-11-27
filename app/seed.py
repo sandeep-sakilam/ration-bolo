@@ -32,6 +32,7 @@ from app.models import (
     StatusTimer,
     Token,
     Turn,
+    Volunteer,
     Window,
 )
 from app.slots import build_windows
@@ -55,6 +56,7 @@ DEMO_CALLERS = {
 
 # Delete order respects foreign keys.
 _ALL_TABLES = [
+    Volunteer,
     BroadcastOptin,
     Grievance,
     HourlyProfile,
@@ -455,6 +457,28 @@ def _seed_v3_shops(db: Session, shop108: Shop) -> None:
             _seed_112_reports(db, shop)
         if code == "109":
             _seed_109_complaints(db, shop)
+            # An SHG volunteer runs tokens today (Level 1 · volunteer) with 15 waiting.
+            db.add(
+                Volunteer(
+                    shop_id=shop.id,
+                    display_label="SHG volunteer (demo)",
+                    starts_on=ist_today() - timedelta(days=7),
+                    ends_on=ist_today() + timedelta(days=30),
+                    on_duty=True,
+                )
+            )
+            for n in range(1, 16):
+                db.add(
+                    Token(
+                        shop_id=shop.id,
+                        date=ist_today(),
+                        token_no=n,
+                        kind="walkin",
+                        status="waiting",
+                        channel="volunteer",
+                        issued_at=ist_to_utc(ist_today(), time(8, 0)) + timedelta(minutes=4 * n),
+                    )
+                )
         if code == "115":  # Level 1: 12 walk-ins waiting today (about 24 minutes)
             for n in range(1, 13):
                 db.add(

@@ -11,6 +11,7 @@ import io
 import re
 import secrets
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any
 
 from fastapi import APIRouter, Depends, File, Header, HTTPException, Request, UploadFile
@@ -19,10 +20,10 @@ from pydantic import BaseModel
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app import incentives, levels, queue
+from app import incentives, levels, queue, volunteers
 from app.clock import ist_today
 from app.db import get_db
-from app.models import Card, Complaint, PhoneLink, Shop, Token
+from app.models import Card, Complaint, PhoneLink, Shop, Token, Volunteer
 from app.packs import all_packs
 from app.ratelimit import RateLimiter
 
@@ -198,6 +199,48 @@ def update_profile(code: str, body: ProfileIn, db: Session = Depends(get_db)) ->
     return {"code": code, "level": levels.base_level(db, shop), "message": f"Shop {code} updated"}
 
 
+class VolunteerIn(BaseModel):
+    display_label: str
+    starts_on: date
+    ends_on: date
+    on_duty: bool = False
+
+
+@router.post("/shops/{code}/volunteers")
+def add_volunteer(code: str, body: VolunteerIn, db: Session = Depends(get_db)) -> dict[str, Any]:
+    shop = db.scalars(select(Shop).where(Shop.code == code)).first()
+    if shop is None:
+        raise HTTPException(404, "no such shop")
+    try:
+        v = volunteers.register(db, shop, body.display_label, body.starts_on, body.ends_on)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+    if body.on_duty:
+        volunteers.set_duty(db, v, True)
+    db.commit()
+    return {
+        "id": v.id,
+        "message": f"Volunteer {v.display_label} registered for shop {code}",
+        "dashboard": f"/dealer?volunteer={v.id}",
+    }
+
+
+class DutyIn(BaseModel):
+    on_duty: bool
+
+
+@router.post("/volunteers/{volunteer_id}/duty")
+def volunteer_duty(
+    volunteer_id: int, body: DutyIn, db: Session = Depends(get_db)
+) -> dict[str, Any]:
+    v = db.get(Volunteer, volunteer_id)
+    if v is None:
+        raise HTTPException(404, "no such volunteer")
+    volunteers.set_duty(db, v, body.on_duty)
+    db.commit()
+    return {"id": v.id, "on_duty": v.on_duty}
+
+
 class DealerPhoneIn(BaseModel):
     phone: str
 
@@ -366,6 +409,16 @@ def shops(db: Session = Depends(get_db)) -> list[dict[str, Any]]:
                 "lat": prof.lat,
                 "lon": prof.lon,
                 "portability": prof.portability,
+                "volunteers": [
+                    {
+                        "id": v.id,
+                        "label": v.display_label,
+                        "on_duty": v.on_duty,
+                        "starts_on": v.starts_on.isoformat(),
+                        "ends_on": v.ends_on.isoformat(),
+                    }
+                    for v in db.scalars(select(Volunteer).where(Volunteer.shop_id == shop.id))
+                ],
                 "state_pack": shop.state_pack,
                 "stock": shop.status_stock,
                 "machine": shop.status_machine,

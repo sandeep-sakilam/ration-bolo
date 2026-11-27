@@ -43,7 +43,7 @@ def test_check15_level0_book_gives_best_time_and_no_booking(db: Session) -> None
     assert call.key("3").text.startswith("Ee shop lo inka booking ledu.")
 
 
-def test_level0_stock_and_queue_say_no_recent_reports(db: Session) -> None:
+def test_level0_stock_and_queue_say_no_recent_reports(db: Session, shop109_level0: None) -> None:
     from app.models import Card, PhoneLink
 
     card = db.scalars(select(Card).where(Card.card_no == "TS-109-3001")).one()

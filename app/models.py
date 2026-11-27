@@ -324,3 +324,16 @@ class BroadcastOptin(Base):
     channel: Mapped[str] = mapped_column(String(12))  # call | whatsapp
     opted_in_at: Mapped[datetime] = mapped_column(DateTime, default=now_utc)
     opted_out_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class Volunteer(Base):
+    """A self-help-group or ward volunteer running tokens at a Level 0 shop (F38).
+    No phone number is stored."""
+
+    __tablename__ = "volunteers"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    shop_id: Mapped[int] = mapped_column(ForeignKey("shops.id"), index=True)
+    display_label: Mapped[str] = mapped_column(String(80))
+    starts_on: Mapped[date] = mapped_column(Date)
+    ends_on: Mapped[date] = mapped_column(Date)
+    on_duty: Mapped[bool] = mapped_column(default=False)

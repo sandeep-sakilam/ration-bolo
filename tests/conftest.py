@@ -70,3 +70,15 @@ def empty_db(db_url: str) -> Iterator[Session]:
     with make_sessionmaker(engine)() as session:
         yield session
     engine.dispose()
+
+
+@pytest.fixture
+def shop109_level0(db: Session) -> None:
+    """Shop 109's demo volunteer goes off duty, so the shop behaves as Level 0."""
+    from sqlalchemy import select
+
+    from app.models import Volunteer
+
+    for v in db.scalars(select(Volunteer)):
+        v.on_duty = False
+    db.commit()

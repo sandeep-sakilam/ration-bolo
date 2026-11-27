@@ -47,7 +47,9 @@ def test_check22_dealer_presses_1_and_optins_get_one_message(db: Session) -> Non
     assert len(_broadcasts(db)) == 2
 
 
-def test_dealer_line_by_voice_and_level0_counts_as_strong_report(db: Session) -> None:
+def test_dealer_line_by_voice_and_level0_counts_as_strong_report(
+    db: Session, shop109_level0: None
+) -> None:
     shop = _shop(db, "109")
     incentives.register_dealer_phone(db, shop, "+919000001090", SALT)
     db.commit()
