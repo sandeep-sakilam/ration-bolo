@@ -129,3 +129,18 @@ Twilio credentials and numbers **without calling or messaging anyone**. Each lin
 PASS, FAIL (with the provider's exact error) or SKIP (key not set). The bundled clip is
 synthesised; for a realistic check record yourself saying "Maa shop ki biyyam vachaya?"
 and pass `--clip my_recording.m4a` (any format ffmpeg reads).
+
+## 8. Version 3 settings (works without a partner)
+
+All optional; with none set everything still works with demo data and mocks.
+
+| Setting | Where | What |
+| --- | --- | --- |
+| `public_pds.enabled`, `url_template`, `format` | `packs/telangana.json` | The state's public shop-wise sales page. `url_template` may use `{shop_code}`, `{date}` (YYYY-MM-DD) and `{date_dmy}` (DD/MM/YYYY); `format` is `csv` or `html_table`. The parser expects a header with a "time" column and a transactions/count column — confirm against the real page first. |
+| `grievance.helpline_number`, `district_officer`, `state_portal` | `packs/telangana.json` (or `GRIEVANCE_HELPLINE_NUMBER`, `DISTRICT_GRIEVANCE_CONTACT`) | Official contacts. The helpline is offered on phone calls only when a number is set, and dialled only after the caller says yes. |
+| `TWILIO_CHECKIN_NUMBER` | Railway variables | Optional second Twilio number for free missed-call check-ins. Set its voice webhook to `https://<domain>/twilio/voice/checkin` (it answers with `<Reject>`). |
+| `REPORTER_SALT` | Railway variables | A long random value in production (hashes reporters' phone numbers). |
+| `DEMO_MODE` | Railway variables | Leave unset (`auto`) for the live demo; `off` in production. |
+
+Register a dealer's phone for the dealer line from the admin page API:
+`POST /api/admin/shops/<code>/dealer-phone` with `{"phone": "+91…"}` (stored only as a hash).

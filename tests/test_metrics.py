@@ -34,3 +34,18 @@ def test_metrics_follow_new_activity(client: TestClient) -> None:
     assert after["voice"]["engines"]["browser"] == before["voice"]["engines"].get("browser", 0) + 6
     assert after["complaints"]["open"] == before["complaints"]["open"] + 1
     assert client.get("/metrics").status_code == 200
+
+
+def test_metrics_without_partner(client: TestClient) -> None:
+    p = client.get("/api/metrics").json()["without_partner"]
+    assert p["shops_by_level"] == {"0": 1, "1": 3, "2": 1}  # 112; 115, 109 (volunteer), 201; 108
+    assert p["cardholder_reports"] >= 4 and p["reporters"] >= 4
+    sid = client.post("/api/sim/start", json={"caller": "ramu"}).json()["session_id"]
+    for text in ("Avunu", "biyyam vachinappudu cheppandi"):
+        client.post(f"/api/sim/{sid}/text", json={"text": text})
+    client.post("/api/dealer/status", json={"machine": "down"})
+    sid = client.post("/api/sim/start", json={"caller": "lakshmi"}).json()["session_id"]
+    for text in ("Avunu", "biyyam vachaya", "Avunu"):
+        client.post(f"/api/sim/{sid}/text", json={"text": text})
+    p = client.get("/api/metrics").json()["without_partner"]
+    assert p["nearby_offered"] == 1 and p["nearby_accepted"] == 1

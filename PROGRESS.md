@@ -1,6 +1,6 @@
 # Progress
 
-Current: F38 merged; next is F39 on `feat/f39-v3-docs`
+Current: none — F01–F39 merged (version 3 complete); no unchecked backlog items
 
 ## Functionality backlog
 
@@ -53,4 +53,4 @@ Version 3 "works without a partner" (F29–F39, merge by 30 Nov 2026, 12:00 noon
 - [x] F36 Public transparency page and monthly report — `feat/f36-transparency`
 - [x] F37 Dealer incentives: dealer phone line, "Rice arrived" broadcast, "Fair shop" badge — `feat/f37-dealer-incentives`
 - [x] F38 Volunteer queue coordinator mode — `feat/f38-volunteer-mode`
-- [ ] F39 Version 3 docs, metrics for reports and levels, rebuilt PDF — `feat/f39-v3-docs`
+- [x] F39 Version 3 docs, metrics for reports and levels, rebuilt PDF — `feat/f39-v3-docs`

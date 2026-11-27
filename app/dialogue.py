@@ -881,6 +881,7 @@ class Dialogue:
         if incentives.fair_shop(self.db, c.shop):
             out.say("fair_shop_note")
         out.say("nearby_ask")
+        queue.log_event(self.db, session.channel, "nearby_offered", f"shop:{c.shop.code}")
         out.actions.append(
             {
                 "type": "nearby_offer",
@@ -901,6 +902,7 @@ class Dialogue:
             session.data = {**session.data, "shop_override": target.id, "nearby_done": True}
             out.say("nearby_accepted", code=target.code)
             out.actions.append({"type": "nearby_accepted", "shop": target.code})
+            queue.log_event(self.db, session.channel, "nearby_accepted", f"shop:{target.code}")
             if levels.takes_bookings(self.db, target):
                 out.say("ask_book_when")
                 self._goto(session, "book_when", out)

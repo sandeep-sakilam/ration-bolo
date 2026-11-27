@@ -35,6 +35,7 @@ def test_no_pin_and_finale_features_present() -> None:
 def test_numbers_are_placeholders_filled_at_build() -> None:
     assert "147" not in HTML and "{{UNIT_TESTS}}" in HTML
     values = {
+        "ACCEPTANCE_CHECKS": "24",
         "UNIT_TESTS": "9",
         "E2E_FLOWS": "8",
         "APP_LINES": "7",

@@ -48,6 +48,17 @@
       kpi(pct(m.voice.backup_engine_sessions), "of calls switched to the backup engine",
           `${pct(m.voice.understood_turns)} of turns understood`),
     );
+    const p = m.without_partner, pk = $("partner"); pk.innerHTML = "";
+    if (p) {
+      const L = p.shops_by_level;
+      pk.append(
+        kpi(`${L[0]} · ${L[1]} · ${L[2]}`, "shops at Level 0 · 1 · 2", "Level 0 = nobody cooperates"),
+        kpi(num(p.cardholder_reports), "cardholder reports", `${p.reporters} different phones · ${p.check_ins} check-ins`),
+        kpi(`${p.nearby_accepted} / ${p.nearby_offered}`, "nearby-shop suggestions taken", "One Nation One Ration Card"),
+        kpi(num(p.rice_arrived_messages), "\"rice arrived\" messages", "to opted-in cardholders"),
+        kpi(num(p.complaints_routed), "complaints routed to officials", `${p.complaints_escalated} escalated · ${p.references_recorded} official references`),
+      );
+    }
     const d = $("daily"); d.innerHTML = "";
     const max = Math.max(1, ...m.daily.map((x) => x.served));
     for (const x of m.daily) {

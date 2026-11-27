@@ -37,8 +37,15 @@ Open **http://localhost:8000** — the call simulator. Everything you see is lab
 4. Open **Dealer dashboard** (no login needed): live queue, *Serve next*, walk-in tokens,
    *Machine down* (booking pauses on every channel), voice updates (*"Biyyam aipoyindi"*),
    complaints, the outbox of every SMS / WhatsApp / reminder call, *Send reminder now*, *Reset demo*.
-5. Open **Admin** (no login needed) to see every shop and import shops and ration cards from CSV.
-6. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
+5. **Works without a partner (version 3).** Call as **Ramu** (Shop 112, Level 0: no cooperating
+   dealer): *Biyyam vachaya?* is answered from cardholder reports and public sales data,
+   *Repu book cheyyandi* gives the best time to go instead of a booking, and *Biyyam vachindi,
+   ikkada 12 mandi unnaru* files a report after a read-back. Set Shop 108 to *Machine down*
+   and call as Lakshmi to hear a nearby shop (Shop 112, 1.2 km). Open **/shop/112** for the
+   public transparency page, call as **Dealer of Shop 108** for the dealer phone line, and open
+   the volunteer dashboard for Shop 109 from the admin page.
+6. Open **Admin** (no login needed) to see every shop and import shops and ration cards from CSV.
+7. Open **Impact metrics** for wait times, adoption, voice success rate, engine usage and complaints.
 
 **Shared live demo.** In demo mode (on by default with demo data) every new call as a demo
 caller starts fresh, "out of stock"/"machine down" switch back after 10 minutes, and the demo
@@ -47,6 +54,17 @@ resets nightly at 03:00 IST, so each judge hears the scripted flow.
 A banner on the simulator lists which services are live and which keys are **not set**
 (the same data is at `/api/status`). Every outside service falls back: no speech keys →
 browser speech; no Twilio keys → messages go to the dashboard's outbox.
+
+## Works without a partner (version 3)
+
+Every shop has a level: **0** (nobody cooperates), **1** (a willing dealer or a volunteer
+coordinator), **2** (dealer and department). A level only adds sources. At Level 0 callers
+still get: cardholder reports and check-ins (confirmed when two phones agree, fading with
+age), the state's public PDS sales data, the best time to go instead of a booking, a nearby
+shop under One Nation One Ration Card, complaints routed to official channels with a 7- and
+21-day escalation ladder, and a public transparency page with a monthly report for vigilance
+committees. Dealers get a one-call phone line, "rice arrived" messages to opted-in
+cardholders and a "Fair shop" badge; where they won't help, a volunteer can run tokens.
 
 ## How it works
 
@@ -143,4 +161,11 @@ shops is unproven until piloted. The Telugu and Hindi phrases need checking by n
 - Checking the Telugu and Hindi phrases in the state pack with native speakers.
 - Running `scripts/smoke_real.py` with real keys and fixing any key or endpoint problem it reports (see `docs/DEPLOY.md` §7).
 - Deleting the merged remote feature branches on GitHub.
+- Version 3: confirm the Telangana food grievance helpline number and the district grievance
+  officer contact (set `GRIEVANCE_HELPLINE_NUMBER` / `DISTRICT_GRIEVANCE_CONTACT`, or
+  `grievance` in `packs/telangana.json`); find the public PDS portal page with shop-wise sales
+  for Hyderabad and confirm its URL and format (`public_pds` in `packs/telangana.json`);
+  decide whether to buy a second Twilio number for missed-call check-ins
+  (`TWILIO_CHECKIN_NUMBER`, optional); have native speakers check the new report, opt-in and
+  nearby-shop phrases.
 - Recording and uploading the demo video, exporting the final deck PDF, and the hackathon submission itself.
