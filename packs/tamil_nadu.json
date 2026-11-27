@@ -737,6 +737,22 @@
   "dealer_updated": {
    "ta": "Nilai maatrappattathu: {status}.",
    "en": "Status updated: {status}."
+  },
+  "code_sent": {
+   "ta": "Uruthipaduththa, indha phone-ukku 4 ilakka code SMS moolam anuppinom. Code-ai sollungal, vendaam endraal 'illai' endru sollungal.",
+   "en": "To verify, we sent a 4-digit code to this phone by SMS. Say the code, or say no to skip."
+  },
+  "code_ok": {
+   "ta": "Nandri, ungal phone uruthipaduththappattathu.",
+   "en": "Thank you, your phone is verified."
+  },
+  "code_wrong": {
+   "ta": "Code thavaru. Meendum sollungal.",
+   "en": "That code is not right. Please say it again."
+  },
+  "sms_code": {
+   "ta": "Ration Bolo code: {code}. Yaridamum sollaatheergal.",
+   "en": "Ration Bolo code: {code}. Do not share it."
   }
  }
 }

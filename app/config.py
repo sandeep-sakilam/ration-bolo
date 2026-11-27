@@ -41,6 +41,9 @@ class Settings(BaseSettings):
 
     audio_cache_dir: str = "./data/audio_cache"
     scheduler_enabled: bool = True
+    # After a caller registers a card by digits, send a one-time code by SMS to verify the
+    # phone ("optional": caller may skip; "off": never ask).
+    link_verification: str = "optional"
 
     @property
     def wispr_ready(self) -> bool:

@@ -109,7 +109,7 @@ def session_for(
 async def incoming(request: Request, db: Session = Depends(get_db)) -> Response:
     form = await verified_form(request)
     services = _services(request)
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session, greeting = session_for(db, dialogue, form, request)
     reply = greeting or dialogue.handle(session, Event("start"))
     db.commit()
@@ -143,7 +143,7 @@ def delete_recording(services: Services, url: str) -> None:
 async def recording(request: Request, db: Session = Depends(get_db)) -> Response:
     form = await verified_form(request)
     services = _services(request)
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session, _ = session_for(db, dialogue, form, request)
     url = form.get("RecordingUrl", "")
     if not url or form.get("RecordingDuration") == "0":
@@ -166,7 +166,7 @@ async def recording(request: Request, db: Session = Depends(get_db)) -> Response
 async def digits(request: Request, db: Session = Depends(get_db)) -> Response:
     form = await verified_form(request)
     services = _services(request)
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session, _ = session_for(db, dialogue, form, request)
     key = "".join(c for c in form.get("Digits", "") if c.isdigit() or c in "*#")
     event = Event("digit", key, engine="keypad") if key else Event("silence")
@@ -179,7 +179,7 @@ async def digits(request: Request, db: Session = Depends(get_db)) -> Response:
 async def silence(request: Request, db: Session = Depends(get_db)) -> Response:
     form = await verified_form(request)
     services = _services(request)
-    dialogue = Dialogue(db, services.sender(db))
+    dialogue = services.dialogue(db)
     session, _ = session_for(db, dialogue, form, request)
     reply = dialogue.handle(session, Event("silence"))
     db.commit()
@@ -197,6 +197,6 @@ async def status(request: Request, db: Session = Depends(get_db)) -> Response:
             select(DialogueSession).where(DialogueSession.external_id == form.get("CallSid", ""))
         ).first()
         if session is not None and session.state != "ended":
-            Dialogue(db, services.sender(db)).handle(session, Event("end"))
+            services.dialogue(db).handle(session, Event("end"))
             db.commit()
     return Response(status_code=204)

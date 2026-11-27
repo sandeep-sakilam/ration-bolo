@@ -55,6 +55,10 @@ REQUIRED_PHRASES = [
     "sms_booking",
     "summary",
     "dealer_updated",
+    "code_sent",
+    "code_ok",
+    "code_wrong",
+    "sms_code",
 ]
 REQUIRED_DISPLAY = ["today", "tomorrow", "morning", "evening"]
 
