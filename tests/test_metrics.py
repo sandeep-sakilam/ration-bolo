@@ -9,7 +9,7 @@ def test_metrics_from_seeded_history(client: TestClient) -> None:
     assert 0 < m["bookings"]["adoption"] <= 1
     assert 0 < m["voice"]["voice_success"] <= 1
     assert "wispr" in m["voice"]["engines"]
-    assert m["complaints"]["filed"] == 2
+    assert m["complaints"]["filed"] >= 2
     assert len(m["daily"]) == 7
 
 

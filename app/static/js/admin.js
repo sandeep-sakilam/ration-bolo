@@ -44,6 +44,12 @@
         s.cards, s.waiting, s.upcoming_bookings, s.open_complaints]) {
         const td = document.createElement("td"); td.textContent = v; tr.appendChild(td);
       }
+      const pub = document.createElement("td");
+      const month = new Date().toISOString().slice(0, 7);
+      pub.innerHTML = "";
+      const a1 = document.createElement("a"); a1.href = `/shop/${s.code}`; a1.textContent = "Page";
+      const a2 = document.createElement("a"); a2.href = `/shop/${s.code}/report/${month}.csv`; a2.textContent = "Monthly CSV";
+      pub.append(a1, " · ", a2); tr.appendChild(pub);
       body.appendChild(tr);
     }
   }

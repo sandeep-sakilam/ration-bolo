@@ -15,6 +15,7 @@ from app import __version__
 from app import admin as admin_module
 from app.buildinfo import build_info
 from app.channels import dealer as dealer_channel
+from app.channels import public as public_channel
 from app.channels import simulator as simulator_channel
 from app.channels import voice as voice_channel
 from app.channels import whatsapp as whatsapp_channel
@@ -127,6 +128,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(simulator_channel.router)
     app.include_router(dealer_channel.router)
     app.include_router(admin_module.router)
+    app.include_router(public_channel.router)
 
     @app.get("/admin", include_in_schema=False)
     def admin_page() -> FileResponse:

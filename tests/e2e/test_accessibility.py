@@ -17,7 +17,7 @@ def _violations(page: Page) -> list[str]:
     return [f"{v['id']}: {v['nodes'][0]['target']}" for v in result.response["violations"]]
 
 
-@pytest.mark.parametrize("path", ["/simulator", "/dealer", "/metrics", "/admin"])
+@pytest.mark.parametrize("path", ["/simulator", "/dealer", "/metrics", "/admin", "/shop/112"])
 def test_pages_have_no_axe_violations(page: Page, path: str) -> None:
     page.goto(path)
     page.wait_for_load_state("networkidle")
@@ -51,7 +51,7 @@ def test_simulator_works_by_keyboard_only(page: Page, reset: None) -> None:
     assert page.locator("#log .bubble.app").first.get_attribute("lang") == "te-IN"
 
 
-@pytest.mark.parametrize("path", ["/simulator", "/dealer", "/metrics", "/admin"])
+@pytest.mark.parametrize("path", ["/simulator", "/dealer", "/metrics", "/admin", "/shop/112"])
 def test_pages_are_light_and_self_contained(page: Page, server: str, path: str) -> None:
     sizes: dict[str, int] = {}
 
