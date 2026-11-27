@@ -22,3 +22,6 @@ ignore_missing_imports = true
 testpaths = ["tests"]
 addopts = "-q --ignore=tests/e2e"
 filterwarnings = ["ignore::DeprecationWarning:fastapi.testclient", "ignore:Using `httpx`"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.File", "fastapi.Form", "fastapi.Header", "fastapi.Query"]

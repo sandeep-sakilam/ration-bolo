@@ -19,3 +19,7 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Quality gate
         run: make check PY=python
+      - name: Install Playwright Chromium
+        run: python -m playwright install --with-deps chromium
+      - name: End-to-end flows
+        run: make e2e PY=python
