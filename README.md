@@ -41,7 +41,8 @@ Open **http://localhost:8000** — the call simulator. Everything you see is lab
    dealer): *Biyyam vachaya?* is answered from cardholder reports and public sales data,
    *Repu book cheyyandi* gives the best time to go instead of a booking, and *Biyyam vachindi,
    ikkada 12 mandi unnaru* files a report after a read-back. Set Shop 108 to *Machine down*
-   and call as Lakshmi to hear a nearby shop (Shop 112, 1.2 km). Open **/shop/112** for the
+   and call as Lakshmi: the warning comes once at the greeting, then a nearby shop (Shop 112,
+   1.2 km) and, after *Avunu*, "go now, about 10 minutes' wait". Open **/shop/112** for the
    public transparency page, call as **Dealer of Shop 108** for the dealer phone line, and open
    the volunteer dashboard for Shop 109 from the admin page.
 6. Open **Admin** (no login needed) to see every shop and import shops and ration cards from CSV.
@@ -65,6 +66,13 @@ shop under One Nation One Ration Card, complaints routed to official channels wi
 21-day escalation ladder, and a public transparency page with a monthly report for vigilance
 committees. Dealers get a one-call phone line, "rice arrived" messages to opted-in
 cardholders and a "Fair shop" badge; where they won't help, a volunteer can run tokens.
+
+**Version 3.1 voice polish.** Demo public sales stay fresh at any hour; advice times are
+spoken as part-of-day phrases from the state pack ("saayantram 7 gantala taruvata", "shaam 7
+baje ke baad") while slot and token times keep "Repu 10:20 ki"; advice follows the day and
+part of day asked for; the stock/machine warning is said once per call; replies are at most
+two sentences plus the closing question; and a nearby shop that is open says "go now" with
+the wait just quoted.
 
 ## How it works
 
@@ -168,4 +176,7 @@ shops is unproven until piloted. The Telugu and Hindi phrases need checking by n
   decide whether to buy a second Twilio number for missed-call check-ins
   (`TWILIO_CHECKIN_NUMBER`, optional); have native speakers check the new report, opt-in and
   nearby-shop phrases.
+- Version 3.1: have native speakers check the spoken time phrases (`time_phrases` in
+  `packs/telangana.json`) and the new short phrases (`booked`, `complaint_filed`,
+  `nearby_offer`, `nearby_go_now`, `booking_paused_machine`/`_stock`, `best_time_part_busy`).
 - Recording and uploading the demo video, exporting the final deck PDF, and the hackathon submission itself.

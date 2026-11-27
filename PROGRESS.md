@@ -1,6 +1,6 @@
 # Progress
 
-Current: F45 next (`feat/f45-v31-docs`)
+Current: version 3.1 complete (F40–F45 merged)
 
 ## Functionality backlog
 
@@ -62,4 +62,4 @@ Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main
 - [x] F42 Advice honours the day and part of day asked for; prefers today's remaining hours — `feat/f42-advice-context`
 - [x] F43 Shorter replies: one status warning per call, one advice sentence, length budget — `feat/f43-shorter-replies`
 - [x] F44 Nearby shop gives today's wait ("go now" / today's best time / tomorrow) — `feat/f44-nearby-today`
-- [ ] F45 Version 3.1 docs: demo script phrases, README, acceptance map, deck only if quoted text changed — `feat/f45-v31-docs`
+- [x] F45 Version 3.1 docs: demo script phrases, README, acceptance map, deck only if quoted text changed — `feat/f45-v31-docs`
