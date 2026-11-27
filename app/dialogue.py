@@ -671,7 +671,9 @@ class Dialogue:
         if intent == "book":
             out.say("no_booking_level0")
             out.actions.append({"type": "booking_refused", "reason": "level0"})
-        elif intent == "stock" and (state.stock or state.machine):
+        elif intent == "stock" and (
+            state.stock or state.machine or (state.public is not None and state.public.available)
+        ):
             if state.machine and state.machine.source == "reports" and state.machine_down:
                 self._say_signal(state.machine, out)
             if state.stock and state.stock.source == "reports":
@@ -694,10 +696,15 @@ class Dialogue:
 
     def _say_public(self, state: shopstate.ShopView, out: _Out) -> None:
         public = state.public
-        if public is None or not public.available or public.first_sale is None:
+        if public is None or not public.available:
+            return
+        if public.first_sale is None:
+            out.say("public_not_started")
             return
         out.say("public_started", time=to_ist(public.first_sale).strftime("%H:%M"))
-        if public.possibly_stopped:
+        if public.closed_now and public.opens_at is not None:
+            out.say("public_closed", total=public.total_today, opens=opens_text(public.opens_at))
+        elif public.possibly_stopped:
             out.say("public_stopped", minutes=public.stopped_minutes)
         out.actions.append(
             {
@@ -1225,6 +1232,12 @@ class Dialogue:
         if day == today + timedelta(days=1):
             return Word("tomorrow")
         return day.strftime("%d %b")
+
+
+def opens_text(at: datetime) -> str:
+    """When a closed shop opens again, as "8 am" / "4 pm" (spoken times come in F41)."""
+    hour = to_ist(at).hour
+    return f"{hour % 12 or 12} {'am' if hour < 12 else 'pm'}"
 
 
 def _code_hash(code: str, salt: int) -> str:

@@ -153,6 +153,8 @@ V3_PHRASES: dict[str, str] = {
     "optout_saved": ("Okay, we will stop rice arrival messages."),
     "broadcast_rice_arrived": ("Ration Bolo: rice has arrived at your shop {shop}."),
     "fair_shop_note": ("It has the 'Fair shop' badge."),
+    "public_not_started": ("Public sales data shows no sales yet today."),
+    "public_closed": ("{total} sales today; the shop is closed now and opens {opens}."),
     "checkin_saved": "Noted that you are at the shop. {count} people checked in in the last hour.",
 }
 V3_INTENTS = [
