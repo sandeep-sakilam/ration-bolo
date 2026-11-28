@@ -30,7 +30,7 @@
   function cell(tr, text) { const td = document.createElement("td"); td.textContent = text; tr.appendChild(td); return td; }
   function btn(td, label, fn, cls) {
     const b = document.createElement("button"); b.type = "button"; b.textContent = label;
-    if (cls) b.className = cls; b.style.marginRight = "4px"; b.style.padding = "4px 8px";
+    b.className = "sm" + (cls ? " " + cls : "");
     b.addEventListener("click", fn); td.appendChild(b); return b;
   }
 
