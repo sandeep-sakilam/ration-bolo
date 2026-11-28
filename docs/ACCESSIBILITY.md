@@ -28,10 +28,12 @@ or see a screen use speech, with keypad and numbered menus as fallbacks.
 
 - **Perceivable**: every reply is shown as text and spoken; an English gloss sits under
   each Telugu/Hindi reply; status (stock, machine, paused) is written in words, not only colour.
+  A dark theme follows the device setting; both themes use the same colour tokens and keep
+  AA contrast (axe checks the light theme in CI).
 - **Operable**: all controls are native buttons, inputs and selects; visible focus ring
   (3 px); buttons and keypad keys are at least 24×24 px (2.5.8 Target size); nothing is
   time-limited (silence is an explicit "Stay silent" button, not a timer); the pulsing mic
-  animation stops with `prefers-reduced-motion`.
+  animation and the reply fade-in stop with `prefers-reduced-motion`.
 - **Understandable**: one language per page (`lang="en"`) with per-reply language marks;
   errors are announced (`role="alert"` on login, `role="status"` on dashboard messages);
   the dealer PIN field says what to enter.

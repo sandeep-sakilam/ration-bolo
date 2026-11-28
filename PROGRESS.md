@@ -1,6 +1,6 @@
 # Progress
 
-Current: version 3.2 complete (F46 merged)
+Current: version 3.2 complete (F46 merged); UI refresh merged
 
 ## Functionality backlog
 
@@ -67,3 +67,7 @@ Version 3.1 "voice polish" (F40–F45, merge by 30 Nov 2026, 10:00 AM IST; `main
 Version 3.2 "closed-shop honesty" (F46, merge by 29 Nov 2026, 6:00 PM IST):
 
 - [x] F46 Closed-shop honesty: nearby offers and status answers respect open hours; demo reports keep their real age outside open hours — `feat/f46-closed-shop-honesty`
+
+Outside the spec backlog (requested by Sandeep, 28 Nov 2026):
+
+- [x] UI refresh: modern styling for every page (design tokens, dark theme, no inline styles), no behaviour change — `feat/ui-refresh`

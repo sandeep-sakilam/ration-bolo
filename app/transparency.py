@@ -249,8 +249,8 @@ def render_page(data: dict[str, Any]) -> str:
         for k, v in data["monthly"].items()
     )
     body = f"""
-<h2>Shop {e(data["code"])} · {e(data["name"])} {badge}</h2>
-<p class="small">{e(data["area"])} · {e(data["level"])}</p>
+<div class="page-head"><h2>Shop {e(data["code"])} · {e(data["name"])} {badge}</h2></div>
+<p class="lead">{e(data["area"])} · {e(data["level"])}</p>
 <div class="grid two">
 <section class="card"><h2>Right now</h2><ul>{status}</ul></section>
 <section class="card"><h2>Quietest times today</h2><ul>{times}</ul></section>
@@ -272,12 +272,12 @@ def render_report(db: Session, shop: Shop, month: str) -> str:
         f'<tr><th scope="row">{e(LABELS[k])}</th><td>{e(shown(v))}</td></tr>' for k, v in m.items()
     )
     body = f"""
-<h2>Monthly report · Shop {e(shop.code)} · {e(month)}</h2>
-<p class="small">{e(shop.name)}, {e(shop.area)}. For the shop-level vigilance committee (NFSA
+<div class="page-head"><h2>Monthly report · Shop {e(shop.code)} · {e(month)}</h2></div>
+<p class="lead">{e(shop.name)}, {e(shop.area)}. For the shop-level vigilance committee (NFSA
 Section 29) and social audit (Section 28).</p>
 <section class="card"><table><tbody>{rows}
 <tr><th scope="row">Share resolved within 7 days</th><td>{e(resolved_share(m))}</td></tr>
 </tbody></table></section>
-<p class="noprint"><button type="button" onclick="window.print()">Print</button>
+<p class="noprint row mt-2"><button type="button" onclick="window.print()">Print</button>
 <a href="/shop/{e(shop.code)}/report/{e(month)}.csv">Download CSV</a></p>"""
     return _page(f"Ration Bolo · Shop {shop.code} report {month}", body)
